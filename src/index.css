@@ -1,5 +1,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,8 +9,8 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    --background: 190 90% 95%; /* Light sky blue background */
+    --foreground: 240 10% 20%;
 
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
@@ -16,13 +18,13 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 215 50% 23%;
+    --primary: 350 85% 60%; /* Bright pink */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 38 92% 50%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 40 100% 60%; /* Bright yellow */
+    --secondary-foreground: 240 10% 20%;
 
-    --accent: 172 84% 31%;
+    --accent: 130 60% 55%; /* Bright green */
     --accent-foreground: 210 40% 98%;
 
     --muted: 210 40% 96%;
@@ -35,15 +37,15 @@
     --input: 214 32% 91%;
     --ring: 215 20% 65%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
-    --sidebar-background: 215 50% 23%;
+    --sidebar-background: 260 70% 50%; /* Purple sidebar */
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 38 92% 50%;
-    --sidebar-primary-foreground: 222 47% 11%;
-    --sidebar-accent: 217 33% 17%;
+    --sidebar-primary: 40 100% 60%; /* Yellow accent */
+    --sidebar-primary-foreground: 240 10% 20%;
+    --sidebar-accent: 270 50% 40%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 215 28% 17%;
+    --sidebar-border: 265 40% 40%;
     --sidebar-ring: 215 20% 65%;
   }
 
@@ -52,7 +54,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-round;
   }
 }
 
@@ -62,26 +64,47 @@
   }
   
   .lms-card {
-    @apply bg-white rounded-lg shadow-md p-6 transition-all duration-200 hover:shadow-lg;
+    @apply bg-white rounded-2xl shadow-md p-6 transition-all duration-200 hover:shadow-lg border-2 border-primary/30;
   }
   
   .lms-button-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md font-medium transition-colors;
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-xl font-medium transition-colors;
   }
   
   .lms-button-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 px-4 py-2 rounded-md font-medium transition-colors;
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 px-4 py-2 rounded-xl font-medium transition-colors;
   }
   
   .lms-button-accent {
-    @apply bg-accent text-accent-foreground hover:bg-accent/90 px-4 py-2 rounded-md font-medium transition-colors;
+    @apply bg-accent text-accent-foreground hover:bg-accent/90 px-4 py-2 rounded-xl font-medium transition-colors;
   }
   
   .lms-input {
-    @apply w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary;
+    @apply w-full px-3 py-2 border-2 border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary;
   }
   
   .lms-label {
     @apply block text-sm font-medium text-foreground mb-1;
+  }
+
+  /* Kid-friendly elements */
+  .kid-card {
+    @apply rounded-3xl bg-white p-6 border-4 shadow-lg transition-all duration-300 hover:scale-105;
+  }
+  
+  .animated-character {
+    @apply absolute pointer-events-none z-10;
+  }
+
+  .cloud {
+    @apply absolute animate-float opacity-75;
+  }
+
+  .star {
+    @apply absolute animate-spin-slow text-lms-yellow;
+  }
+
+  .bubble {
+    @apply absolute rounded-full bg-blue-200/50 animate-float;
   }
 }

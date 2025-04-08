@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -70,12 +69,15 @@ export default {
 					teal: '#0d9488',
 					lightGray: '#f8fafc',
 					darkSlate: '#1e293b',
+					// Kid-friendly colors
+					purple: '#9333EA',
+					pink: '#EC4899',
+					yellow: '#FCD34D',
+					green: '#4ADE80',
+					blue: '#60A5FA',
+					red: '#F87171',
+					orange: '#FB923C',
 				}
-			},
-			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
 			},
 			keyframes: {
 				'accordion-down': {
@@ -101,16 +103,51 @@ export default {
 				'fade-out': {
 					'0%': { opacity: '1' },
 					'100%': { opacity: '0' }
+				},
+				'bounce': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-20px)' }
+				},
+				'wiggle': {
+					'0%, 100%': { transform: 'rotate(-3deg)' },
+					'50%': { transform: 'rotate(3deg)' }
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
+				},
+				'spin-slow': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.3s ease-out',
-				'fade-out': 'fade-out 0.3s ease-out'
+				'fade-out': 'fade-out 0.3s ease-out',
+				'bounce': 'bounce 2s infinite ease-in-out',
+				'wiggle': 'wiggle 2s infinite ease-in-out',
+				'float': 'float 3s infinite ease-in-out',
+				'spin-slow': 'spin-slow 8s linear infinite'
 			},
 			fontFamily: {
 				sans: ['Inter', 'sans-serif'],
+				round: ['Quicksand', 'sans-serif'],
+				bubbly: ['Comic Neue', 'cursive'],
+			},
+			borderRadius: {
+				lg: 'var(--radius)',
+				md: 'calc(var(--radius) - 2px)',
+				sm: 'calc(var(--radius) - 4px)',
+				xl: '1rem',
+				'2xl': '1.5rem',
+				'3xl': '2rem',
+			},
+			backgroundImage: {
+				'rainbow-gradient': 'linear-gradient(90deg, #F87171, #FB923C, #FCD34D, #4ADE80, #60A5FA, #9333EA, #EC4899)',
+				'playful-gradient': 'linear-gradient(90deg, hsla(24, 100%, 83%, 1) 0%, hsla(341, 91%, 68%, 1) 100%)',
+				'sunny-gradient': 'linear-gradient(90deg, hsla(39, 100%, 77%, 1) 0%, hsla(22, 90%, 57%, 1) 100%)'
 			}
 		}
 	},
