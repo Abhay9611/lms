@@ -49,7 +49,8 @@ const AnimatedCharacters: React.FC<AnimatedCharactersProps> = ({
             top: pos.top, 
             left: pos.left,
             animationDelay: `${pos.delay}s`,
-            animationDuration: `${pos.duration}s`
+            animationDuration: `${pos.duration}s`,
+            zIndex: -1 // Keep animated elements behind content
           }}
         >
           {element === 0 && (
@@ -78,7 +79,8 @@ const AnimatedCharacters: React.FC<AnimatedCharactersProps> = ({
             top: pos.top, 
             left: pos.left,
             animationDelay: `${pos.delay}s`,
-            animationDuration: `${pos.duration}s`
+            animationDuration: `${pos.duration}s`,
+            zIndex: -1 // Keep animated elements behind content
           }}
         >
           {element === 0 && (
@@ -110,7 +112,8 @@ const AnimatedCharacters: React.FC<AnimatedCharactersProps> = ({
             top: pos.top, 
             left: pos.left,
             animationDelay: `${pos.delay}s`,
-            animationDuration: `${pos.duration}s`
+            animationDuration: `${pos.duration}s`,
+            zIndex: -1 // Keep animated elements behind content
           }}
         >
           {shape === 0 && (
@@ -139,7 +142,8 @@ const AnimatedCharacters: React.FC<AnimatedCharactersProps> = ({
             top: pos.top, 
             left: pos.left,
             animationDelay: `${pos.delay}s`,
-            animationDuration: `${pos.duration}s`
+            animationDuration: `${pos.duration}s`,
+            zIndex: -1 // Keep animated elements behind content
           }}
         >
           {element === 0 && (
