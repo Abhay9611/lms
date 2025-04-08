@@ -9,7 +9,7 @@ import StudentDashboard from './pages/StudentDashboard';
 import Subjects from './pages/student/Subjects';
 import SubjectDetails from './pages/student/SubjectDetails';
 import Assignments from './pages/student/Assignments';
-import Progress from './pages/student/Progress';
+import StudentProgress from './pages/student/Progress';
 
 function App() {
   return (
@@ -21,7 +21,7 @@ function App() {
           <Route path="/student/subjects" element={<Subjects />} />
           <Route path="/student/subjects/:id" element={<SubjectDetails />} />
           <Route path="/student/assignments" element={<Assignments />} />
-          <Route path="/student/progress" element={<Progress />} />
+          <Route path="/student/progress" element={<StudentProgress />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
@@ -31,3 +31,4 @@ function App() {
 }
 
 export default App;
+

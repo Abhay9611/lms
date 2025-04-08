@@ -2,11 +2,12 @@
 import React from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
+import { Progress as ProgressBar } from '@/components/ui/progress';
 import { BarChart3, Award, Star, BookOpen, Clock, CheckCircle } from 'lucide-react';
 import AnimatedCharacters from '@/components/animated/AnimatedCharacters';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
 
 // Preschool-specific subjects with progress data
 const subjectsProgress = [
@@ -120,7 +121,7 @@ const achievements = [
   }
 ];
 
-const Progress = () => {
+const StudentProgress = () => {
   const navigate = useNavigate();
   const totalProgress = Math.round(subjectsProgress.reduce((acc, subject) => acc + subject.progress, 0) / subjectsProgress.length);
   
@@ -192,7 +193,7 @@ const Progress = () => {
                         </div>
                         <span className="text-sm font-medium">{subject.progress}%</span>
                       </div>
-                      <Progress 
+                      <ProgressBar 
                         value={subject.progress} 
                         className="h-2.5 rounded-full"
                       />
@@ -339,4 +340,5 @@ const Progress = () => {
   );
 };
 
-export default Progress;
+export default StudentProgress;
+
