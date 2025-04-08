@@ -6,6 +6,7 @@ import { Toaster } from './components/ui/toaster';
 import Index from './pages/Index';
 import NotFound from './pages/NotFound';
 import StudentDashboard from './pages/StudentDashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import Subjects from './pages/student/Subjects';
 import SubjectDetails from './pages/student/SubjectDetails';
 import Assignments from './pages/student/Assignments';
@@ -14,6 +15,9 @@ import StudentProgress from './pages/student/Progress';
 // Admin pages
 import Schools from './pages/admin/Schools';
 import Users from './pages/admin/Users';
+import Analytics from './pages/admin/Analytics';
+import Content from './pages/admin/Content';
+import Settings from './pages/admin/Settings';
 
 // Teacher pages
 import Students from './pages/teacher/Students';
@@ -36,8 +40,12 @@ function App() {
           <Route path="/student/progress" element={<StudentProgress />} />
           
           {/* Admin Routes */}
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/schools" element={<Schools />} />
           <Route path="/admin/users" element={<Users />} />
+          <Route path="/admin/analytics" element={<Analytics />} />
+          <Route path="/admin/content" element={<Content />} />
+          <Route path="/admin/settings" element={<Settings />} />
           
           {/* Teacher Routes */}
           <Route path="/teacher/students" element={<Students />} />

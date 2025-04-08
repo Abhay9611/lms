@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -17,7 +16,12 @@ import {
   LogOut,
   Menu,
   X,
-  Star
+  Star,
+  FilePen,
+  UserCircle,
+  Gear,
+  FileText,
+  Bell
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
@@ -64,6 +68,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       { name: 'Students', icon: <Users className="h-5 w-5" />, path: '/teacher/students' },
       { name: 'Assignments', icon: <ClipboardList className="h-5 w-5" />, path: '/teacher/assignments' },
       { name: 'Content', icon: <BookText className="h-5 w-5" />, path: '/teacher/content' },
+      { name: 'Progress Reports', icon: <BarChart3 className="h-5 w-5" />, path: '/teacher/progress' },
+      { name: 'Notifications', icon: <Bell className="h-5 w-5" />, path: '/teacher/notifications' },
+      { name: 'Settings', icon: <Settings className="h-5 w-5" />, path: '/teacher/settings' },
     ];
 
     const studentItems = [
@@ -71,12 +78,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       { name: 'Subjects', icon: <BookOpen className="h-5 w-5" />, path: '/student/subjects' },
       { name: 'Assignments', icon: <ClipboardList className="h-5 w-5" />, path: '/student/assignments' },
       { name: 'Progress', icon: <BarChart3 className="h-5 w-5" />, path: '/student/progress' },
+      { name: 'Story Books', icon: <BookText className="h-5 w-5" />, path: '/student/stories' },
+      { name: 'Games', icon: <Star className="h-5 w-5" />, path: '/student/games' },
     ];
 
     const parentItems = [
       { name: 'Dashboard', icon: <Home className="h-5 w-5" />, path: '/parent' },
       { name: 'Children', icon: <Users className="h-5 w-5" />, path: '/parent/children' },
       { name: 'Progress', icon: <BarChart3 className="h-5 w-5" />, path: '/parent/progress' },
+      { name: 'Assignments', icon: <ClipboardList className="h-5 w-5" />, path: '/parent/assignments' },
+      { name: 'Messages', icon: <FileText className="h-5 w-5" />, path: '/parent/messages' },
+      { name: 'Calendar', icon: <Calendar className="h-5 w-5" />, path: '/parent/calendar' },
       { name: 'Settings', icon: <Settings className="h-5 w-5" />, path: '/parent/settings' },
     ];
 
