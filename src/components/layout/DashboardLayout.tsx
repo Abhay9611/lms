@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { UserRole } from '@/types';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   BookOpen,
   Home,
@@ -16,7 +16,8 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  Star
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
@@ -30,6 +31,7 @@ interface DashboardLayoutProps {
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
 
@@ -96,23 +98,66 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         navItems = studentItems;
     }
 
+    // Enhanced student menu with child submenu for subjects
+    const isStudent = user.role === UserRole.STUDENT;
+    const isSubjectsPath = location.pathname.includes('/student/subjects') && !location.pathname.includes('/student/subjects/');
+    
     return (
       <div className="flex flex-col flex-1">
-        {navItems.map((item) => (
-          <Button
-            key={item.name}
-            variant="ghost"
-            className={cn(
-              "justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-              "my-1 rounded-md",
-              sidebarOpen ? "px-4" : "px-2 justify-center"
-            )}
-            onClick={() => navigate(item.path)}
-          >
-            {item.icon}
-            {sidebarOpen && <span className="ml-2">{item.name}</span>}
-          </Button>
-        ))}
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path || 
+                          (location.pathname.includes(item.path) && item.path !== '/student' && item.path !== '/admin' && 
+                          item.path !== '/teacher' && item.path !== '/parent');
+          
+          return (
+            <div key={item.name}>
+              <Button
+                variant="ghost"
+                className={cn(
+                  "justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                  "my-1 rounded-md",
+                  isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : "",
+                  sidebarOpen ? "px-4" : "px-2 justify-center"
+                )}
+                onClick={() => navigate(item.path)}
+              >
+                {item.icon}
+                {sidebarOpen && <span className="ml-2">{item.name}</span>}
+              </Button>
+              
+              {/* For student, add subject submenu */}
+              {isStudent && item.name === 'Subjects' && sidebarOpen && (
+                <div className="ml-8 pl-2 border-l-2 border-sidebar-border">
+                  {[
+                    { name: 'English Rhymes', path: '/student/subjects/1', icon: <Star className="h-4 w-4" /> },
+                    { name: 'EVS', path: '/student/subjects/2', icon: <Star className="h-4 w-4" /> },
+                    { name: 'Maths', path: '/student/subjects/3', icon: <Star className="h-4 w-4" /> },
+                    { name: 'Story Time', path: '/student/subjects/4', icon: <Star className="h-4 w-4" /> },
+                  ].map((subItem) => {
+                    const isSubActive = location.pathname === subItem.path;
+                    return (
+                      <Button
+                        key={subItem.name}
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                          "justify-start text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                          "my-1 rounded-md text-xs",
+                          isSubActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : "",
+                          "px-3 w-full"
+                        )}
+                        onClick={() => navigate(subItem.path)}
+                      >
+                        {subItem.icon}
+                        <span className="ml-2">{subItem.name}</span>
+                      </Button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     );
   };
@@ -151,7 +196,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         )}>
           <BookOpen className="h-8 w-8 text-sidebar-primary" />
           {sidebarOpen && (
-            <span className="ml-2 font-bold text-lg text-sidebar-foreground">
+            <span className="ml-2 font-bold text-lg font-bubbly text-sidebar-foreground">
               BookWorm LMS
             </span>
           )}
