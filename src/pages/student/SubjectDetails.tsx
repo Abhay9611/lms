@@ -19,6 +19,18 @@ import Flashcard, { FlashcardItem } from '@/components/learning/Flashcard';
 import LearningMaterials, { LearningResource } from '@/components/learning/LearningMaterials';
 import { toast } from '@/components/ui/use-toast';
 
+// Type for learning material resource
+type MaterialType = "worksheet" | "reading" | "activity" | "printable";
+
+// Extending the interface to match our data structure
+interface TopicLearningMaterial {
+  id: string;
+  title: string;
+  type: MaterialType;
+  description: string;
+  url: string;
+}
+
 // Dummy subject data
 const subjects = {
   '1': {
@@ -86,28 +98,28 @@ const subjects = {
           {
             id: 'lm1',
             title: 'Illustrated Lyrics Sheet',
-            type: 'printable',
+            type: 'printable' as MaterialType,
             description: 'Colorful printable with the complete lyrics and pictures to color',
             url: '#/materials/twinkle-lyrics'
           },
           {
             id: 'lm2',
             title: 'Star Craft Activity',
-            type: 'activity',
+            type: 'activity' as MaterialType,
             description: 'Make your own shining star with paper and glitter',
             url: '#/activities/star-craft'
           },
           {
             id: 'lm3',
             title: 'Twinkle Rhyme Reading',
-            type: 'reading',
+            type: 'reading' as MaterialType,
             description: 'Read along with the illustrated story of Twinkle Twinkle',
             url: '#/reading/twinkle'
           },
           {
             id: 'lm4',
             title: 'Matching Words Worksheet',
-            type: 'worksheet',
+            type: 'worksheet' as MaterialType,
             description: 'Match words from the rhyme to pictures',
             url: '#/worksheets/twinkle-matching'
           }
@@ -172,28 +184,28 @@ const subjects = {
           {
             id: 'lm1',
             title: 'Sheep Mask Craft',
-            type: 'printable',
+            type: 'printable' as MaterialType,
             description: 'Make your own black sheep mask with this template',
             url: '#/materials/sheep-mask'
           },
           {
             id: 'lm2',
             title: 'Farm Animals Sounds',
-            type: 'activity',
+            type: 'activity' as MaterialType,
             description: 'Learn about different farm animals and the sounds they make',
             url: '#/activities/farm-sounds'
           },
           {
             id: 'lm3',
             title: 'Baa Baa Illustrated Story',
-            type: 'reading',
+            type: 'reading' as MaterialType,
             description: 'Read the story with beautiful illustrations',
             url: '#/reading/baa-baa'
           },
           {
             id: 'lm4',
             title: 'Counting Bags Worksheet',
-            type: 'worksheet',
+            type: 'worksheet' as MaterialType,
             description: 'Practice counting with bags of wool',
             url: '#/worksheets/counting-bags'
           }
@@ -258,28 +270,28 @@ const subjects = {
           {
             id: 'lm1',
             title: 'Spider Web Craft',
-            type: 'activity',
+            type: 'activity' as MaterialType,
             description: 'Create a spider web with yarn and make a little spider',
             url: '#/activities/spider-web'
           },
           {
             id: 'lm2',
             title: 'Weather Sequence Cards',
-            type: 'printable',
+            type: 'printable' as MaterialType,
             description: 'Cards showing rain, sun, and other weather to sequence',
             url: '#/materials/weather-cards'
           },
           {
             id: 'lm3',
             title: 'Incy Wincy Story Book',
-            type: 'reading',
+            type: 'reading' as MaterialType,
             description: "Read about Incy Wincy's adventure with beautiful illustrations",
             url: '#/reading/incy-wincy'
           },
           {
             id: 'lm4',
             title: 'Up and Down Worksheet',
-            type: 'worksheet',
+            type: 'worksheet' as MaterialType,
             description: 'Practice direction concepts with up and down arrows',
             url: '#/worksheets/up-down'
           }
@@ -352,28 +364,28 @@ const subjects = {
           {
             id: 'lm1',
             title: 'Seed Germination Journal',
-            type: 'printable',
+            type: 'printable' as MaterialType,
             description: 'Track the growth of your seeds with this printable journal',
             url: '#/materials/seed-journal'
           },
           {
             id: 'lm2',
             title: 'Parts of a Plant',
-            type: 'worksheet',
+            type: 'worksheet' as MaterialType,
             description: 'Label the different parts of a plant',
             url: '#/worksheets/plant-parts'
           },
           {
             id: 'lm3',
             title: 'Plant Life Cycle',
-            type: 'reading',
+            type: 'reading' as MaterialType,
             description: 'Learn about how plants grow from seeds to full plants',
             url: '#/reading/plant-lifecycle'
           },
           {
             id: 'lm4',
             title: 'Leaf Rubbing Activity',
-            type: 'activity',
+            type: 'activity' as MaterialType,
             description: 'Collect different leaves and make leaf rubbings to observe patterns',
             url: '#/activities/leaf-rubbing'
           }
@@ -438,28 +450,28 @@ const subjects = {
           {
             id: 'lm1',
             title: 'Animal Habitat Matching',
-            type: 'worksheet',
+            type: 'worksheet' as MaterialType,
             description: 'Match different animals to their habitats',
             url: '#/worksheets/habitat-matching'
           },
           {
             id: 'lm2',
             title: 'Animal Mask Templates',
-            type: 'printable',
+            type: 'printable' as MaterialType,
             description: 'Make masks of different wild animals',
             url: '#/materials/animal-masks'
           },
           {
             id: 'lm3',
             title: 'Wild Animal Facts Book',
-            type: 'reading',
+            type: 'reading' as MaterialType,
             description: 'Read interesting facts about different wild animals',
             url: '#/reading/animal-facts'
           },
           {
             id: 'lm4',
             title: 'Food Chain Activity',
-            type: 'activity',
+            type: 'activity' as MaterialType,
             description: 'Learn about what animals eat with this interactive activity',
             url: '#/activities/food-chain'
           }
@@ -524,28 +536,28 @@ const subjects = {
           {
             id: 'lm1',
             title: 'Water Cycle Wheel',
-            type: 'printable',
+            type: 'printable' as MaterialType,
             description: 'A rotating wheel that shows the stages of the water cycle',
             url: '#/materials/water-wheel'
           },
           {
             id: 'lm2',
             title: 'Rain Cloud in a Jar',
-            type: 'activity',
+            type: 'activity' as MaterialType,
             description: 'Create your own mini water cycle with this simple experiment',
             url: '#/activities/cloud-jar'
           },
           {
             id: 'lm3',
             title: 'The Journey of a Raindrop',
-            type: 'reading',
+            type: 'reading' as MaterialType,
             description: 'Follow a raindrop as it travels through the water cycle',
             url: '#/reading/raindrop-journey'
           },
           {
             id: 'lm4',
             title: 'Water Cycle Sequencing',
-            type: 'worksheet',
+            type: 'worksheet' as MaterialType,
             description: 'Put the stages of the water cycle in the correct order',
             url: '#/worksheets/cycle-sequence'
           }
@@ -618,28 +630,28 @@ const subjects = {
           {
             id: 'lm1',
             title: 'Number Tracing Sheets',
-            type: 'printable',
+            type: 'printable' as MaterialType,
             description: 'Practice writing numbers 1-10 with these tracing worksheets',
             url: '#/materials/number-tracing'
           },
           {
             id: 'lm2',
             title: 'Counting Objects Worksheet',
-            type: 'worksheet',
+            type: 'worksheet' as MaterialType,
             description: 'Count different groups of objects and write the numbers',
             url: '#/worksheets/counting-objects'
           },
           {
             id: 'lm3',
             title: 'Number Rhymes Book',
-            type: 'reading',
+            type: 'reading' as MaterialType,
             description: 'Fun rhymes to help remember numbers 1-10',
             url: '#/reading/number-rhymes'
           },
           {
             id: 'lm4',
             title: 'Counting Beads Activity',
-            type: 'activity',
+            type: 'activity' as MaterialType,
             description: 'Use beads to practice counting and making patterns',
             url: '#/activities/counting-beads'
           }
@@ -704,28 +716,28 @@ const subjects = {
           {
             id: 'lm1',
             title: 'Shape Tracing Worksheets',
-            type: 'printable',
+            type: 'printable' as MaterialType,
             description: 'Practice drawing different shapes with these templates',
             url: '#/materials/shape-tracing'
           },
           {
             id: 'lm2',
             title: 'Shape Sorting Activity',
-            type: 'activity',
+            type: 'activity' as MaterialType,
             description: 'Sort objects by their shapes in this fun activity',
             url: '#/activities/shape-sort'
           },
           {
             id: 'lm3',
             title: 'Shapes All Around Us',
-            type: 'reading',
+            type: 'reading' as MaterialType,
             description: 'Read about how shapes are found everywhere in our world',
             url: '#/reading/shapes-around'
           },
           {
             id: 'lm4',
             title: 'Shape Identification',
-            type: 'worksheet',
+            type: 'worksheet' as MaterialType,
             description: 'Identify different shapes in pictures',
             url: '#/worksheets/shape-id'
           }
@@ -790,28 +802,28 @@ const subjects = {
           {
             id: 'lm1',
             title: 'Addition with Pictures',
-            type: 'worksheet',
+            type: 'worksheet' as MaterialType,
             description: 'Practice adding by counting pictures of objects',
             url: '#/worksheets/picture-addition'
           },
           {
             id: 'lm2',
             title: 'Addition Dot Cards',
-            type: 'printable',
+            type: 'printable' as MaterialType,
             description: 'Cards showing addition problems with dots to count',
             url: '#/materials/dot-cards'
           },
           {
             id: 'lm3',
             title: 'Addition Stories',
-            type: 'reading',
+            type: 'reading' as MaterialType,
             description: 'Read simple stories that involve adding things together',
             url: '#/reading/addition-stories'
           },
           {
             id: 'lm4',
             title: 'Number Line Jumping',
-            type: 'activity',
+            type: 'activity' as MaterialType,
             description: 'Use a number line to practice addition by jumping forward',
             url: '#/activities/number-line'
           }
@@ -884,28 +896,28 @@ const subjects = {
           {
             id: 'lm1',
             title: 'Three Little Pigs Masks',
-            type: 'printable',
+            type: 'printable' as MaterialType,
             description: 'Pig and wolf masks for acting out the story',
             url: '#/materials/pig-masks'
           },
           {
             id: 'lm2',
             title: 'Building Materials Test',
-            type: 'activity',
+            type: 'activity' as MaterialType,
             description: 'Test different materials to see which ones are strongest',
             url: '#/activities/building-test'
           },
           {
             id: 'lm3',
             title: 'Three Little Pigs Storybook',
-            type: 'reading',
+            type: 'reading' as MaterialType,
             description: 'Read the complete story with beautiful illustrations',
             url: '#/reading/three-pigs'
           },
           {
             id: 'lm4',
             title: 'Story Sequencing',
-            type: 'worksheet',
+            type: 'worksheet' as MaterialType,
             description: 'Put the events of the story in the correct order',
             url: '#/worksheets/pigs-sequence'
           }
@@ -970,28 +982,28 @@ const subjects = {
           {
             id: 'lm1',
             title: 'Red Riding Hood Puppet Set',
-            type: 'printable',
+            type: 'printable' as MaterialType,
             description: 'Make stick puppets of all the characters',
             url: '#/materials/puppets'
           },
           {
             id: 'lm2',
             title: 'Forest Safety Rules',
-            type: 'worksheet',
+            type: 'worksheet' as MaterialType,
             description: 'Learn about safety rules when outdoors',
             url: '#/worksheets/forest-safety'
           },
           {
             id: 'lm3',
             title: 'Little Red Riding Hood Book',
-            type: 'reading',
+            type: 'reading' as MaterialType,
             description: 'Read the complete story with colorful illustrations',
             url: '#/reading/red-riding'
           },
           {
             id: 'lm4',
             title: 'Path Through the Forest',
-            type: 'activity',
+            type: 'activity' as MaterialType,
             description: 'Create a map of the path through the forest',
             url: '#/activities/forest-path'
           }
@@ -1056,28 +1068,28 @@ const subjects = {
           {
             id: 'lm1',
             title: 'Gingerbread Man Template',
-            type: 'printable',
+            type: 'printable' as MaterialType,
             description: 'Template for creating your own paper gingerbread men',
             url: '#/materials/gingerbread-template'
           },
           {
             id: 'lm2',
             title: 'Story Characters Wheel',
-            type: 'activity',
+            type: 'activity' as MaterialType,
             description: 'A spinning wheel showing all the characters who chased the Gingerbread Man',
             url: '#/activities/character-wheel'
           },
           {
             id: 'lm3',
             title: 'The Gingerbread Man Story',
-            type: 'reading',
+            type: 'reading' as MaterialType,
             description: 'Read the complete tale with colorful illustrations',
             url: '#/reading/gingerbread'
           },
           {
             id: 'lm4',
             title: 'Story Sequence Cards',
-            type: 'worksheet',
+            type: 'worksheet' as MaterialType,
             description: 'Put the events of the story in the correct order',
             url: '#/worksheets/gingerbread-sequence'
           }
