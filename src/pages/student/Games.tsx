@@ -1,162 +1,217 @@
 
 import React from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Gamepad2, Star, Brain, Puzzle, Award } from 'lucide-react';
+import { Gamepad2, Award, Star, Clock, ArrowRight } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import AnimatedCharacters from '@/components/animated/AnimatedCharacters';
-
-const games = [
-  {
-    id: 1,
-    title: "Alphabet Adventure",
-    description: "Learn letters through a fun forest adventure",
-    category: "English",
-    difficulty: "Easy",
-    image: "https://images.unsplash.com/photo-1535572290543-960a8046f5af?auto=format&fit=crop&q=80&w=1500",
-    color: "bg-lms-pink",
-    icon: <Star className="h-5 w-5" />,
-    completed: true
-  },
-  {
-    id: 2,
-    title: "Counting Stars",
-    description: "Count stars in the night sky to learn numbers",
-    category: "Maths",
-    difficulty: "Easy",
-    image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80&w=1500",
-    color: "bg-lms-blue",
-    icon: <Brain className="h-5 w-5" />,
-    completed: false
-  },
-  {
-    id: 3,
-    title: "Animal Sounds",
-    description: "Listen and match animal sounds in this memory game",
-    category: "EVS",
-    difficulty: "Medium",
-    image: "https://images.unsplash.com/photo-1425082661705-1834bfd09dca?auto=format&fit=crop&q=80&w=1500",
-    color: "bg-lms-green",
-    icon: <Puzzle className="h-5 w-5" />,
-    completed: false
-  },
-  {
-    id: 4,
-    title: "Shape Sorter",
-    description: "Sort shapes and learn their names",
-    category: "Maths",
-    difficulty: "Easy",
-    image: "https://images.unsplash.com/photo-1618540824901-8c1a0749ae11?auto=format&fit=crop&q=80&w=1500",
-    color: "bg-lms-purple",
-    icon: <Puzzle className="h-5 w-5" />,
-    completed: false
-  },
-  {
-    id: 5,
-    title: "Rhyme Time",
-    description: "Sing along with animated rhymes and songs",
-    category: "English Rhymes",
-    difficulty: "Easy",
-    image: "https://images.unsplash.com/photo-1485579149621-3123dd979885?auto=format&fit=crop&q=80&w=1500",
-    color: "bg-lms-yellow",
-    icon: <Star className="h-5 w-5" />,
-    completed: false
-  },
-  {
-    id: 6,
-    title: "Color Matching",
-    description: "Match colors to objects in this fun game",
-    category: "EVS",
-    difficulty: "Easy",
-    image: "https://images.unsplash.com/photo-1529310399831-ed472b81d589?auto=format&fit=crop&q=80&w=1500",
-    color: "bg-lms-pink",
-    icon: <Puzzle className="h-5 w-5" />,
-    completed: true
-  }
-];
+import { useNavigate } from 'react-router-dom';
 
 const StudentGames = () => {
+  const navigate = useNavigate();
+
+  const games = [
+    {
+      id: 1,
+      title: "Alphabet Adventure",
+      description: "Learn alphabet letters through a fun adventure game",
+      image: "https://placehold.co/300x200/FCD34D/1F2937?text=Alphabet+Adventure",
+      category: "English",
+      difficulty: "Easy",
+      time: "10 min",
+      color: "bg-lms-yellow"
+    },
+    {
+      id: 2,
+      title: "Counting Stars",
+      description: "Count stars and other objects in this interactive math game",
+      image: "https://placehold.co/300x200/60A5FA/FFFFFF?text=Counting+Stars",
+      category: "Maths",
+      difficulty: "Easy",
+      time: "5 min",
+      color: "bg-lms-blue"
+    },
+    {
+      id: 3,
+      title: "Animal Sounds",
+      description: "Match animals with their sounds in this fun memory game",
+      image: "https://placehold.co/300x200/4ADE80/1F2937?text=Animal+Sounds",
+      category: "EVS",
+      difficulty: "Medium",
+      time: "8 min",
+      color: "bg-lms-green"
+    },
+    {
+      id: 4,
+      title: "Color Mixer",
+      description: "Learn about colors by mixing them in this interactive game",
+      image: "https://placehold.co/300x200/EC4899/FFFFFF?text=Color+Mixer",
+      category: "Art",
+      difficulty: "Easy",
+      time: "7 min",
+      color: "bg-lms-pink"
+    },
+    {
+      id: 5,
+      title: "Story Builder",
+      description: "Create your own story by arranging pictures in sequence",
+      image: "https://placehold.co/300x200/9333EA/FFFFFF?text=Story+Builder",
+      category: "Story Time",
+      difficulty: "Medium",
+      time: "15 min",
+      color: "bg-lms-purple"
+    },
+    {
+      id: 6,
+      title: "Shape Sorter",
+      description: "Sort different shapes and learn their names",
+      image: "https://placehold.co/300x200/F87171/FFFFFF?text=Shape+Sorter",
+      category: "Maths",
+      difficulty: "Easy",
+      time: "6 min",
+      color: "bg-lms-red"
+    }
+  ];
+
+  const popularGames = games.slice(0, 3);
+
   return (
     <DashboardLayout>
-      <div className="relative space-y-6">
-        <AnimatedCharacters variant="school" density="low" />
+      <div className="space-y-8 relative">
+        <AnimatedCharacters variant="school" density="medium" />
         
-        <div className="relative mb-6">
+        <div className="mb-6 relative">
           <h1 className="text-4xl font-bubbly font-bold text-primary flex items-center">
             <Gamepad2 className="mr-3 h-8 w-8" />
-            Fun Learning Games
+            Learning Games
           </h1>
           <p className="text-lg text-muted-foreground font-round mt-2">
-            Play these fun games to practice what you've learned!
+            Have fun while learning with these educational games
           </p>
         </div>
         
-        <Card className="border-4 border-lms-yellow/30 rounded-3xl shadow-lg overflow-hidden">
-          <CardHeader className="bg-lms-yellow/10">
-            <CardTitle className="text-xl font-bubbly flex items-center">
-              <Award className="h-5 w-5 mr-2 text-lms-yellow" />
-              Your Game Achievements
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-16 h-16 rounded-full bg-lms-yellow/20 flex items-center justify-center">
-                  <Star className="h-8 w-8 text-lms-yellow fill-lms-yellow" />
+        {/* Featured Games */}
+        <div className="relative">
+          <h2 className="text-2xl font-bubbly font-bold flex items-center mb-4">
+            <Star className="mr-2 h-5 w-5 text-lms-yellow fill-lms-yellow" strokeWidth={1} />
+            Popular Games
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {popularGames.map((game) => (
+              <Card key={game.id} className="border-4 border-dashed hover:border-solid hover:shadow-xl transition-all duration-300 rounded-3xl overflow-hidden">
+                <div className="relative">
+                  <img src={game.image} alt={game.title} className="w-full h-48 object-cover" />
+                  <div className={`absolute top-4 right-4 ${game.color} text-white px-3 py-1 rounded-full text-xs font-bold`}>
+                    {game.category}
+                  </div>
                 </div>
-                <div className="ml-4">
-                  <h3 className="font-bubbly text-lg">Game Master</h3>
-                  <p className="text-muted-foreground text-sm">You've completed 2 of 6 games</p>
-                </div>
-              </div>
-              
-              <div className="text-right">
-                <div className="text-3xl font-bubbly font-bold">2/6</div>
-                <p className="text-muted-foreground text-sm">Games Completed</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {games.map((game) => (
-            <Card key={game.id} className={`border-4 border-${game.color}/30 rounded-3xl shadow-lg overflow-hidden transition-all hover:scale-105`}>
-              <div className="aspect-video w-full overflow-hidden relative">
-                <img 
-                  src={game.image} 
-                  alt={game.title} 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <div className="flex items-center">
-                    <div className={`${game.color} p-2 rounded-full`}>
-                      {game.icon}
+                <CardContent className="p-5">
+                  <h3 className="text-xl font-bubbly font-bold mb-2">{game.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{game.description}</p>
+                  <div className="flex items-center justify-between mb-4">
+                    <Badge variant="outline" className="font-round">
+                      {game.difficulty}
+                    </Badge>
+                    <div className="flex items-center text-xs text-muted-foreground">
+                      <Clock className="h-3 w-3 mr-1" />
+                      {game.time}
                     </div>
-                    <span className="ml-2 text-sm font-medium">{game.category}</span>
                   </div>
-                </div>
-                {game.completed && (
-                  <div className="absolute top-3 right-3 bg-lms-green text-white text-xs font-medium px-2 py-1 rounded-full flex items-center">
-                    <Award className="h-3 w-3 mr-1" />
-                    Completed
-                  </div>
-                )}
-              </div>
-              <CardContent className="p-4">
-                <h3 className="font-bubbly text-lg font-bold mb-1">{game.title}</h3>
-                <p className="text-sm text-muted-foreground mb-3">{game.description}</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-medium bg-muted px-2 py-1 rounded">
-                    {game.difficulty}
-                  </span>
-                  <Button size="sm" className={`${game.color}`}>
-                    {game.completed ? "Play Again" : "Start Game"}
+                  <Button 
+                    className={`w-full rounded-xl ${game.color}`}
+                    onClick={() => {
+                      // In a real app this would navigate to the game
+                      alert(`Starting ${game.title} game!`);
+                    }}
+                  >
+                    Play Now
                   </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+        
+        {/* All Games */}
+        <div>
+          <h2 className="text-2xl font-bubbly font-bold flex items-center mb-4">
+            <Gamepad2 className="mr-2 h-5 w-5" />
+            All Games
+          </h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {games.map((game) => (
+              <div 
+                key={game.id} 
+                className="bg-white rounded-3xl border-2 p-4 shadow hover:shadow-lg transition-all duration-300 cursor-pointer flex items-center"
+                onClick={() => {
+                  // In a real app this would navigate to the game
+                  alert(`Starting ${game.title} game!`);
+                }}
+              >
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${game.color} mr-4 text-white`}>
+                  {game.category === 'English' ? (
+                    <span className="text-xl font-bold">A</span>
+                  ) : game.category === 'Maths' ? (
+                    <span className="text-xl font-bold">123</span>
+                  ) : game.category === 'EVS' ? (
+                    <span className="text-xl font-bold">🌿</span>
+                  ) : game.category === 'Art' ? (
+                    <span className="text-xl font-bold">🎨</span>
+                  ) : game.category === 'Story Time' ? (
+                    <span className="text-xl font-bold">📚</span>
+                  ) : (
+                    <Gamepad2 className="h-6 w-6" />
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+                <div className="flex-1">
+                  <h3 className="font-bubbly font-bold">{game.title}</h3>
+                  <div className="flex items-center text-xs text-muted-foreground mt-1">
+                    <span className="mr-3">{game.difficulty}</span>
+                    <span className="flex items-center">
+                      <Clock className="h-3 w-3 mr-1" />
+                      {game.time}
+                    </span>
+                  </div>
+                </div>
+                <ArrowRight className="h-5 w-5 text-muted-foreground" />
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Achievements */}
+        <div>
+          <h2 className="text-2xl font-bubbly font-bold flex items-center mb-4">
+            <Award className="mr-2 h-5 w-5 text-lms-yellow" />
+            Your Game Achievements
+          </h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {[
+              { title: 'Alphabet Master', progress: 80, color: 'bg-lms-pink' },
+              { title: 'Math Explorer', progress: 60, color: 'bg-lms-blue' },
+              { title: 'Story Teller', progress: 40, color: 'bg-lms-purple' }
+            ].map((achievement, i) => (
+              <Card key={i} className="border-4 border-dashed rounded-3xl overflow-hidden">
+                <CardContent className="p-6 flex flex-col items-center text-center">
+                  <div className={`w-16 h-16 rounded-full mb-4 flex items-center justify-center ${achievement.color} text-white`}>
+                    <Award className="h-8 w-8" />
+                  </div>
+                  <h3 className="font-bubbly font-bold text-lg mb-2">{achievement.title}</h3>
+                  <div className="w-full bg-muted rounded-full h-4 mb-2">
+                    <div 
+                      className={`${achievement.color} h-4 rounded-full transition-all duration-500`}
+                      style={{ width: `${achievement.progress}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-sm font-medium">{achievement.progress}% Complete</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     </DashboardLayout>

@@ -1,19 +1,27 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { BookOpen, Users, GraduationCap, School, Sparkles, Star, BookText } from 'lucide-react';
 import { UserRole } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
+import RegistrationModal from '@/components/auth/RegistrationModal';
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [showRegistration, setShowRegistration] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
 
   const handleRoleLogin = async (role: UserRole) => {
     await login('demo@example.com', 'password', role);
     navigate('/');
+  };
+
+  const handleRoleSelect = (role: UserRole) => {
+    setSelectedRole(role);
+    setShowRegistration(true);
   };
 
   return (
@@ -57,9 +65,15 @@ const LandingPage = () => {
         <h1 className="text-4xl md:text-6xl font-bubbly font-bold text-primary mb-6 animate-bounce">
           <span className="text-lms-pink">Learn.</span> <span className="text-lms-green">Play.</span> <span className="text-lms-blue">Grow.</span>
         </h1>
-        <p className="text-xl md:text-2xl text-foreground mb-8 max-w-3xl font-round">
+        <p className="text-xl md:text-2xl text-foreground mb-4 max-w-3xl font-round">
           BookWorm Academy makes learning fun for preschoolers with interactive lessons, 
           rhymes, stories, and games that inspire curiosity and creativity.
+        </p>
+        
+        <p className="text-lg text-muted-foreground mb-8 max-w-3xl font-round">
+          We are a premier educational book distribution company dedicated to bringing high-quality learning materials
+          to students across all grade levels. Our carefully curated content helps teachers create engaging lessons
+          and enables students to explore subjects through interactive materials.
         </p>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl mb-12">
@@ -94,12 +108,21 @@ const LandingPage = () => {
                 <div className="mb-4">{item.icon}</div>
                 <h3 className="text-xl font-bubbly font-bold mb-2">{item.title}</h3>
                 <p className="text-sm text-center mb-4">{item.description}</p>
-                <Button 
-                  className={`w-full rounded-xl ${item.buttonColor}`}
-                  onClick={() => handleRoleLogin(item.role)}
-                >
-                  Sign Up
-                </Button>
+                <div className="flex flex-col w-full space-y-2">
+                  <Button 
+                    className={`w-full rounded-xl ${item.buttonColor}`}
+                    onClick={() => handleRoleSelect(item.role)}
+                  >
+                    Sign Up
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="w-full rounded-xl"
+                    onClick={() => handleRoleLogin(item.role)}
+                  >
+                    Demo Login
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -207,6 +230,15 @@ const LandingPage = () => {
           <p className="text-sm opacity-60">© 2025 BookWorm Academy. All rights reserved.</p>
         </div>
       </footer>
+
+      {/* Registration Modal */}
+      {showRegistration && selectedRole && (
+        <RegistrationModal 
+          isOpen={showRegistration} 
+          onClose={() => setShowRegistration(false)}
+          role={selectedRole}
+        />
+      )}
     </div>
   );
 };

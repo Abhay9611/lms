@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar as CalendarIcon, Plus, Users, School, Check, Calendar as CalendarComponent } from 'lucide-react';
+import { Calendar as CalendarIcon, Plus, Users, School, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Badge } from '@/components/ui/badge';

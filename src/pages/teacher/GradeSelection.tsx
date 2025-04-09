@@ -1,117 +1,100 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent } from '@/components/ui/card';
-import { GraduationCap, School, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { School, BookOpen, Users, GraduationCap } from 'lucide-react';
 import AnimatedCharacters from '@/components/animated/AnimatedCharacters';
-
-const grades = [
-  {
-    id: 1,
-    name: "Pre-Nursery",
-    ageRange: "2-3 years",
-    students: 45,
-    icon: <GraduationCap className="h-8 w-8 text-lms-pink" />,
-    color: "border-lms-pink/50 bg-lms-pink/5 hover:bg-lms-pink/10",
-    textColor: "text-lms-pink"
-  },
-  {
-    id: 2,
-    name: "Nursery",
-    ageRange: "3-4 years",
-    students: 56,
-    icon: <GraduationCap className="h-8 w-8 text-lms-blue" />,
-    color: "border-lms-blue/50 bg-lms-blue/5 hover:bg-lms-blue/10",
-    textColor: "text-lms-blue"
-  },
-  {
-    id: 3,
-    name: "LKG",
-    ageRange: "4-5 years",
-    students: 48,
-    icon: <GraduationCap className="h-8 w-8 text-lms-green" />,
-    color: "border-lms-green/50 bg-lms-green/5 hover:bg-lms-green/10",
-    textColor: "text-lms-green"
-  },
-  {
-    id: 4,
-    name: "UKG",
-    ageRange: "5-6 years",
-    students: 52,
-    icon: <GraduationCap className="h-8 w-8 text-lms-purple" />,
-    color: "border-lms-purple/50 bg-lms-purple/5 hover:bg-lms-purple/10",
-    textColor: "text-lms-purple"
-  }
-];
+import { useToast } from '@/hooks/use-toast';
 
 const TeacherGradeSelection = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
-  const handleGradeSelect = (gradeId: number) => {
-    // In a real app, this would save the selection to context/store
+  const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
+
+  const grades = [
+    { name: 'Pre-Nursery', icon: <GraduationCap className="h-12 w-12" />, color: 'bg-lms-pink text-white' },
+    { name: 'Nursery', icon: <GraduationCap className="h-12 w-12" />, color: 'bg-lms-yellow text-black' },
+    { name: 'Kindergarten', icon: <GraduationCap className="h-12 w-12" />, color: 'bg-lms-green text-white' },
+    { name: 'Grade 1', icon: <School className="h-12 w-12" />, color: 'bg-lms-blue text-white' },
+    { name: 'Grade 2', icon: <School className="h-12 w-12" />, color: 'bg-lms-purple text-white' },
+    { name: 'Grade 3', icon: <School className="h-12 w-12" />, color: 'bg-lms-red text-white' },
+    { name: 'Grade 4', icon: <School className="h-12 w-12" />, color: 'bg-lms-orange text-white' },
+    { name: 'Grade 5', icon: <School className="h-12 w-12" />, color: 'bg-lms-navy text-white' }
+  ];
+
+  const handleGradeSelect = (grade: string) => {
+    setSelectedGrade(grade);
+    
+    // In a real app, this would likely store the selected grade in context or localStorage
+    localStorage.setItem('teacherSelectedGrade', grade);
+    
     toast({
-      title: "Grade selected",
-      description: `You are now viewing resources for ${grades.find(g => g.id === gradeId)?.name}`,
+      title: "Grade Selected",
+      description: `You've selected ${grade}. Resources for this grade will now be shown.`,
     });
     
+    // Navigate to teacher dashboard
     navigate('/teacher');
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-primary/5 p-4 md:p-8 overflow-hidden relative">
-      {/* Animated background */}
-      <AnimatedCharacters variant="minimal" density="low" />
-      
-      <div className="max-w-4xl mx-auto w-full">
-        <div className="flex items-center space-x-2 mb-6">
-          <School className="h-8 w-8 text-primary" />
-          <h1 className="text-3xl font-bubbly font-bold text-primary">BookWorm Academy</h1>
+    <DashboardLayout>
+      <div className="relative min-h-[80vh] flex flex-col">
+        <AnimatedCharacters variant="minimal" density="medium" />
+        
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bubbly font-bold text-primary mb-3">
+            Welcome Teacher!
+          </h1>
+          <p className="text-xl text-muted-foreground font-round max-w-2xl mx-auto">
+            Please select the grade level you're teaching to access customized teaching resources, 
+            lesson plans, and activities for your classroom.
+          </p>
         </div>
         
-        <div className="bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-primary/30 p-8 shadow-xl">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bubbly font-bold mb-2">Welcome, Teacher!</h2>
-            <p className="text-muted-foreground">
-              Please select the grade level you're teaching today to access relevant resources.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {grades.map((grade) => (
-              <Card 
-                key={grade.id} 
-                className={`border-4 rounded-3xl shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg cursor-pointer ${grade.color}`}
-                onClick={() => handleGradeSelect(grade.id)}
-              >
-                <CardContent className="p-6 flex items-center">
-                  <div className="mr-4">
-                    {grade.icon}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className={`text-xl font-bubbly font-bold ${grade.textColor}`}>{grade.name}</h3>
-                    <p className="text-sm text-muted-foreground">{grade.ageRange}</p>
-                    <p className="text-xs text-muted-foreground">{grade.students} students</p>
-                  </div>
-                  <ArrowRight className={`h-5 w-5 ${grade.textColor}`} />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          
-          <div className="flex justify-between items-center pt-4 border-t border-border">
-            <Button variant="ghost" onClick={() => navigate('/login')}>
-              Switch Account
-            </Button>
-            <p className="text-sm text-muted-foreground">
-              You can change the grade level at any time from your dashboard.
-            </p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {grades.map((grade) => (
+            <Card 
+              key={grade.name}
+              className={`border-4 rounded-3xl shadow-lg overflow-hidden transition-all cursor-pointer ${
+                selectedGrade === grade.name 
+                  ? 'border-primary scale-105 transform' 
+                  : 'border-transparent hover:border-primary/50 hover:scale-105'
+              }`}
+              onClick={() => handleGradeSelect(grade.name)}
+            >
+              <CardContent className="p-6 flex flex-col items-center text-center">
+                <div className={`w-20 h-20 rounded-full flex items-center justify-center ${grade.color} mb-4`}>
+                  {grade.icon}
+                </div>
+                <h3 className="text-xl font-bubbly font-bold mb-2">{grade.name}</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Access resources and materials for {grade.name} students
+                </p>
+                <Button 
+                  variant={selectedGrade === grade.name ? "default" : "outline"}
+                  className="w-full rounded-xl"
+                >
+                  {selectedGrade === grade.name ? "Selected" : "Select Grade"}
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        
+        <div className="mt-auto pt-8 text-center">
+          <Button 
+            className="rounded-xl px-8 py-6 text-lg bg-primary hover:bg-primary/80"
+            onClick={() => navigate('/teacher')}
+          >
+            <BookOpen className="mr-2 h-5 w-5" />
+            Continue to Dashboard
+          </Button>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 
