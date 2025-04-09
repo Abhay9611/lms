@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/layout/DashboardLayout';
@@ -274,7 +273,7 @@ const subjects = {
             id: 'lm3',
             title: 'Incy Wincy Story Book',
             type: 'reading',
-            description: 'Read about Incy Wincy's adventure with beautiful illustrations',
+            description: "Read about Incy Wincy's adventure with beautiful illustrations",
             url: '#/reading/incy-wincy'
           },
           {
@@ -495,7 +494,7 @@ const subjects = {
             id: 'q3',
             question: 'What is precipitation?',
             options: ['When clouds form', 'When water evaporates', 'When water falls from clouds as rain, snow, or hail', 'When water freezes'],
-            correctAnswer: 'When water falls from clouds as rain, snow, or hail',
+            correctAnswer: 'When water falls from clouds as rain, snow, sleet, or hail',
             explanation: 'Precipitation is when water falls from clouds back to Earth as rain, snow, or hail!'
           }
         ],
