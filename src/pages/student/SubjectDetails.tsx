@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/layout/DashboardLayout';
@@ -1196,31 +1197,33 @@ const SubjectDetails = () => {
               <CardHeader className={`${subject.color} bg-opacity-20`}>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                   <CardTitle className="text-xl font-bubbly">{currentTopic?.title}</CardTitle>
-                  <Tabs value={activeTab} className="mt-4 sm:mt-0" onValueChange={handleTabChange}>
-                    <TabsList className="grid grid-cols-4 w-full sm:w-auto">
-                      <TabsTrigger value="video" className="text-sm">
-                        <PlayCircle className="h-4 w-4 mr-1 sm:mr-2" />
-                        <span className="hidden sm:inline">Video</span>
-                      </TabsTrigger>
-                      <TabsTrigger value="quiz" className="text-sm">
-                        <CheckCircle className="h-4 w-4 mr-1 sm:mr-2" />
-                        <span className="hidden sm:inline">Quiz</span>
-                      </TabsTrigger>
-                      <TabsTrigger value="flashcards" className="text-sm">
-                        <ScrollText className="h-4 w-4 mr-1 sm:mr-2" />
-                        <span className="hidden sm:inline">Flashcards</span>
-                      </TabsTrigger>
-                      <TabsTrigger value="materials" className="text-sm">
-                        <BookText className="h-4 w-4 mr-1 sm:mr-2" />
-                        <span className="hidden sm:inline">Materials</span>
-                      </TabsTrigger>
-                    </TabsList>
-                  </Tabs>
+                  <div className="mt-4 sm:mt-0">
+                    <Tabs value={activeTab} onValueChange={handleTabChange}>
+                      <TabsList className="grid grid-cols-4 w-full sm:w-auto">
+                        <TabsTrigger value="video" className="text-sm">
+                          <PlayCircle className="h-4 w-4 mr-1 sm:mr-2" />
+                          <span className="hidden sm:inline">Video</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="quiz" className="text-sm">
+                          <CheckCircle className="h-4 w-4 mr-1 sm:mr-2" />
+                          <span className="hidden sm:inline">Quiz</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="flashcards" className="text-sm">
+                          <ScrollText className="h-4 w-4 mr-1 sm:mr-2" />
+                          <span className="hidden sm:inline">Flashcards</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="materials" className="text-sm">
+                          <BookText className="h-4 w-4 mr-1 sm:mr-2" />
+                          <span className="hidden sm:inline">Materials</span>
+                        </TabsTrigger>
+                      </TabsList>
+                    </Tabs>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="p-6">
                 {currentTopic && (
-                  <div>
+                  <Tabs value={activeTab} onValueChange={handleTabChange}>
                     <TabsContent value="video" className="mt-0">
                       <p className="text-muted-foreground mb-6 font-round">{currentTopic.description}</p>
                       <div className="aspect-video bg-black mb-6 rounded-xl overflow-hidden">
@@ -1262,7 +1265,7 @@ const SubjectDetails = () => {
                         />
                       )}
                     </TabsContent>
-                  </div>
+                  </Tabs>
                 )}
               </CardContent>
             </Card>
