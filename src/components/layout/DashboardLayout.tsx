@@ -19,7 +19,6 @@ import {
   Star,
   FilePen,
   UserCircle,
-  Gear,
   FileText,
   Bell
 } from 'lucide-react';
@@ -110,10 +109,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         navItems = studentItems;
     }
 
-    // Enhanced student menu with child submenu for subjects
     const isStudent = user.role === UserRole.STUDENT;
     const isSubjectsPath = location.pathname.includes('/student/subjects') && !location.pathname.includes('/student/subjects/');
-    
+
     return (
       <div className="flex flex-col flex-1">
         {navItems.map((item) => {
@@ -137,7 +135,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 {sidebarOpen && <span className="ml-2">{item.name}</span>}
               </Button>
               
-              {/* For student, add subject submenu */}
               {isStudent && item.name === 'Subjects' && sidebarOpen && (
                 <div className="ml-8 pl-2 border-l-2 border-sidebar-border">
                   {[
@@ -176,7 +173,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      {/* Mobile sidebar toggle */}
       {isMobile && (
         <Button
           variant="ghost"
@@ -188,7 +184,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         </Button>
       )}
 
-      {/* Sidebar */}
       <div
         className={cn(
           "bg-sidebar h-full flex flex-col text-sidebar-foreground transition-all duration-300 ease-in-out",
@@ -201,7 +196,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             : "w-16"
         )}
       >
-        {/* Logo */}
         <div className={cn(
           "flex items-center p-4",
           sidebarOpen ? "justify-start" : "justify-center"
@@ -216,14 +210,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
         <Separator className="bg-sidebar-border" />
 
-        {/* Navigation */}
         <div className="flex flex-col flex-1 overflow-y-auto p-2">
           <NavItems />
         </div>
 
         <Separator className="bg-sidebar-border" />
 
-        {/* User info */}
         <div className={cn(
           "p-4 flex items-center",
           sidebarOpen ? "justify-between" : "justify-center"
@@ -253,7 +245,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         </div>
       </div>
 
-      {/* Main content */}
       <div className="flex-1 overflow-auto">
         <main className="p-4 md:p-6 max-w-7xl mx-auto">
           {children}
