@@ -3,10 +3,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { BookOpen, Users, GraduationCap, School, Sparkles, Star, BookText } from 'lucide-react';
+import { BookOpen, Users, GraduationCap, School, Sparkles, Star, BookText, Award, Trophy, Heart, Check, Globe, Lightbulb, Building, MessageSquare } from 'lucide-react';
 import { UserRole } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import RegistrationModal from '@/components/auth/RegistrationModal';
+import { motion } from 'framer-motion';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -22,6 +23,25 @@ const LandingPage = () => {
   const handleRoleSelect = (role: UserRole) => {
     setSelectedRole(role);
     setShowRegistration(true);
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: 'spring', stiffness: 50 }
+    }
   };
 
   return (
@@ -49,7 +69,7 @@ const LandingPage = () => {
       <header className="py-6 px-4 md:px-8 flex items-center justify-between">
         <div className="flex items-center">
           <BookOpen className="h-10 w-10 text-primary" />
-          <span className="ml-2 text-2xl font-bubbly font-bold text-primary">BookWorm Academy</span>
+          <span className="ml-2 text-2xl font-bubbly font-bold text-primary">Aspiring Gems</span>
         </div>
         <Button 
           variant="outline" 
@@ -62,21 +82,32 @@ const LandingPage = () => {
       
       {/* Hero Section */}
       <section className="flex-1 flex flex-col items-center justify-center py-12 px-4 text-center">
-        <h1 className="text-4xl md:text-6xl font-bubbly font-bold text-primary mb-6 animate-bounce">
-          <span className="text-lms-pink">Learn.</span> <span className="text-lms-green">Play.</span> <span className="text-lms-blue">Grow.</span>
-        </h1>
-        <p className="text-xl md:text-2xl text-foreground mb-4 max-w-3xl font-round">
-          BookWorm Academy makes learning fun for preschoolers with interactive lessons, 
-          rhymes, stories, and games that inspire curiosity and creativity.
-        </p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className="text-5xl md:text-6xl font-bubbly font-bold text-primary mb-6">
+            <span className="text-lms-pink">Learn.</span> <span className="text-lms-green">Play.</span> <span className="text-lms-blue">Grow.</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-foreground mb-4 max-w-3xl font-round">
+            Aspiring Gems makes learning fun for preschoolers with interactive lessons, 
+            rhymes, stories, and games that inspire curiosity and creativity.
+          </p>
+          
+          <p className="text-lg text-muted-foreground mb-8 max-w-3xl font-round">
+            We are a premier educational book distribution company dedicated to bringing high-quality learning materials
+            to students across all grade levels. Our carefully curated content helps teachers create engaging lessons
+            and enables students to explore subjects through interactive materials.
+          </p>
+        </motion.div>
         
-        <p className="text-lg text-muted-foreground mb-8 max-w-3xl font-round">
-          We are a premier educational book distribution company dedicated to bringing high-quality learning materials
-          to students across all grade levels. Our carefully curated content helps teachers create engaging lessons
-          and enables students to explore subjects through interactive materials.
-        </p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl mb-12">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl mb-12"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {[
             {
               title: "For Students",
@@ -103,29 +134,179 @@ const LandingPage = () => {
               role: UserRole.ADMIN
             }
           ].map((item, index) => (
-            <Card key={index} className={`border-4 rounded-3xl shadow-lg overflow-hidden transition-transform hover:scale-105 ${item.color}`}>
-              <CardContent className="p-6 flex flex-col items-center">
-                <div className="mb-4">{item.icon}</div>
-                <h3 className="text-xl font-bubbly font-bold mb-2">{item.title}</h3>
-                <p className="text-sm text-center mb-4">{item.description}</p>
-                <div className="flex flex-col w-full space-y-2">
-                  <Button 
-                    className={`w-full rounded-xl ${item.buttonColor}`}
-                    onClick={() => handleRoleSelect(item.role)}
-                  >
-                    Sign Up
-                  </Button>
-                  <Button 
-                    variant="outline"
-                    className="w-full rounded-xl"
-                    onClick={() => handleRoleLogin(item.role)}
-                  >
-                    Demo Login
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <motion.div key={index} variants={itemVariants}>
+              <Card className={`border-4 rounded-3xl shadow-lg overflow-hidden transition-transform hover:scale-105 ${item.color}`}>
+                <CardContent className="p-6 flex flex-col items-center">
+                  <div className="mb-4">{item.icon}</div>
+                  <h3 className="text-xl font-bubbly font-bold mb-2">{item.title}</h3>
+                  <p className="text-sm text-center mb-4">{item.description}</p>
+                  <div className="flex flex-col w-full space-y-2">
+                    <Button 
+                      className={`w-full rounded-xl ${item.buttonColor}`}
+                      onClick={() => handleRoleSelect(item.role)}
+                    >
+                      Sign Up
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      className="w-full rounded-xl"
+                      onClick={() => handleRoleLogin(item.role)}
+                    >
+                      Demo Login
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
+        </motion.div>
+      </section>
+      
+      {/* About Section */}
+      <section className="py-16 px-4 bg-primary/5 backdrop-blur-sm" id="about">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl font-bubbly font-bold mb-4">About Aspiring Gems</h2>
+            <p className="text-lg max-w-3xl mx-auto text-muted-foreground">
+              Empowering young minds through innovative and engaging educational resources
+            </p>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="text-2xl font-bubbly font-bold mb-4">Our Mission</h3>
+              <p className="mb-4 text-muted-foreground">
+                At Aspiring Gems, we believe every child deserves access to quality education that sparks 
+                curiosity, fosters creativity, and builds confidence. Our mission is to create educational 
+                resources that make learning a joyful experience for children worldwide.
+              </p>
+              <p className="mb-6 text-muted-foreground">
+                Founded in 2020 by a team of passionate educators and child development experts, 
+                we've grown to serve over 500 schools and countless families with our carefully 
+                crafted learning materials and digital platform.
+              </p>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="flex items-center">
+                  <Check className="h-5 w-5 text-lms-green mr-2" />
+                  <span>Child-centered approach</span>
+                </div>
+                <div className="flex items-center">
+                  <Check className="h-5 w-5 text-lms-green mr-2" />
+                  <span>Research-backed methods</span>
+                </div>
+                <div className="flex items-center">
+                  <Check className="h-5 w-5 text-lms-green mr-2" />
+                  <span>Inclusive materials</span>
+                </div>
+                <div className="flex items-center">
+                  <Check className="h-5 w-5 text-lms-green mr-2" />
+                  <span>Continuous innovation</span>
+                </div>
+              </div>
+              <Button className="rounded-xl">Learn More About Us</Button>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="grid grid-cols-2 gap-6"
+            >
+              <Card className="border-4 border-lms-pink/30 rounded-3xl p-5 text-center">
+                <motion.div
+                  whileHover={{ y: -5 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                >
+                  <Trophy className="h-12 w-12 text-lms-pink mx-auto mb-4" />
+                  <h4 className="font-bubbly font-bold">10+</h4>
+                  <p className="text-sm text-muted-foreground">Industry Awards</p>
+                </motion.div>
+              </Card>
+              
+              <Card className="border-4 border-lms-blue/30 rounded-3xl p-5 text-center">
+                <motion.div
+                  whileHover={{ y: -5 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                >
+                  <Building className="h-12 w-12 text-lms-blue mx-auto mb-4" />
+                  <h4 className="font-bubbly font-bold">500+</h4>
+                  <p className="text-sm text-muted-foreground">Partner Schools</p>
+                </motion.div>
+              </Card>
+              
+              <Card className="border-4 border-lms-green/30 rounded-3xl p-5 text-center">
+                <motion.div
+                  whileHover={{ y: -5 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                >
+                  <BookOpen className="h-12 w-12 text-lms-green mx-auto mb-4" />
+                  <h4 className="font-bubbly font-bold">1000+</h4>
+                  <p className="text-sm text-muted-foreground">Learning Resources</p>
+                </motion.div>
+              </Card>
+              
+              <Card className="border-4 border-lms-yellow/30 rounded-3xl p-5 text-center">
+                <motion.div
+                  whileHover={{ y: -5 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                >
+                  <Heart className="h-12 w-12 text-lms-yellow mx-auto mb-4" />
+                  <h4 className="font-bubbly font-bold">100K+</h4>
+                  <p className="text-sm text-muted-foreground">Happy Students</p>
+                </motion.div>
+              </Card>
+            </motion.div>
+          </div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8"
+          >
+            <div className="text-center">
+              <div className="bg-lms-pink/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Lightbulb className="h-8 w-8 text-lms-pink" />
+              </div>
+              <h3 className="text-xl font-bubbly font-bold mb-2">Our Vision</h3>
+              <p className="text-muted-foreground">
+                To revolutionize early childhood education through playful, engaging, and inclusive learning experiences.
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <div className="bg-lms-blue/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Globe className="h-8 w-8 text-lms-blue" />
+              </div>
+              <h3 className="text-xl font-bubbly font-bold mb-2">Our Reach</h3>
+              <p className="text-muted-foreground">
+                With presence in 15 countries, we're making quality education accessible to children worldwide.
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <div className="bg-lms-green/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageSquare className="h-8 w-8 text-lms-green" />
+              </div>
+              <h3 className="text-xl font-bubbly font-bold mb-2">Our Community</h3>
+              <p className="text-muted-foreground">
+                Join our community of educators, parents, and learning enthusiasts sharing best practices.
+              </p>
+            </div>
+          </motion.div>
         </div>
       </section>
       
@@ -172,10 +353,16 @@ const LandingPage = () => {
       </section>
       
       {/* Call to Action */}
-      <section className="py-16 px-4 text-center bg-gradient-to-r from-primary/20 to-secondary/20">
+      <motion.section 
+        className="py-16 px-4 text-center bg-gradient-to-r from-primary/20 to-secondary/20"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
         <h2 className="text-3xl font-bubbly font-bold mb-4">Ready to Start the Learning Adventure?</h2>
         <p className="text-lg mb-8 max-w-2xl mx-auto">
-          Join thousands of happy students, teachers, and schools using BookWorm Academy today.
+          Join thousands of happy students, teachers, and schools using Aspiring Gems today.
         </p>
         <Button 
           size="lg" 
@@ -184,6 +371,55 @@ const LandingPage = () => {
         >
           Get Started For Free
         </Button>
+      </motion.section>
+      
+      {/* Testimonials Section */}
+      <section className="py-16 px-4 bg-primary/5">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bubbly font-bold text-center mb-12">
+            What Our Users Say
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                quote: "Aspiring Gems has transformed how I teach my preschool class. The children are more engaged and excited about learning than ever before!",
+                name: "Sarah Johnson",
+                role: "Preschool Teacher",
+                color: "border-lms-blue"
+              },
+              {
+                quote: "As a parent, I love how the platform allows me to be involved in my child's education. The progress tracking features are invaluable.",
+                name: "Michael Chen",
+                role: "Parent",
+                color: "border-lms-green"
+              },
+              {
+                quote: "Implementing Aspiring Gems across our school has elevated our early education program. The curriculum alignment makes planning so much easier.",
+                name: "Dr. Lisa Patel",
+                role: "School Principal",
+                color: "border-lms-pink"
+              }
+            ].map((testimonial, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <Card className={`border-4 ${testimonial.color} rounded-3xl shadow-lg p-6`}>
+                  <Star className="h-8 w-8 text-lms-yellow fill-lms-yellow" strokeWidth={1} />
+                  <p className="mt-4 italic text-muted-foreground">"{testimonial.quote}"</p>
+                  <div className="mt-6 pt-4 border-t border-border">
+                    <h4 className="font-bold">{testimonial.name}</h4>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </section>
       
       {/* Footer */}
@@ -192,7 +428,7 @@ const LandingPage = () => {
           <div className="w-full md:w-auto mb-6 md:mb-0">
             <div className="flex items-center mb-4">
               <BookOpen className="h-6 w-6 text-sidebar-primary" />
-              <span className="ml-2 font-bold text-lg font-bubbly">BookWorm Academy</span>
+              <span className="ml-2 font-bold text-lg font-bubbly">Aspiring Gems</span>
             </div>
             <p className="text-sm opacity-80 max-w-xs">
               Making learning fun and accessible for preschoolers around the world.
@@ -227,7 +463,7 @@ const LandingPage = () => {
           </div>
         </div>
         <div className="max-w-6xl mx-auto mt-8 pt-6 border-t border-sidebar-border text-center">
-          <p className="text-sm opacity-60">© 2025 BookWorm Academy. All rights reserved.</p>
+          <p className="text-sm opacity-60">© 2025 Aspiring Gems. All rights reserved.</p>
         </div>
       </footer>
 
