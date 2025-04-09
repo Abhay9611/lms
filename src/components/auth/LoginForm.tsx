@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,15 +16,30 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<UserRole>(UserRole.STUDENT);
   const { login, error, isLoading } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await login(email, password, role);
-      toast({
-        title: 'Login successful',
-        description: 'Welcome to BookWorm Academy LMS',
-      });
+      
+      // Redirect based on role
+      switch (role) {
+        case UserRole.ADMIN:
+          navigate('/admin');
+          break;
+        case UserRole.TEACHER:
+          navigate('/teacher/grade-selection');
+          break;
+        case UserRole.STUDENT:
+          navigate('/student');
+          break;
+        case UserRole.PARENT:
+          navigate('/parent');
+          break;
+        default:
+          navigate('/dashboard');
+      }
     } catch (err) {
       console.error(err);
     }
@@ -70,10 +86,10 @@ const LoginForm = () => {
               value={role}
               onValueChange={(value) => setRole(value as UserRole)}
             >
-              <SelectTrigger id="role">
+              <SelectTrigger id="role" className="bg-white">
                 <SelectValue placeholder="Select a role" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white">
                 <SelectItem value={UserRole.ADMIN}>Administrator</SelectItem>
                 <SelectItem value={UserRole.TEACHER}>Teacher</SelectItem>
                 <SelectItem value={UserRole.STUDENT}>Student</SelectItem>

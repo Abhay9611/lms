@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -20,7 +21,9 @@ import {
   FilePen,
   UserCircle,
   FileText,
-  Bell
+  Bell,
+  Shield,
+  Gamepad
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
@@ -48,7 +51,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('/login');
   };
 
   const NavItems = () => {
@@ -58,16 +61,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       { name: 'Users', icon: <Users className="h-5 w-5" />, path: '/admin/users' },
       { name: 'Content', icon: <BookText className="h-5 w-5" />, path: '/admin/content' },
       { name: 'Analytics', icon: <BarChart3 className="h-5 w-5" />, path: '/admin/analytics' },
+      { name: 'Calendar', icon: <Calendar className="h-5 w-5" />, path: '/admin/calendar' },
+      { name: 'Planner', icon: <FilePen className="h-5 w-5" />, path: '/admin/planner' },
       { name: 'Settings', icon: <Settings className="h-5 w-5" />, path: '/admin/settings' },
     ];
 
     const teacherItems = [
       { name: 'Dashboard', icon: <Home className="h-5 w-5" />, path: '/teacher' },
+      { name: 'Grade Selection', icon: <School className="h-5 w-5" />, path: '/teacher/grade-selection' },
       { name: 'Calendar', icon: <Calendar className="h-5 w-5" />, path: '/teacher/calendar' },
       { name: 'Students', icon: <Users className="h-5 w-5" />, path: '/teacher/students' },
-      { name: 'Assignments', icon: <ClipboardList className="h-5 w-5" />, path: '/teacher/assignments' },
-      { name: 'Content', icon: <BookText className="h-5 w-5" />, path: '/teacher/content' },
-      { name: 'Progress Reports', icon: <BarChart3 className="h-5 w-5" />, path: '/teacher/progress' },
+      { name: 'Planner', icon: <FilePen className="h-5 w-5" />, path: '/teacher/planner' },
+      { name: 'Resources', icon: <BookText className="h-5 w-5" />, path: '/teacher/resources' },
       { name: 'Notifications', icon: <Bell className="h-5 w-5" />, path: '/teacher/notifications' },
       { name: 'Settings', icon: <Settings className="h-5 w-5" />, path: '/teacher/settings' },
     ];
@@ -78,7 +83,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       { name: 'Assignments', icon: <ClipboardList className="h-5 w-5" />, path: '/student/assignments' },
       { name: 'Progress', icon: <BarChart3 className="h-5 w-5" />, path: '/student/progress' },
       { name: 'Story Books', icon: <BookText className="h-5 w-5" />, path: '/student/stories' },
-      { name: 'Games', icon: <Star className="h-5 w-5" />, path: '/student/games' },
+      { name: 'Games', icon: <Gamepad className="h-5 w-5" />, path: '/student/games' },
+      { name: 'Settings', icon: <Settings className="h-5 w-5" />, path: '/student/settings' },
+      { name: 'Parental Control', icon: <Shield className="h-5 w-5" />, path: '/student/parental-control' },
     ];
 
     const parentItems = [

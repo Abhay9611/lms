@@ -1,6 +1,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, UserRole } from '@/types';
+import { useNavigate } from 'react-router-dom';
+import { toast } from '@/components/ui/use-toast';
 
 interface AuthContextType {
   user: User | null;
@@ -43,45 +45,51 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       // In a real app, this would be the response from your auth API
       const mockUsers = {
-        admin: {
+        [UserRole.ADMIN]: {
           ...initialUser,
           id: 'admin-1',
-          email: 'admin@example.com',
+          email: email || 'admin@example.com',
           name: 'Admin User',
           role: UserRole.ADMIN,
         },
-        teacher: {
+        [UserRole.TEACHER]: {
           ...initialUser,
           id: 'teacher-1',
-          email: 'teacher@example.com',
+          email: email || 'teacher@example.com',
           name: 'Teacher User',
           role: UserRole.TEACHER,
         },
-        student: {
+        [UserRole.STUDENT]: {
           ...initialUser,
           id: 'student-1',
-          email: 'student@example.com',
+          email: email || 'student@example.com',
           name: 'Student User',
           role: UserRole.STUDENT,
         },
-        parent: {
+        [UserRole.PARENT]: {
           ...initialUser,
           id: 'parent-1',
-          email: 'parent@example.com',
+          email: email || 'parent@example.com',
           name: 'Parent User',
           role: UserRole.PARENT,
         },
       };
       
       // Get the user based on the selected role
-      const loggedInUser = mockUsers[role as keyof typeof mockUsers];
+      const loggedInUser = mockUsers[role];
       
       if (email && password) {
         setUser(loggedInUser);
         localStorage.setItem('lms-user', JSON.stringify(loggedInUser));
         setError(null);
+        toast({
+          title: "Login successful",
+          description: `Welcome, ${loggedInUser.name}!`,
+        });
+        
+        return; // Successfully logged in
       } else {
-        setError('Invalid email or password');
+        setError('Please enter email and password');
       }
     } catch (err) {
       setError('Failed to login. Please try again.');
@@ -94,6 +102,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('lms-user');
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out.",
+    });
   };
 
   return (

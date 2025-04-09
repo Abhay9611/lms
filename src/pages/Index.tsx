@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import Login from './Login';
@@ -12,6 +12,29 @@ import AnimatedCharacters from '@/components/animated/AnimatedCharacters';
 
 const Index = () => {
   const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  
+  // Redirect users based on their role when they hit the dashboard route
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      switch (user.role) {
+        case UserRole.ADMIN:
+          navigate('/admin');
+          break;
+        case UserRole.TEACHER:
+          navigate('/teacher');
+          break;
+        case UserRole.STUDENT:
+          navigate('/student');
+          break;
+        case UserRole.PARENT:
+          navigate('/parent');
+          break;
+        default:
+          break;
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
   
   // Determine which animated theme to use based on user role
   const getAnimatedTheme = () => {
