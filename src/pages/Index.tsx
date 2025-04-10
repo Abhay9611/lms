@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -27,9 +26,6 @@ const Index = () => {
         case UserRole.STUDENT:
           navigate('/student');
           break;
-        case UserRole.PARENT:
-          navigate('/parent');
-          break;
         default:
           break;
       }
@@ -43,8 +39,6 @@ const Index = () => {
     switch (user.role) {
       case UserRole.STUDENT:
         return 'school';
-      case UserRole.PARENT:
-        return 'forest';
       case UserRole.TEACHER:
         return 'minimal';
       case UserRole.ADMIN:
@@ -76,13 +70,6 @@ const Index = () => {
       );
     case UserRole.STUDENT:
       return <StudentDashboard />;
-    case UserRole.PARENT:
-      return (
-        <>
-          <AnimatedCharacters variant={getAnimatedTheme()} density="low" />
-          <ParentDashboard />
-        </>
-      );
     default:
       return <StudentDashboard />;
   }

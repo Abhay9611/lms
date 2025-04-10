@@ -18,6 +18,9 @@ import {
   Menu,
   LogOut,
   User,
+  Calendar,
+  BookText,
+  Bell,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -40,11 +43,6 @@ const StudentLinks = [
     title: 'Subjects',
     href: '/student/subjects',
     icon: BookOpen,
-  },
-  {
-    title: 'Assignments',
-    href: '/student/assignments',
-    icon: ListTodo,
   },
   {
     title: 'Games',
@@ -75,14 +73,9 @@ const TeacherLinks = [
     icon: Home,
   },
   {
-    title: 'Students',
-    href: '/teacher/students',
-    icon: User,
-  },
-  {
     title: 'Calendar',
     href: '/teacher/calendar',
-    icon: BookOpen,
+    icon: Calendar,
   },
   {
     title: 'Planner',
@@ -92,7 +85,7 @@ const TeacherLinks = [
   {
     title: 'Resources',
     href: '/teacher/resources',
-    icon: Gamepad2,
+    icon: BookText,
   },
   {
     title: 'Settings',
@@ -144,24 +137,6 @@ const AdminLinks = [
   },
 ];
 
-const ParentLinks = [
-  {
-    title: 'Dashboard',
-    href: '/parent',
-    icon: Home,
-  },
-  {
-    title: 'Children',
-    href: '/parent/children',
-    icon: User,
-  },
-  {
-    title: 'Settings',
-    href: '/parent/settings',
-    icon: Settings,
-  },
-];
-
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { user, logout } = useAuth();
   const location = useLocation();
@@ -188,11 +163,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     active: location.pathname === link.href,
   }));
 
-  const parentMenuItems = ParentLinks.map((link) => ({
-    ...link,
-    active: location.pathname === link.href,
-  }));
-
   let menuItems;
   switch (user?.role) {
     case 'admin':
@@ -200,9 +170,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       break;
     case 'teacher':
       menuItems = teacherMenuItems;
-      break;
-    case 'parent':
-      menuItems = parentMenuItems;
       break;
     default:
       menuItems = studentMenuItems;
@@ -233,35 +200,31 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </SheetHeader>
           <Separator />
           <div className="flex flex-col h-full">
-            <div className="py-4 flex-1">
-              {menuItems &&
-                menuItems.map((item) => (
-                  <NavLink
-                    key={item.title}
-                    to={item.href}
-                    className={({ isActive }) =>
-                      cn(
-                        "flex items-center space-x-2 px-4 py-2.5 rounded-md transition-colors hover:bg-secondary/5 font-medium",
-                        isActive
-                          ? "bg-secondary/5 text-secondary-foreground"
-                          : "text-muted-foreground"
-                      )
-                    }
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.title}</span>
-                  </NavLink>
-                ))}
-            </div>
-            <Separator />
-            <div className="p-4">
+            <nav className="flex-1 p-4 space-y-2">
+              {menuItems.map((item) => (
+                <Button
+                  key={item.href}
+                  variant={item.active ? "secondary" : "ghost"}
+                  className={`w-full justify-start rounded-xl ${
+                    item.active ? "bg-primary/10 text-primary" : ""
+                  }`}
+                  onClick={() => {
+                    navigate(item.href);
+                    setIsSidebarOpen(false);
+                  }}
+                >
+                  <item.icon className="mr-2 h-5 w-5" />
+                  {item.title}
+                </Button>
+              ))}
+            </nav>
+            <div className="p-4 border-t">
               <Button
-                variant="outline"
-                className="w-full justify-start font-medium"
+                variant="ghost"
+                className="w-full justify-start rounded-xl"
                 onClick={handleLogout}
               >
-                <LogOut className="h-4 w-4 mr-2" />
+                <LogOut className="mr-2 h-5 w-5" />
                 Logout
               </Button>
             </div>
@@ -270,67 +233,69 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       </Sheet>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-64 border-r bg-secondary/5">
-        <div className="flex items-center justify-center h-16 border-b">
-          <Link to="/" className="font-bold text-xl font-bubbly">
-            LMS Dashboard
-          </Link>
-        </div>
-        <div className="flex flex-col h-full">
-          <div className="py-4 flex-1">
-            {menuItems &&
-              menuItems.map((item) => (
-                <NavLink
-                  key={item.title}
-                  to={item.href}
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center space-x-2 px-4 py-2.5 rounded-md transition-colors hover:bg-secondary/5 font-medium",
-                      isActive
-                        ? "bg-secondary/5 text-secondary-foreground"
-                        : "text-muted-foreground"
-                    )
-                  }
-                >
-                  <item.icon className="h-4 w-4" />
-                  <span>{item.title}</span>
-                </NavLink>
-              ))}
+      <div className="hidden md:flex w-64 flex-col border-r bg-gradient-to-b from-primary/5 to-background">
+        <div className="p-6">
+          <div className="flex items-center space-x-2">
+            <BookOpen className="h-8 w-8 text-primary" />
+            <span className="font-bubbly text-2xl font-bold text-primary">Aspiring Gems</span>
           </div>
-          <Separator />
-          <div className="p-4">
+          <p className="text-sm text-muted-foreground mt-1">
+            {user?.role === 'teacher' ? 'Teacher Portal' : user?.role === 'admin' ? 'Admin Portal' : 'Student Portal'}
+          </p>
+        </div>
+        <Separator />
+        <nav className="flex-1 p-4 space-y-2">
+          {menuItems.map((item) => (
             <Button
-              variant="outline"
-              className="w-full justify-start font-medium"
-              onClick={handleLogout}
+              key={item.href}
+              variant={item.active ? "secondary" : "ghost"}
+              className={`w-full justify-start rounded-xl ${
+                item.active ? "bg-primary/10 text-primary" : ""
+              }`}
+              onClick={() => navigate(item.href)}
             >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
+              <item.icon className="mr-2 h-5 w-5" />
+              {item.title}
             </Button>
-          </div>
+          ))}
+        </nav>
+        <div className="p-4 border-t">
+          <Button
+            variant="ghost"
+            className="w-full justify-start rounded-xl"
+            onClick={handleLogout}
+          >
+            <LogOut className="mr-2 h-5 w-5" />
+            Logout
+          </Button>
         </div>
-      </aside>
+      </div>
 
       {/* Main Content */}
-      <main className="flex-1 p-6">
-        <div className="flex items-center justify-between mb-6">
+      <div className="flex-1 flex flex-col min-h-screen bg-gradient-to-b from-background to-primary/5">
+        <header className="h-16 border-b bg-white/50 backdrop-blur-sm flex items-center justify-between px-4 md:px-6">
           <div className="flex items-center space-x-4">
-            <Avatar>
-              <AvatarImage src={user?.avatar} alt={user?.name} />
+            <h1 className="text-xl font-bubbly font-bold text-primary">
+              {menuItems.find(item => item.active)?.title || 'Dashboard'}
+            </h1>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <Bell className="h-5 w-5" />
+            </Button>
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <Settings className="h-5 w-5" />
+            </Button>
+            <Avatar className="h-8 w-8 border-2 border-primary">
+              <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.name}`} />
               <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
             </Avatar>
-            <div>
-              <h2 className="text-2xl font-semibold font-round">
-                Welcome, {user?.name}!
-              </h2>
-              <p className="text-muted-foreground">
-                {user?.email} ({user?.role})
-              </p>
-            </div>
           </div>
-        </div>
-        {children}
-      </main>
+        </header>
+        <main className="flex-1 p-4 md:p-6 overflow-auto">
+          {children}
+        </main>
+      </div>
     </div>
   );
 };

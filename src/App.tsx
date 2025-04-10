@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
@@ -29,15 +28,10 @@ import Settings from './pages/admin/Settings';
 
 // Teacher pages
 import TeacherDashboard from './pages/TeacherDashboard';
-import Students from './pages/teacher/Students';
 import TeacherCalendar from './pages/teacher/Calendar';
 import TeacherPlanner from './pages/teacher/Planner';
 import TeacherResourceHub from './pages/teacher/ResourceHub';
 import TeacherGradeSelection from './pages/teacher/GradeSelection';
-
-// Parent pages
-import ParentDashboard from './pages/ParentDashboard';
-import Children from './pages/parent/Children';
 
 function App() {
   return (
@@ -72,14 +66,9 @@ function App() {
           {/* Teacher Routes */}
           <Route path="/teacher" element={<TeacherDashboard />} />
           <Route path="/teacher/grade-selection" element={<TeacherGradeSelection />} />
-          <Route path="/teacher/students" element={<Students />} />
           <Route path="/teacher/calendar" element={<TeacherCalendar />} />
           <Route path="/teacher/planner" element={<TeacherPlanner />} />
           <Route path="/teacher/resources" element={<TeacherResourceHub />} />
-          
-          {/* Parent Routes */}
-          <Route path="/parent" element={<ParentDashboard />} />
-          <Route path="/parent/children" element={<Children />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>

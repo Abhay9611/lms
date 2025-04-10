@@ -1,45 +1,16 @@
-
 import React from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import WelcomeCard from '@/components/dashboard/WelcomeCard';
-import StatCard from '@/components/dashboard/StatCard';
-import { teacherStats, assignments } from '@/data/mockData';
+import { assignments } from '@/data/mockData';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, BookOpen, Calendar, ClipboardList } from 'lucide-react';
+import { Calendar, ClipboardList } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 const TeacherDashboard = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <WelcomeCard stats={teacherStats} />
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard 
-            title="Classes" 
-            value={4} 
-            description="2 active today" 
-            icon={<Users className="h-4 w-4" />}
-          />
-          <StatCard 
-            title="Students" 
-            value={98} 
-            description="12 submissions pending" 
-            icon={<Users className="h-4 w-4" />}
-          />
-          <StatCard 
-            title="Assignments" 
-            value={12} 
-            description="3 due this week" 
-            icon={<ClipboardList className="h-4 w-4" />}
-          />
-          <StatCard 
-            title="Books Assigned" 
-            value={6} 
-            description="Across 4 subjects" 
-            icon={<BookOpen className="h-4 w-4" />}
-          />
-        </div>
+        <WelcomeCard />
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>

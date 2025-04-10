@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import WelcomeCard from '@/components/dashboard/WelcomeCard';
@@ -48,31 +47,6 @@ const preschoolSubjects = [
   }
 ];
 
-// Mock assignments data
-const assignments = [
-  { 
-    id: 1, 
-    title: 'Draw Your Family', 
-    description: 'Draw a picture of your family members',
-    dueDate: '2025-04-15',
-    subject: 'EVS'
-  },
-  { 
-    id: 2, 
-    title: 'Count the Objects', 
-    description: 'Count and write the number of objects shown',
-    dueDate: '2025-04-12',
-    subject: 'Maths'
-  },
-  { 
-    id: 3, 
-    title: 'Recite Twinkle Twinkle', 
-    description: 'Practice reciting "Twinkle Twinkle Little Star"',
-    dueDate: '2025-04-10',
-    subject: 'English Rhymes'
-  }
-];
-
 const StudentDashboard = () => {
   const navigate = useNavigate();
   
@@ -84,8 +58,8 @@ const StudentDashboard = () => {
         
         <WelcomeCard stats={studentStats} />
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 gap-6">
+          <div>
             <Card className="border-4 border-lms-blue/30 rounded-3xl shadow-lg overflow-hidden relative">
               <div className="absolute top-0 right-0 -mt-4 -mr-4 transform rotate-12">
                 <Star className="h-12 w-12 text-lms-yellow fill-lms-yellow animate-pulse" />
@@ -122,40 +96,6 @@ const StudentDashboard = () => {
                     );
                   })}
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div>
-            <Card className="border-4 border-lms-purple/30 rounded-3xl shadow-lg overflow-hidden relative">
-              <div className="absolute top-0 left-0 -mt-4 -ml-4 transform -rotate-12">
-                <BookOpen className="h-12 w-12 text-lms-purple/70 animate-bounce" />
-              </div>
-              
-              <CardHeader className="bg-lms-purple/10">
-                <CardTitle className="text-xl font-bubbly">My Assignments</CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 space-y-4">
-                {assignments.map((assignment) => (
-                  <div key={assignment.id} className="flex items-start space-x-3 border-b border-dashed pb-3 last:border-0">
-                    <div className="mt-1 w-10 h-10 rounded-full bg-lms-pink/20 flex items-center justify-center text-lms-pink">
-                      <Clock className="h-5 w-5" />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center space-x-2">
-                        <p className="font-medium font-round">{assignment.title}</p>
-                        <Badge variant="outline" className="text-xs bg-lms-yellow/10 text-lms-yellow border-lms-yellow">
-                          Due {new Date(assignment.dueDate).toLocaleDateString()}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{assignment.description}</p>
-                      <p className="text-xs text-muted-foreground font-medium">{assignment.subject}</p>
-                    </div>
-                  </div>
-                ))}
-                <Button size="sm" variant="outline" className="w-full">
-                  View All Assignments
-                </Button>
               </CardContent>
             </Card>
           </div>

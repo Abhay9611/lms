@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -15,7 +14,7 @@ import { motion } from 'framer-motion';
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<UserRole>(UserRole.STUDENT);
+  const [role, setRole] = useState<UserRole>(UserRole.TEACHER);
   const { login, error, isLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -32,12 +31,6 @@ const LoginForm = () => {
         case UserRole.TEACHER:
           navigate('/teacher/grade-selection');
           break;
-        case UserRole.STUDENT:
-          navigate('/student');
-          break;
-        case UserRole.PARENT:
-          navigate('/parent');
-          break;
         default:
           navigate('/dashboard');
       }
@@ -49,8 +42,6 @@ const LoginForm = () => {
   const roleOptions = [
     { value: UserRole.ADMIN, label: "Administrator", icon: <CheckCircle className="h-4 w-4 text-lms-pink" /> },
     { value: UserRole.TEACHER, label: "Teacher", icon: <CheckCircle className="h-4 w-4 text-lms-green" /> },
-    { value: UserRole.STUDENT, label: "Student", icon: <CheckCircle className="h-4 w-4 text-lms-blue" /> },
-    { value: UserRole.PARENT, label: "Parent", icon: <CheckCircle className="h-4 w-4 text-lms-yellow" /> },
   ];
 
   return (

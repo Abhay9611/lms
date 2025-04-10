@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { School, BookOpen, Users, GraduationCap } from 'lucide-react';
+import { School, BookOpen, BookText } from 'lucide-react';
 import AnimatedCharacters from '@/components/animated/AnimatedCharacters';
 import { useToast } from '@/hooks/use-toast';
 
@@ -14,9 +13,9 @@ const TeacherGradeSelection = () => {
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
 
   const grades = [
-    { name: 'Pre-Nursery', icon: <GraduationCap className="h-12 w-12" />, color: 'bg-lms-pink text-white' },
-    { name: 'Nursery', icon: <GraduationCap className="h-12 w-12" />, color: 'bg-lms-yellow text-black' },
-    { name: 'Kindergarten', icon: <GraduationCap className="h-12 w-12" />, color: 'bg-lms-green text-white' },
+    { name: 'Pre-Nursery', icon: <BookText className="h-12 w-12" />, color: 'bg-lms-pink text-white' },
+    { name: 'Nursery', icon: <BookText className="h-12 w-12" />, color: 'bg-lms-yellow text-black' },
+    { name: 'Kindergarten', icon: <BookText className="h-12 w-12" />, color: 'bg-lms-green text-white' },
     { name: 'Grade 1', icon: <School className="h-12 w-12" />, color: 'bg-lms-blue text-white' },
     { name: 'Grade 2', icon: <School className="h-12 w-12" />, color: 'bg-lms-purple text-white' },
     { name: 'Grade 3', icon: <School className="h-12 w-12" />, color: 'bg-lms-red text-white' },
@@ -32,7 +31,7 @@ const TeacherGradeSelection = () => {
     
     toast({
       title: "Grade Selected",
-      description: `You've selected ${grade}. Resources for this grade will now be shown.`,
+      description: `You've selected ${grade}. Teaching resources for this grade will now be shown.`,
     });
     
     // Navigate to teacher dashboard
@@ -50,7 +49,7 @@ const TeacherGradeSelection = () => {
           </h1>
           <p className="text-xl text-muted-foreground font-round max-w-2xl mx-auto">
             Please select the grade level you're teaching to access customized teaching resources, 
-            lesson plans, and activities for your classroom.
+            lesson plans, and curriculum materials.
           </p>
         </div>
         
@@ -71,7 +70,7 @@ const TeacherGradeSelection = () => {
                 </div>
                 <h3 className="text-xl font-bubbly font-bold mb-2">{grade.name}</h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Access resources and materials for {grade.name} students
+                  Access teaching resources and curriculum for {grade.name}
                 </p>
                 <Button 
                   variant={selectedGrade === grade.name ? "default" : "outline"}

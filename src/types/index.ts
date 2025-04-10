@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   name: string;
@@ -11,7 +10,6 @@ export enum UserRole {
   ADMIN = "admin",
   TEACHER = "teacher",
   STUDENT = "student",
-  PARENT = "parent",
 }
 
 export interface Subject {

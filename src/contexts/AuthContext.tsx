@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, UserRole } from '@/types';
 import { toast } from '@/components/ui/use-toast';
@@ -68,13 +67,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           email: email || 'student@example.com',
           name: 'Student User',
           role: UserRole.STUDENT,
-        },
-        [UserRole.PARENT]: {
-          ...initialUser,
-          id: 'parent-1',
-          email: email || 'parent@example.com',
-          name: 'Parent User',
-          role: UserRole.PARENT,
         },
       };
       

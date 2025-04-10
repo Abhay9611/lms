@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Star, Cloud, Sun, Moon, Book, Pencil, Rocket, Heart } from 'lucide-react';
 
@@ -14,10 +13,10 @@ const AnimatedCharacters: React.FC<AnimatedCharactersProps> = ({
   // Determine number of elements based on density
   const getElementCount = () => {
     switch (density) {
-      case 'low': return 5;
-      case 'medium': return 10;
-      case 'high': return 15;
-      default: return 10;
+      case 'low': return 15;
+      case 'medium': return 25;
+      case 'high': return 40;
+      default: return 25;
     }
   };
   
@@ -44,13 +43,13 @@ const AnimatedCharacters: React.FC<AnimatedCharactersProps> = ({
       return (
         <div 
           key={pos.id}
-          className="animated-character"
+          className="animated-character pointer-events-none"
           style={{ 
             top: pos.top, 
             left: pos.left,
             animationDelay: `${pos.delay}s`,
             animationDuration: `${pos.duration}s`,
-            zIndex: -1 // Keep animated elements behind content
+            zIndex: -1
           }}
         >
           {element === 0 && (
@@ -74,13 +73,13 @@ const AnimatedCharacters: React.FC<AnimatedCharactersProps> = ({
       return (
         <div 
           key={pos.id}
-          className="animated-character"
+          className="animated-character pointer-events-none"
           style={{ 
             top: pos.top, 
             left: pos.left,
             animationDelay: `${pos.delay}s`,
             animationDuration: `${pos.duration}s`,
-            zIndex: -1 // Keep animated elements behind content
+            zIndex: -1
           }}
         >
           {element === 0 && (
@@ -90,7 +89,7 @@ const AnimatedCharacters: React.FC<AnimatedCharactersProps> = ({
             <Pencil className={`h-${pos.size} w-${pos.size} text-lms-yellow fill-lms-yellow/30 animate-wiggle`} />
           )}
           {element === 2 && (
-            <div className={`h-${pos.size} w-${pos.size} rounded-full bg-lms-green/50 animate-bounce`}></div>
+            <div className={`h-${pos.size} w-${pos.size} rounded-full bg-lms-green/30 animate-bounce`}></div>
           )}
         </div>
       );
@@ -107,13 +106,13 @@ const AnimatedCharacters: React.FC<AnimatedCharactersProps> = ({
       return (
         <div 
           key={pos.id}
-          className="animated-character"
+          className="animated-character pointer-events-none"
           style={{ 
             top: pos.top, 
             left: pos.left,
             animationDelay: `${pos.delay}s`,
             animationDuration: `${pos.duration}s`,
-            zIndex: -1 // Keep animated elements behind content
+            zIndex: -1
           }}
         >
           {shape === 0 && (
@@ -137,13 +136,13 @@ const AnimatedCharacters: React.FC<AnimatedCharactersProps> = ({
       return (
         <div 
           key={pos.id}
-          className="animated-character"
+          className="animated-character pointer-events-none"
           style={{ 
             top: pos.top, 
             left: pos.left,
             animationDelay: `${pos.delay}s`,
             animationDuration: `${pos.duration}s`,
-            zIndex: -1 // Keep animated elements behind content
+            zIndex: -1
           }}
         >
           {element === 0 && (
@@ -172,7 +171,7 @@ const AnimatedCharacters: React.FC<AnimatedCharactersProps> = ({
   };
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: -1 }}>
       {renderElements()}
     </div>
   );
