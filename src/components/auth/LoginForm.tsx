@@ -31,6 +31,9 @@ const LoginForm = () => {
         case UserRole.TEACHER:
           navigate('/teacher/grade-selection');
           break;
+        case UserRole.STUDENT:
+          navigate('/student');
+          break;
         default:
           navigate('/dashboard');
       }
@@ -42,6 +45,7 @@ const LoginForm = () => {
   const roleOptions = [
     { value: UserRole.ADMIN, label: "Administrator", icon: <CheckCircle className="h-4 w-4 text-lms-pink" /> },
     { value: UserRole.TEACHER, label: "Teacher", icon: <CheckCircle className="h-4 w-4 text-lms-green" /> },
+    { value: UserRole.STUDENT, label: "Student", icon: <CheckCircle className="h-4 w-4 text-lms-blue" /> },
   ];
 
   return (
@@ -173,7 +177,7 @@ const LoginForm = () => {
             whileHover={{ scale: 1.1 }}
             className="w-2 h-2 rounded-full bg-lms-blue"
           />
-          <motion.div 
+          <motion.div
             whileHover={{ scale: 1.1 }}
             className="w-2 h-2 rounded-full bg-lms-green"
           />
