@@ -93,4 +93,17 @@ export class UserController {
       res.status(400).json({ message: 'Error updating profile', error });
     }
   }
+
+  async getAllUsers(req: Request, res: Response) {
+    try {
+      const users = await this.userService.getAllUsers();
+      res.json(users);
+    } catch (error) {
+      console.error('Error in getAllUsers:', error);
+      res.status(500).json({ 
+        message: 'Error fetching users', 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      });
+    }
+  }
 } 

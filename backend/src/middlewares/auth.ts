@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { AppDataSource } from '../config/database';
 import { User } from '../models/User';
 
 export interface AuthRequest extends Request {
@@ -16,7 +15,9 @@ export const auth = async (req: AuthRequest, res: Response, next: NextFunction) 
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret') as { id: string };
-    const user = await AppDataSource.getRepository(User).findOne({ where: { id: decoded.id } });
+    const user = await User.findByPk(decoded.id, {
+      attributes: { exclude: ['password'] }
+    });
 
     if (!user) {
       throw new Error();

@@ -1,18 +1,36 @@
-import { DataSource } from 'typeorm';
+import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const AppDataSource = new DataSource({
-  type: 'postgres',
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT || '5432'),
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  synchronize: process.env.NODE_ENV === 'development',
-  logging: process.env.NODE_ENV === 'development',
-  entities: ['src/models/**/*.ts'],
-  migrations: ['src/migrations/**/*.ts'],
-  subscribers: ['src/subscribers/**/*.ts'],
-}); 
+const sequelize = new Sequelize(
+  'Learnify', // database name
+  'postgres', // username (default for pgAdmin)
+  process.env.DB_PASSWORD || 'postgres', // password
+  {
+    host: 'localhost',
+    dialect: 'postgres',
+    port: 5432,
+    logging: false, // Set to console.log to see SQL queries
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    }
+  }
+);
+
+// Test the connection
+const testConnection = async (): Promise<void> => {
+  try {
+    await sequelize.authenticate();
+    console.log('PostgreSQL connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the PostgreSQL database:', error);
+  }
+};
+
+testConnection();
+
+export default sequelize; 
