@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/layout/DashboardLayout';
@@ -17,7 +16,7 @@ import {
 import AnimatedCharacters from '@/components/animated/AnimatedCharacters';
 import Quiz, { QuizQuestion } from '@/components/learning/Quiz';
 import Flashcard, { FlashcardItem } from '@/components/learning/Flashcard';
-import LearningMaterials, { LearningResource } from '@/components/learning/LearningMaterials';
+import PDFViewer from '@/components/learning/PDFViewer';
 import { toast } from '@/components/ui/use-toast';
 
 // Type for learning material resource
@@ -30,6 +29,21 @@ interface TopicLearningMaterial {
   type: MaterialType;
   description: string;
   url: string;
+  pdfUrl: string;
+}
+
+// Update the topic interface
+interface Topic {
+  id: string;
+  title: string;
+  description: string;
+  videoUrl: string;
+  quizUrl: string;
+  materials: { title: string; url: string; }[];
+  quiz: QuizQuestion[];
+  flashcards: FlashcardItem[];
+  learningMaterials: TopicLearningMaterial[];
+  pdfUrl: string;
 }
 
 // Dummy subject data
@@ -50,6 +64,7 @@ const subjects = {
           { title: 'Illustrated Lyrics PDF', url: '#/materials/1' },
           { title: 'Coloring Activity', url: '#/activities/1' }
         ],
+        pdfUrl: '/materials/twinkle-lyrics.pdf',
         quiz: [
           {
             id: 'q1',
@@ -136,6 +151,7 @@ const subjects = {
           { title: 'Sing Along Cards', url: '#/materials/2' },
           { title: 'Animal Sounds Activity', url: '#/activities/2' }
         ],
+        pdfUrl: '/materials/baa-baa-lyrics.pdf',
         quiz: [
           {
             id: 'q1',
@@ -222,6 +238,7 @@ const subjects = {
           { title: 'Spider Craft Template', url: '#/materials/3' },
           { title: 'Weather Words Activity', url: '#/activities/3' }
         ],
+        pdfUrl: '/materials/incy-wincy-lyrics.pdf',
         quiz: [
           {
             id: 'q1',
@@ -316,6 +333,7 @@ const subjects = {
           { title: 'Plant Growth Chart', url: '#/materials/4' },
           { title: 'Seed Planting Activity', url: '#/activities/4' }
         ],
+        pdfUrl: '/materials/plant-growth-chart.pdf',
         quiz: [
           {
             id: 'q1',
@@ -402,6 +420,7 @@ const subjects = {
           { title: 'Animal Habitats Poster', url: '#/materials/5' },
           { title: 'Animal Sounds Activity', url: '#/activities/5' }
         ],
+        pdfUrl: '/materials/animal-habitats-poster.pdf',
         quiz: [
           {
             id: 'q1',
@@ -488,6 +507,7 @@ const subjects = {
           { title: 'Water Cycle Diagram', url: '#/materials/6' },
           { title: 'Cloud in a Jar Experiment', url: '#/activities/6' }
         ],
+        pdfUrl: '/materials/water-cycle-diagram.pdf',
         quiz: [
           {
             id: 'q1',
@@ -582,6 +602,7 @@ const subjects = {
           { title: 'Number Flashcards', url: '#/materials/7' },
           { title: 'Counting Game', url: '#/activities/7' }
         ],
+        pdfUrl: '/materials/number-flashcards.pdf',
         quiz: [
           {
             id: 'q1',
@@ -668,6 +689,7 @@ const subjects = {
           { title: 'Shape Matching Cards', url: '#/materials/8' },
           { title: 'Shape Hunt Activity', url: '#/activities/8' }
         ],
+        pdfUrl: '/materials/shape-matching-cards.pdf',
         quiz: [
           {
             id: 'q1',
@@ -754,6 +776,7 @@ const subjects = {
           { title: 'Addition Worksheet', url: '#/materials/9' },
           { title: 'Addition Game', url: '#/activities/9' }
         ],
+        pdfUrl: '/materials/addition-worksheet.pdf',
         quiz: [
           {
             id: 'q1',
@@ -848,6 +871,7 @@ const subjects = {
           { title: 'Story Sequence Cards', url: '#/materials/10' },
           { title: 'House Building Activity', url: '#/activities/10' }
         ],
+        pdfUrl: '/materials/three-little-pigs-story.pdf',
         quiz: [
           {
             id: 'q1',
@@ -934,6 +958,7 @@ const subjects = {
           { title: 'Character Masks', url: '#/materials/11' },
           { title: 'Story Map Activity', url: '#/activities/11' }
         ],
+        pdfUrl: '/materials/little-red-riding-hood-story.pdf',
         quiz: [
           {
             id: 'q1',
@@ -1020,6 +1045,7 @@ const subjects = {
           { title: 'Gingerbread Recipe', url: '#/materials/12' },
           { title: 'Running Race Game', url: '#/activities/12' }
         ],
+        pdfUrl: '/materials/gingerbread-recipe.pdf',
         quiz: [
           {
             id: 'q1',
@@ -1089,7 +1115,7 @@ const subjects = {
           },
           {
             id: 'lm4',
-            title: 'Story Sequence Cards',
+            title: 'Story Sequencing Cards',
             type: 'worksheet' as MaterialType,
             description: 'Put the events of the story in the correct order',
             url: '#/worksheets/gingerbread-sequence'
@@ -1258,9 +1284,9 @@ const SubjectDetails = () => {
                     </TabsContent>
                     
                     <TabsContent value="materials" className="mt-0">
-                      {currentTopic.learningMaterials && (
-                        <LearningMaterials 
-                          resources={currentTopic.learningMaterials}
+                      {currentTopic?.pdfUrl && (
+                        <PDFViewer 
+                          url={currentTopic.pdfUrl} 
                           subjectColor={subject.color}
                         />
                       )}
