@@ -1,9 +1,56 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import LoginForm from '@/components/auth/LoginForm';
 import { Star, Cloud, Sun, Moon, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/contexts/AuthContext';
+import { Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { UserRole } from '@/types';
 
 const Login = () => {
+  const { isAuthenticated, user, loading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    console.log('Login page mounted, auth state:', { isAuthenticated, user, loading });
+  }, [isAuthenticated, user, loading]);
+
+  // If user is already authenticated, redirect to appropriate dashboard
+  if (isAuthenticated && user) {
+    console.log('User authenticated, redirecting...', { role: user.role, user });
+    
+    // Get the intended destination or default to role-based dashboard
+    let from = location.state?.from?.pathname;
+    if (!from) {
+      switch (user.role) {
+        case 'ADMIN':
+          from = '/admin/dashboard';
+          break;
+        case 'TEACHER':
+          from = '/teacher/dashboard';
+          break;
+        case 'STUDENT':
+          from = '/student/dashboard';
+          break;
+        default:
+          console.warn('Unknown role:', user.role);
+          from = '/dashboard';
+      }
+    }
+
+    console.log('Redirecting to:', from, 'for role:', user.role);
+    return <Navigate to={from} replace />;
+  }
+
+  // If loading, show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-primary/5 to-primary/20 p-4 overflow-hidden relative">
       {/* Animated background elements */}

@@ -21,8 +21,16 @@ const teachingGuideRoutes = require('./routes/teachingGuideRoutes');
 
 const app = express();
 
+// CORS configuration
+const corsOptions = {
+  origin: ['http://localhost:8080', 'http://localhost:5173', 'http://localhost:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(compression());
 app.use(morgan('dev'));

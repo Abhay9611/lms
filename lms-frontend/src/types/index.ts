@@ -1,15 +1,24 @@
 export interface User {
-  id: string;
-  name: string;
+  id: number;
+  firstName: string;
+  lastName: string;
   email: string;
   role: UserRole;
-  avatar?: string;
+  school?: {
+    id: number;
+    name: string;
+    code: string;
+  };
+  grade?: {
+    id: number;
+    name: string;
+  };
 }
 
 export enum UserRole {
-  ADMIN = "admin",
-  TEACHER = "teacher",
-  STUDENT = "student",
+  ADMIN = "ADMIN",
+  TEACHER = "TEACHER",
+  STUDENT = "STUDENT",
 }
 
 export interface Subject {
