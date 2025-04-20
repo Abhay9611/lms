@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -6,7 +6,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
+} from "@/components/ui/sheet";
 import {
   Home,
   BookOpen,
@@ -21,13 +21,14 @@ import {
   Calendar,
   BookText,
   Bell,
-} from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { UserRole } from "@/types";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -35,84 +36,84 @@ interface DashboardLayoutProps {
 
 const StudentLinks = [
   {
-    title: 'Dashboard',
-    href: '/student',
+    title: "Dashboard",
+    href: "/student",
     icon: Home,
   },
   {
-    title: 'Subjects',
-    href: '/student/subjects',
+    title: "Subjects",
+    href: "/student/subjects",
     icon: BookOpen,
   },
   {
-    title: 'Games',
-    href: '/student/games',
+    title: "Games",
+    href: "/student/games",
     icon: Gamepad2,
   },
   {
-    title: 'Progress',
-    href: '/student/progress',
+    title: "Progress",
+    href: "/student/progress",
     icon: BarChart2,
   },
 ];
 
 const TeacherLinks = [
   {
-    title: 'Dashboard',
-    href: '/teacher',
+    title: "Dashboard",
+    href: "/teacher",
     icon: Home,
   },
   {
-    title: 'Calendar',
-    href: '/teacher/calendar',
+    title: "Calendar",
+    href: "/teacher/calendar",
     icon: Calendar,
   },
   {
-    title: 'Planner',
-    href: '/teacher/planner',
+    title: "Planner",
+    href: "/teacher/planner",
     icon: ListTodo,
   },
   {
-    title: 'Resources',
-    href: '/teacher/resources',
+    title: "Resources",
+    href: "/teacher/resources",
     icon: BookText,
   },
 ];
 
 const AdminLinks = [
   {
-    title: 'Dashboard',
-    href: '/admin',
+    title: "Dashboard",
+    href: "/admin",
     icon: Home,
   },
   {
-    title: 'Schools',
-    href: '/admin/schools',
+    title: "Schools",
+    href: "/admin/schools",
     icon: BookOpen,
   },
   {
-    title: 'Users',
-    href: '/admin/users',
+    title: "Users",
+    href: "/admin/users",
     icon: User,
   },
   {
-    title: 'Analytics',
-    href: '/admin/analytics',
+    title: "Analytics",
+    href: "/admin/analytics",
     icon: ListTodo,
   },
   {
-    title: 'Content',
-    href: '/admin/content',
+    title: "Content",
+    href: "/admin/content",
     icon: Gamepad2,
   },
   {
-    title: 'Calendar',
-    href: '/admin/calendar',
+    title: "Calendar",
+    href: "/admin/calendar",
     icon: BookOpen,
   },
   {
-    title: 'Planner',
-    href: '/admin/planner',
+    title: "Planner",
+    href: "/admin/planner",
     icon: ListTodo,
   },
 ];
@@ -125,7 +126,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   const studentMenuItems = StudentLinks.map((link) => ({
@@ -145,13 +146,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   let menuItems;
   switch (user?.role) {
-    case 'admin':
+    case UserRole.ADMIN:
       menuItems = adminMenuItems;
       break;
-    case 'teacher':
+    case UserRole.TEACHER:
       menuItems = teacherMenuItems;
       break;
-    default:
+    case UserRole.STUDENT:
       menuItems = studentMenuItems;
       break;
   }
@@ -171,7 +172,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </SheetTrigger>
         <SheetContent side="left" className="w-64 p-0">
           <SheetHeader className="pl-0 pb-4 pt-6">
-            <img src="/logo.png" alt="Aspiring Gems Logo" className="h-24 w-64 md:h-24 md:w-64 object-contain" />
+            <img
+              src="/logo.png"
+              alt="Aspiring Gems Logo"
+              className="h-24 w-64 md:h-24 md:w-64 object-contain"
+            />
             <SheetDescription>
               Navigate through your learning journey.
             </SheetDescription>
@@ -214,7 +219,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <div className="hidden md:flex w-64 flex-col border-r bg-gradient-to-b from-primary/5 to-background">
         <div className="p-6">
           <div className="flex items-center space-x-2">
-          <img src="/logo.png" alt="Aspiring Gems Logo" className="h-24 w-64 md:h-24 md:w-64 object-contain" />
+            <img
+              src="/logo.png"
+              alt="Aspiring Gems Logo"
+              className="h-24 w-64 md:h-24 md:w-64 object-contain"
+            />
           </div>
         </div>
         <Separator />
@@ -250,37 +259,19 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <header className="h-16 border-b bg-white/50 backdrop-blur-sm flex items-center justify-between px-4 md:px-6">
           <div className="flex items-center space-x-4">
             <h1 className="text-xl font-bubbly font-bold text-primary">
-              {menuItems.find(item => item.active)?.title || 'Dashboard'}
+              {menuItems.find((item) => item.active)?.title || "Dashboard"}
             </h1>
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Bell className="h-5 w-5" />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="rounded-full"
-              onClick={() => {
-                const settingsPath = user?.role === 'admin' 
-                  ? '/admin/settings' 
-                  : user?.role === 'teacher' 
-                    ? '/teacher/settings' 
-                    : '/student/settings';
-                navigate(settingsPath);
-              }}
-            >
-              <Settings className="h-5 w-5" />
-            </Button>
             <Avatar className="h-8 w-8 border-2 border-primary">
-              <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.name}`} />
-              <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
+              <AvatarImage
+                src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.firstName}`}
+              />
+              <AvatarFallback>{user?.firstName?.charAt(0)}</AvatarFallback>
             </Avatar>
           </div>
         </header>
-        <main className="flex-1 p-4 md:p-6 overflow-auto">
-          {children}
-        </main>
+        <main className="flex-1 p-4 md:p-6 overflow-auto">{children}</main>
       </div>
     </div>
   );

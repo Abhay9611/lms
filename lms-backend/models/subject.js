@@ -28,22 +28,15 @@ module.exports = (sequelize) => {
       primaryKey: true
     },
     name: {
-      type: DataTypes.ENUM('Math', 'EVS', 'English', 'StoryTime'),
+      type: DataTypes.TEXT,
       allowNull: false
     },
-    code: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
-    },
+
     description: {
       type: DataTypes.TEXT,
       allowNull: true
     },
-    icon: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
+
     gradeId: {
       type: DataTypes.UUID,
       allowNull: false,

@@ -65,6 +65,72 @@ module.exports = (sequelize) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true
+    },
+    question: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    points: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    order: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    option1_text: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    option1_iscorrect: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
+    option1_explanation: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    option2_text: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    option2_iscorrect: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
+    option2_explanation: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    option3_text: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    option3_iscorrect: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
+    option3_explanation: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    option4_text: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    option4_iscorrect: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
+    option4_explanation: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
     sequelize,

@@ -31,11 +31,6 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    code: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
-    },
     address: {
       type: DataTypes.TEXT,
       allowNull: true
@@ -62,11 +57,7 @@ module.exports = (sequelize) => {
   }, {
     sequelize,
     modelName: 'School',
-    indexes: [
-      {
-        fields: ['code']
-      }
-    ]
+
   });
 
   return School;

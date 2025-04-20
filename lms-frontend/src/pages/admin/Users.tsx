@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users as UsersIcon, Plus, Search, Edit, Trash2, UserCircle, Filter } from 'lucide-react';
@@ -9,57 +9,74 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import AnimatedCharacters from '@/components/animated/AnimatedCharacters';
 import { UserRole } from '@/types';
+import axios from 'axios';
+import { useAuth } from '@/contexts/AuthContext';
 
-// Mock users data
-const users = [
-  {
-    id: 1,
-    name: "Sarah Johnson",
-    email: "sarah.j@example.com",
-    role: UserRole.TEACHER,
-    school: "Little Learners Preschool",
-    status: "active",
-    avatar: "/avatars/teacher1.jpg"
-  },
-  {
-    id: 2,
-    name: "Michael Brown",
-    email: "michael.b@example.com",
-    role: UserRole.ADMIN,
-    school: "BookWorm Admin",
-    status: "active",
-    avatar: ""
-  },
-  {
-    id: 3,
-    name: "Emily Wilson",
-    email: "emily.w@example.com",
-    role: UserRole.TEACHER,
-    school: "FirstSteps Montessori",
-    status: "active",
-    avatar: "/avatars/teacher2.jpg"
-  },
-  {
-    id: 4,
-    name: "Robert Smith",
-    email: "robert.s@example.com",
-    role: UserRole.PARENT,
-    school: "Tiny Tots Academy",
-    status: "inactive",
-    avatar: ""
-  },
-  {
-    id: 5,
-    name: "Lisa Davis",
-    email: "lisa.d@example.com",
-    role: UserRole.TEACHER,
-    school: "BrightStart Kindergarten",
-    status: "active",
-    avatar: "/avatars/teacher3.jpg"
-  }
-];
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: UserRole;
+  school: string;
+  status: string;
+  avatar: string;
+}
 
 const UsersPage = () => {
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [usersList, setUsersList] = useState<User[]>([]);
+
+
+  const handleDelete = (id: number) => {
+    axios.delete(`http://localhost:3000/api/users/${id}`)
+      .then(() => {
+        setUsersList(usersList.filter(user => user.id !== id));
+      })
+      .catch(error => console.error('Error deleting user:', error));
+  };
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const usersResponse = await axios.get('http://localhost:3000/api/users');
+        const schoolsResponse = await axios.get('http://localhost:3000/api/schools');
+        const schoolsData = schoolsResponse.data;
+
+        const formattedUsers = usersResponse.data.map((userData: any) => {
+          const userSchool = schoolsData.find((school: any) => school.id === userData.schoolId)?.name || 'Unknown School';
+          return {
+            id: userData.id,
+            name: userData.firstName,
+            email: userData.email,
+            role: userData.role.toUpperCase(),
+            school: userSchool,
+            status: userData.isActive ? 'active' : 'inactive',
+            avatar: userData.firstName.charAt(0),
+          };
+        });
+
+        setUsersList(formattedUsers);
+      } catch (error) {
+        setError('Failed to fetch statistics');
+        console.error('Error fetching statistics:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, [user]);
+
+  if (loading) {
+    return <div className="p-8 text-center">Loading data...</div>;
+  }
+  if (error) {
+    return <div className="p-8 text-center text-red-500">{error}</div>;
+  }
   return (
     <DashboardLayout>
       <div className="space-y-8 relative">
@@ -115,7 +132,7 @@ const UsersPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map(user => (
+                  {usersList.map(user => (
                     <tr key={user.id} className="border-b border-muted/50 hover:bg-muted/20 transition-colors">
                       <td className="px-4 py-4">
                         <div className="flex items-center space-x-3">
@@ -133,7 +150,7 @@ const UsersPage = () => {
                         <Badge className={
                           user.role === UserRole.ADMIN ? "bg-lms-purple" :
                           user.role === UserRole.TEACHER ? "bg-lms-blue" :
-                          user.role === UserRole.PARENT ? "bg-lms-green" :
+                          user.role === UserRole.STUDENT ? "bg-lms-green" :
                           "bg-lms-yellow"
                         }>
                           {user.role}
@@ -148,10 +165,8 @@ const UsersPage = () => {
                       </td>
                       <td className="px-4 py-4 text-center">
                         <div className="flex items-center justify-center space-x-2">
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-lms-blue">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-lms-pink">
+                          
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-lms-pink" onClick={() => handleDelete(user.id)}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -164,7 +179,7 @@ const UsersPage = () => {
           </CardContent>
         </Card>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="border-4 border-lms-blue/30 rounded-3xl shadow-lg overflow-hidden">
             <CardHeader className="bg-lms-blue/10">
               <CardTitle className="text-xl font-bubbly">User Statistics</CardTitle>
@@ -175,7 +190,7 @@ const UsersPage = () => {
                   <div className="bg-lms-blue/10 p-3 rounded-full mb-2">
                     <UsersIcon className="h-6 w-6 text-lms-blue" />
                   </div>
-                  <div className="text-3xl font-bubbly font-bold">{users.length}</div>
+                  <div className="text-3xl font-bubbly font-bold">{usersList.length}</div>
                   <div className="text-sm text-muted-foreground">Total Users</div>
                 </div>
                 <div className="bg-white p-4 rounded-2xl border-2 border-dashed border-lms-green/30 flex flex-col items-center">
@@ -183,7 +198,7 @@ const UsersPage = () => {
                     <UserCircle className="h-6 w-6 text-lms-green" />
                   </div>
                   <div className="text-3xl font-bubbly font-bold">
-                    {users.filter(user => user.status === "active").length}
+                    {usersList.filter(user => user.status === "active").length}
                   </div>
                   <div className="text-sm text-muted-foreground">Active Users</div>
                 </div>
@@ -193,8 +208,8 @@ const UsersPage = () => {
                 <h3 className="font-bubbly text-lg">Users by Role</h3>
                 <div className="space-y-3">
                   {Object.values(UserRole).map(role => {
-                    const count = users.filter(user => user.role === role).length;
-                    const percentage = (count / users.length) * 100;
+                    const count = usersList.filter(user => user.role === role).length;
+                    const percentage = (count / usersList.length) * 100;
                     
                     return (
                       <div key={role} className="space-y-1">
@@ -207,7 +222,7 @@ const UsersPage = () => {
                             className={
                               role === UserRole.ADMIN ? "bg-lms-purple h-full" :
                               role === UserRole.TEACHER ? "bg-lms-blue h-full" :
-                              role === UserRole.PARENT ? "bg-lms-green h-full" :
+                              role === UserRole.STUDENT ? "bg-lms-green h-full" :
                               "bg-lms-yellow h-full"
                             } 
                             style={{ width: `${percentage}%` }}
@@ -231,13 +246,13 @@ const UsersPage = () => {
                   { user: "Michael Brown", action: "added a new school to the system", time: "2 hours ago", role: UserRole.ADMIN },
                   { user: "Sarah Johnson", action: "updated her profile information", time: "Yesterday", role: UserRole.TEACHER },
                   { user: "Emily Wilson", action: "created a new lesson plan", time: "2 days ago", role: UserRole.TEACHER },
-                  { user: "Robert Smith", action: "logged in for the first time", time: "3 days ago", role: UserRole.PARENT }
+                  { user: "Robert Smith", action: "logged in for the first time", time: "3 days ago", role: UserRole.STUDENT }
                 ].map((activity, index) => (
                   <div key={index} className="flex items-start space-x-3 pb-3 border-b border-dashed last:border-0 last:pb-0">
                     <div className={`mt-0.5 p-2 rounded-full ${
                       activity.role === UserRole.ADMIN ? "bg-lms-purple/20 text-lms-purple" :
                       activity.role === UserRole.TEACHER ? "bg-lms-blue/20 text-lms-blue" :
-                      activity.role === UserRole.PARENT ? "bg-lms-green/20 text-lms-green" :
+                      activity.role === UserRole.STUDENT ? "bg-lms-green/20 text-lms-green" :
                       "bg-lms-yellow/20 text-lms-yellow"
                     }`}>
                       <UserCircle className="h-4 w-4" />
@@ -253,7 +268,7 @@ const UsersPage = () => {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
       </div>
     </DashboardLayout>
   );

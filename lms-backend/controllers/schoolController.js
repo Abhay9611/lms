@@ -3,17 +3,11 @@ const { School } = require('../models');
 // Create a new school
 const createSchool = async (req, res) => {
   try {
-    const { name, code, address } = req.body;
+    const { schoolName, address } = req.body;
 
-    // Check if school code already exists
-    const existingSchool = await School.findOne({ where: { code } });
-    if (existingSchool) {
-      return res.status(400).json({ message: 'School code already exists' });
-    }
 
     const school = await School.create({
-      name,
-      code,
+      name: schoolName,
       address
     });
 

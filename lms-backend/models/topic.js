@@ -47,10 +47,7 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    },
+
     subjectId: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -59,14 +56,7 @@ module.exports = (sequelize) => {
         key: 'id'
       }
     },
-    month: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      validate: {
-        min: 1,
-        max: 12
-      }
-    },
+
     order: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -83,9 +73,7 @@ module.exports = (sequelize) => {
       {
         fields: ['subjectId']
       },
-      {
-        fields: ['month']
-      },
+
       {
         fields: ['order']
       }

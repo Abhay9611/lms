@@ -39,14 +39,7 @@ module.exports = (sequelize) => {
       type: DataTypes.TEXT,
       allowNull: true
     },
-    schoolId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      references: {
-        model: 'Schools',
-        key: 'id'
-      }
-    },
+
     isActive: {
       type: DataTypes.BOOLEAN,
       defaultValue: true
@@ -55,9 +48,7 @@ module.exports = (sequelize) => {
     sequelize,
     modelName: 'Grade',
     indexes: [
-      {
-        fields: ['schoolId']
-      },
+
       {
         fields: ['name']
       }

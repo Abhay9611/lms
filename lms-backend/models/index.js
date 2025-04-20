@@ -25,6 +25,7 @@ const sequelize = new Sequelize(
 const School = require('./school')(sequelize, Sequelize.DataTypes);
 const Grade = require('./grade')(sequelize, Sequelize.DataTypes);
 const User = require('./user')(sequelize, Sequelize.DataTypes);
+const UserProfile = require('./userProfile')(sequelize, Sequelize.DataTypes);
 const Subject = require('./subject')(sequelize, Sequelize.DataTypes);
 const Topic = require('./topic')(sequelize, Sequelize.DataTypes);
 const Quiz = require('./quiz')(sequelize, Sequelize.DataTypes);
@@ -37,11 +38,13 @@ const Content = require('./content')(sequelize, Sequelize.DataTypes);
 const TeachingGuide = require('./teachingGuide')(sequelize, Sequelize.DataTypes);
 const StudentProgress = require('./studentProgress')(sequelize, Sequelize.DataTypes);
 const ContentUpload = require('./contentUpload')(sequelize, Sequelize.DataTypes);
-
+const ActivationCode = require('./activationCode')(sequelize, Sequelize.DataTypes);
 // Add models to db object
 db.School = School;
 db.Grade = Grade;
 db.User = User;
+db.ActivationCode = ActivationCode;
+db.UserProfile = UserProfile;
 db.Subject = Subject;
 db.Topic = Topic;
 db.Quiz = Quiz;
@@ -150,6 +153,10 @@ ContentUpload.belongsTo(User, { foreignKey: 'uploadedById' });
 // StudentProgress (user-topic mapping)
 User.hasMany(StudentProgress, { foreignKey: 'userId' });
 StudentProgress.belongsTo(User, { foreignKey: 'userId' });
+
+
+User.hasOne(UserProfile, { as: 'profile', foreignKey: 'userId' });
+UserProfile.belongsTo(User, { foreignKey: 'userId' });
 
 Topic.hasMany(StudentProgress, { foreignKey: 'topicId' });
 StudentProgress.belongsTo(Topic, { foreignKey: 'topicId' });

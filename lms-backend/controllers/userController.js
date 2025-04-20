@@ -5,10 +5,10 @@ const { ValidationError } = require('sequelize');
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll({
-      include: [{
+      include: {
         model: UserProfile,
         as: 'profile'
-      }],
+      },
       attributes: { exclude: ['password'] }
     });
     res.json(users);
@@ -135,11 +135,36 @@ const updateLastLogin = async (userId) => {
   }
 };
 
+// Delete user (admin only)
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id, {
+      include: [{
+        model: UserProfile,
+        as: 'profile'
+      }],
+      attributes: { exclude: ['password'] }
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+
+    await user.destroy();
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({ message: 'Error deleting user' });
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
   getCurrentUser,
   updateProfile,
   changePassword,
-  updateLastLogin
+  updateLastLogin,
+  deleteUser
 }; 

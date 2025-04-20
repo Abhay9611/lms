@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, Plus, Search, Edit, Trash2, FileText, Film, Music, Upload } from 'lucide-react';
@@ -7,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import AnimatedCharacters from '@/components/animated/AnimatedCharacters';
+import AddContentModal from '@/components/content/AddContentModal';
 
 // Mock content data
 const contentItems = [
@@ -58,6 +58,16 @@ const contentItems = [
 ];
 
 const ContentPage = () => {
+  const [isAddContentModalOpen, setIsAddContentModalOpen] = useState(false);
+
+  const handleAddContentClick = () => {
+    setIsAddContentModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsAddContentModalOpen(false);
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-8 relative">
@@ -83,12 +93,14 @@ const ContentPage = () => {
           </div>
           
           <div className="flex items-center gap-3">
-            <Button className="rounded-xl bg-primary">
+            <Button className="rounded-xl bg-primary" onClick={handleAddContentClick}>
               <Plus className="h-4 w-4 mr-2" />
               Add New Content
             </Button>
           </div>
         </div>
+        
+        <AddContentModal isOpen={isAddContentModalOpen} onClose={handleCloseModal} />
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           {[

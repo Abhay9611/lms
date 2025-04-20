@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Student, Teacher, Admin, School, User } = require('../models');
 const generateToken = require('../utils/token');
+const sendEmail = require('../utils/email');
 
 // Register Student
 exports.registerStudent = async (req, res) => {
@@ -248,7 +249,13 @@ const forgotPassword = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // TODO: Implement email sending with reset token
+    // Generate reset token
+    const resetToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    // Send email with reset link
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+    await sendEmail(user.email, 'Password Reset', `Click here to reset your password: ${resetLink}`);
+
     res.json({ message: 'Password reset instructions sent to email' });
   } catch (error) {
     console.error('Forgot password error:', error);
@@ -260,21 +267,16 @@ const forgotPassword = async (req, res) => {
 const resetPassword = async (req, res) => {
   try {
     const { token, newPassword } = req.body;
-    
-    // TODO: Verify reset token
-    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // const user = await User.findByPk(decoded.id);
-    
-    // if (!user) {
-    //   return res.status(404).json({ message: 'User not found' });
-    // }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findByPk(decoded.id);
+  
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-    // Hash new password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
 
     // Update password
-    // await user.update({ password: hashedPassword });
+    await user.update({ password: newPassword });
     res.json({ message: 'Password reset successfully' });
   } catch (error) {
     console.error('Reset password error:', error);

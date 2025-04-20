@@ -37,15 +37,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    },
-    type: {
-      type: DataTypes.ENUM('VIDEO', 'DOCUMENT', 'LINK', 'INTERACTIVE'),
-      allowNull: false,
-      defaultValue: 'VIDEO'
-    },
+
+
     videoUrl: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -53,33 +46,6 @@ module.exports = (sequelize, DataTypes) => {
         isUrl: true
       }
     },
-    contentUrl: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      validate: {
-        isUrl: true
-      }
-    },
-    duration: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      comment: 'Duration in minutes'
-    },
-    order: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0
-    },
-    isRequired: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true
-    },
-    isActive: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true
-    }
   }, {
     sequelize,
     modelName: 'Content',
@@ -88,10 +54,7 @@ module.exports = (sequelize, DataTypes) => {
         fields: ['topicId']
       },
       {
-        fields: ['topicId', 'order']
-      },
-      {
-        fields: ['type']
+        fields: ['topicId']
       }
     ]
   });

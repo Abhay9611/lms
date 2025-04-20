@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -110,12 +109,13 @@ const TeacherPlanner = () => {
           </Button>
         </div>
         
-        <Tabs defaultValue="current" className="w-full">
+        <Tabs defaultValue="play-home" className="w-full">
           <div className="flex items-center justify-between mb-6">
-            <TabsList className="grid w-full max-w-md grid-cols-3">
-              <TabsTrigger value="current">Current Week</TabsTrigger>
-              <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-              <TabsTrigger value="past">Past Lessons</TabsTrigger>
+            <TabsList className="grid grid-cols-4 w-full sm:w-auto">
+              <TabsTrigger value="play-home">Play Home</TabsTrigger>
+              <TabsTrigger value="nursery">Nursery</TabsTrigger>
+              <TabsTrigger value="lkg">LKG</TabsTrigger>
+              <TabsTrigger value="ukg">UKG</TabsTrigger>
             </TabsList>
             <div className="flex items-center space-x-2">
               <Button variant="outline" size="sm" className="rounded-xl">
@@ -135,6 +135,31 @@ const TeacherPlanner = () => {
               </Select>
             </div>
           </div>
+          
+          <TabsContent value="play-home" className="mt-0">
+            <CardHeader className="bg-lms-green/10">
+              <CardTitle className="text-xl font-bubbly">This Week's Lesson Plans</CardTitle>
+            </CardHeader>
+            <p className="text-muted-foreground mb-6 font-round">Flipbook goes here</p>
+          </TabsContent>
+          <TabsContent value="nursery" className="mt-0">
+            <CardHeader className="bg-lms-green/10">
+              <CardTitle className="text-xl font-bubbly">This Week's Lesson Plans</CardTitle>
+            </CardHeader>
+            <p className="text-muted-foreground mb-6 font-round">Flipbook goes here</p>
+          </TabsContent>
+          <TabsContent value="lkg" className="mt-0">
+            <CardHeader className="bg-lms-green/10">
+              <CardTitle className="text-xl font-bubbly">This Week's Lesson Plans</CardTitle>
+            </CardHeader>
+            <p className="text-muted-foreground mb-6 font-round">Flipbook goes here</p>
+          </TabsContent>
+          <TabsContent value="ukg" className="mt-0">
+            <CardHeader className="bg-lms-green/10">
+              <CardTitle className="text-xl font-bubbly">This Week's Lesson Plans</CardTitle>
+            </CardHeader>
+            <p className="text-muted-foreground mb-6 font-round">Flipbook goes here</p>
+          </TabsContent>
           
           <TabsContent value="current" className="space-y-6">
             <Card className="border-4 border-lms-green/30 rounded-3xl shadow-lg overflow-hidden">

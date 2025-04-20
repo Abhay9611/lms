@@ -44,6 +44,7 @@ router.post('/', isTeacher, async (req, res) => {
     const content = await Content.create(req.body);
     res.status(201).json({ content });
   } catch (error) {
+    console.error('Error creating content:', error);
     res.status(500).json({ message: error.message });
   }
 });

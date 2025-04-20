@@ -1,28 +1,28 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { UserRole } from '@/types';
-import { useAuth } from '@/contexts/AuthContext';
-import { 
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { UserRole } from "@/types";
+import { useAuth } from "@/contexts/AuthContext";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import { GraduationCap, BookText, School, AlertCircle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import axios from 'axios';
+  SelectValue,
+} from "@/components/ui/select";
+import { GraduationCap, BookText, School, AlertCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import axios from "axios";
 
 interface RegistrationModalProps {
   isOpen: boolean;
@@ -30,26 +30,43 @@ interface RegistrationModalProps {
   role: UserRole;
 }
 
-const RegistrationModal = ({ isOpen, onClose, role }: RegistrationModalProps) => {
+const RegistrationModal = ({
+  isOpen,
+  onClose,
+  role,
+}: RegistrationModalProps) => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    grade: '',
-    schoolCode: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    grade: "",
+    activationCode: "",
+    schoolId: "",
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [schoolsList, setSchoolsList] = useState([]);
+
+  useEffect(()=>{
+    const fetchSchools = async () => {
+      const response = await axios.get("http://localhost:3000/api/schools");
+      setSchoolsList(response.data);
+      console.log("Fetched schools:", response.data);
+    };
+    fetchSchools();
+  },[]);
+
 
   const grades = [
-    { value: 'Pre-nursery', label: 'Pre-nursery' },
-    { value: 'LKG', label: 'LKG' },
-    { value: 'UKG', label: 'UKG' }
+    { value: "Play Home", label: "Play Group" },
+    { value: "Pre-nursery", label: "Nursery" },
+    { value: "LKG", label: "LKG" },
+    { value: "UKG", label: "UKG" },
   ];
 
   const getRoleIcon = () => {
@@ -80,39 +97,43 @@ const RegistrationModal = ({ isOpen, onClose, role }: RegistrationModalProps) =>
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const validateForm = () => {
     if (!formData.firstName || !formData.lastName) {
-      setError('First name and last name are required');
+      setError("First name and last name are required");
       return false;
     }
     if (!formData.email) {
-      setError('Email is required');
+      setError("Email is required");
       return false;
     }
     if (!formData.password) {
-      setError('Password is required');
+      setError("Password is required");
       return false;
     }
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      setError("Password must be at least 6 characters long");
       return false;
     }
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return false;
     }
-    if ((role === UserRole.STUDENT || role === UserRole.TEACHER) && !formData.schoolCode) {
-      setError('School code is required');
+    if (role === UserRole.STUDENT && !formData.activationCode) {
+      setError("Activation code is required for students");
+      return false;
+    }
+    if (role === UserRole.TEACHER && !formData.activationCode) {
+      setError("School code is required for teachers");
       return false;
     }
     if (role === UserRole.STUDENT && !formData.grade) {
-      setError('Grade level is required for students');
+      setError("Grade level is required for students");
       return false;
     }
     return true;
@@ -121,7 +142,7 @@ const RegistrationModal = ({ isOpen, onClose, role }: RegistrationModalProps) =>
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     if (!validateForm()) {
       setLoading(false);
@@ -129,32 +150,40 @@ const RegistrationModal = ({ isOpen, onClose, role }: RegistrationModalProps) =>
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/register', {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        role: role,
-        grade: formData.grade,
-        schoolCode: formData.schoolCode
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/register",
+        {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+          role: role,
+          grade: formData.grade,
+          // grade: formData.grade === 'Nursery' ? 'Pre-nursery' : formData.grade,
+          activationCode: formData.activationCode,
+          schoolId: formData.schoolId,
+        }
+      );
 
-      if (response.data.status === 'success') {
+      if (response.data.status === "success") {
         toast({
           title: "Registration successful",
-          description: "Welcome to BookWorm Academy!",
+          description: "Welcome to Aspiring Gems!",
         });
-        
+
         // Login the user after successful registration
-        await login(formData.email, formData.password, role);
-        navigate('/');
+        await login(formData.email, formData.password);
+        navigate("/");
       }
     } catch (error: any) {
-      setError(error.response?.data?.message || 'Registration failed. Please try again.');
+      setError(
+        error.response?.data?.message ||
+          "Registration failed. Please try again."
+      );
       toast({
         title: "Registration failed",
         description: error.response?.data?.message || "Please try again later.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -175,11 +204,13 @@ const RegistrationModal = ({ isOpen, onClose, role }: RegistrationModalProps) =>
             Create your account to access personalized learning resources.
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName" className="font-round">First Name</Label>
+              <Label htmlFor="firstName" className="font-round">
+                First Name
+              </Label>
               <Input
                 id="firstName"
                 name="firstName"
@@ -191,7 +222,9 @@ const RegistrationModal = ({ isOpen, onClose, role }: RegistrationModalProps) =>
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName" className="font-round">Last Name</Label>
+              <Label htmlFor="lastName" className="font-round">
+                Last Name
+              </Label>
               <Input
                 id="lastName"
                 name="lastName"
@@ -203,9 +236,11 @@ const RegistrationModal = ({ isOpen, onClose, role }: RegistrationModalProps) =>
               />
             </div>
           </div>
-          
+
           <div className="space-y-2">
-            <Label htmlFor="email" className="font-round">Email</Label>
+            <Label htmlFor="email" className="font-round">
+              Email
+            </Label>
             <Input
               id="email"
               name="email"
@@ -217,9 +252,11 @@ const RegistrationModal = ({ isOpen, onClose, role }: RegistrationModalProps) =>
               required
             />
           </div>
-          
+
           <div className="space-y-2">
-            <Label htmlFor="password" className="font-round">Password</Label>
+            <Label htmlFor="password" className="font-round">
+              Password
+            </Label>
             <Input
               id="password"
               name="password"
@@ -233,7 +270,9 @@ const RegistrationModal = ({ isOpen, onClose, role }: RegistrationModalProps) =>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="font-round">Confirm Password</Label>
+            <Label htmlFor="confirmPassword" className="font-round">
+              Confirm Password
+            </Label>
             <Input
               id="confirmPassword"
               name="confirmPassword"
@@ -245,17 +284,28 @@ const RegistrationModal = ({ isOpen, onClose, role }: RegistrationModalProps) =>
               required
             />
           </div>
-          
+
           {role === UserRole.STUDENT && (
             <div className="space-y-2">
-              <Label htmlFor="grade" className="font-round">Grade Level</Label>
-              <Select value={formData.grade} onValueChange={(value) => setFormData(prev => ({ ...prev, grade: value }))}>
+              <Label htmlFor="grade" className="font-round">
+                Grade Level
+              </Label>
+              <Select
+                value={formData.grade}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, grade: value }))
+                }
+              >
                 <SelectTrigger className="rounded-xl">
                   <SelectValue placeholder="Select grade" />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
                   {grades.map((g) => (
-                    <SelectItem key={g.value} value={g.value} className="font-round">
+                    <SelectItem
+                      key={g.value}
+                      value={g.value}
+                      className="font-round"
+                    >
                       {g.label}
                     </SelectItem>
                   ))}
@@ -264,49 +314,100 @@ const RegistrationModal = ({ isOpen, onClose, role }: RegistrationModalProps) =>
             </div>
           )}
 
-          {(role === UserRole.STUDENT || role === UserRole.TEACHER) && (
+          {role === UserRole.STUDENT && (
             <div className="space-y-2">
-              <Label htmlFor="schoolCode" className="font-round">School Code</Label>
+              <Label htmlFor="schoolId" className="font-round">
+                School Name
+              </Label>
+              <Select
+                value={formData.schoolId}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, schoolId: value }))
+                }
+              >
+                <SelectTrigger className="rounded-xl">
+                  <SelectValue placeholder="Select school" />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  {schoolsList.map((g) => (
+                    <SelectItem
+                      key={g.value}
+                      value={g.name}
+                      className="font-round"
+                    >
+                      {g.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {role === UserRole.STUDENT && (
+            <div className="space-y-2">
+              <Label htmlFor="activationCode" className="font-round">
+                Activation Code
+              </Label>
               <Input
-                id="schoolCode"
-                name="schoolCode"
-                value={formData.schoolCode}
+                id="activationCode"
+                name="activationCode"
+                value={formData.activationCode}
+                onChange={handleChange}
+                placeholder="Enter your activation code"
+                className="rounded-xl"
+                required
+              />
+              <p className="text-xs text-muted-foreground">
+                Please refer the scratch card behind the book for the activation code.
+              </p>
+            </div>
+          )}
+
+          {role === UserRole.TEACHER && (
+            <div className="space-y-2">
+              <Label htmlFor="activationCode" className="font-round">
+                School Code
+              </Label>
+              <Input
+                id="activationCode"
+                name="activationCode"
+                value={formData.activationCode}
                 onChange={handleChange}
                 placeholder="Enter your school code"
                 className="rounded-xl"
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Please contact your school administrator if you don't have a school code.
+                Please refer school administrator for the school code.
               </p>
             </div>
           )}
-          
+
           {error && (
             <div className="flex items-center gap-2 text-sm text-destructive p-2 rounded-lg bg-destructive/10">
               <AlertCircle className="h-4 w-4" />
               <p>{error}</p>
             </div>
           )}
-          
+
           <DialogFooter className="pt-4">
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className={`w-full rounded-xl ${getRoleColor()} font-bubbly text-white`}
               disabled={loading}
             >
               {loading ? "Signing Up..." : "Create Account"}
             </Button>
           </DialogFooter>
-          
+
           <div className="text-center text-sm text-muted-foreground mt-4">
             Already have an account?{" "}
-            <Button 
-              variant="link" 
+            <Button
+              variant="link"
               className="p-0 h-auto font-medium text-primary"
               onClick={() => {
                 onClose();
-                navigate('/login');
+                navigate("/login");
               }}
             >
               Sign In

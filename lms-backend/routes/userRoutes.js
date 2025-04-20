@@ -5,7 +5,8 @@ const {
   getUserById,
   getCurrentUser,
   updateProfile,
-  changePassword
+  changePassword,
+  deleteUser
 } = require('../controllers/userController');
 const { isAuthenticated, isAdmin } = require('../middleware/auth');
 const upload = require('../middleware/upload');
@@ -22,5 +23,7 @@ router.get('/:id', getUserById);
 router.put('/me', upload.single('avatar'), updateProfile);
 router.put('/:id', isAdmin, upload.single('avatar'), updateProfile);
 router.put('/me/password', changePassword);
+
+router.delete('/:id', isAdmin, deleteUser);
 
 module.exports = router; 

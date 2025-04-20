@@ -9,12 +9,13 @@ import Login from './pages/Login';
 import StudentDashboard from './pages/StudentDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Subjects from './pages/student/Subjects';
-import SubjectDetails from './pages/student/SubjectDetails';
+import SubjectDetails from './pages/student/SubjectDetails.tsx';
 import Assignments from './pages/student/Assignments';
 import StudentProgress from './pages/student/Progress';
 import StudentGames from './pages/student/Games';
 import StudentSettings from './pages/student/Settings';
 import StudentParentalControl from './pages/student/ParentalControl';
+import ResetPassword from './pages/ResetPassword';
 
 // Admin pages
 import Schools from './pages/admin/Schools';
@@ -69,6 +70,8 @@ function App() {
           <Route path="/teacher/calendar" element={<TeacherCalendar />} />
           <Route path="/teacher/planner" element={<TeacherPlanner />} />
           <Route path="/teacher/resources" element={<TeacherResourceHub />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          
           
           <Route path="*" element={<NotFound />} />
         </Routes>

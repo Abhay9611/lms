@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import { Card } from '@/components/ui/card';
-import { BookOpen, Book, Star } from 'lucide-react';
-import AnimatedCharacters from '@/components/animated/AnimatedCharacters';
-import { Progress } from '@/components/ui/progress';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/AuthContext';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import { Card } from "@/components/ui/card";
+import { BookOpen, Book, Star } from "lucide-react";
+import AnimatedCharacters from "@/components/animated/AnimatedCharacters";
+import { Progress } from "@/components/ui/progress";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import axios from "axios";
 
 const Subjects = () => {
   const navigate = useNavigate();
@@ -21,20 +21,21 @@ const Subjects = () => {
       setLoading(true);
       setError(null);
       try {
-        console.log('Student user object:', user);
-        if (!user?.grade?.id && !user?.gradeId) {
-          setError('No grade information found for user.');
+        console.log("Student user object:", user);
+        if (!user?.gradeId) {
+          setError("No grade information found for user.");
           setLoading(false);
           return;
         }
         // Fetch all subjects and filter by gradeId
-        const res = await axios.get('/api/subjects');
-        console.log('Fetched subjects from backend:', res.data);
+        const res = await axios.get("http://localhost:3000/api/subjects");
+        console.log("Fetched subjects from backend:", res.data);
         const gradeId = user.grade?.id || user.gradeId;
         const filtered = res.data.filter((s: any) => s.gradeId === gradeId);
+        console.log(filtered);
         setSubjects(filtered);
       } catch (err: any) {
-        setError(err.message || 'Failed to fetch subjects');
+        setError(err.message || "Failed to fetch subjects");
       } finally {
         setLoading(false);
       }
@@ -53,7 +54,7 @@ const Subjects = () => {
     <DashboardLayout>
       <div className="relative space-y-8">
         <AnimatedCharacters variant="school" density="high" />
-        
+
         <div className="mb-6 relative">
           <h1 className="text-4xl font-bubbly font-bold text-primary flex items-center">
             <BookOpen className="mr-3 h-8 w-8" />
@@ -63,10 +64,10 @@ const Subjects = () => {
             Explore all your fun learning subjects!
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {subjects.map((subject) => (
-            <Card 
+            <Card
               key={subject.id}
               className="rounded-3xl overflow-hidden border-4 border-dashed hover:border-solid transition-all duration-300 hover:scale-[1.02] cursor-pointer flex flex-col"
               onClick={() => navigate(`/student/subjects/${subject.id}`)}
@@ -86,9 +87,11 @@ const Subjects = () => {
                     </div>
                   </div>
                 </div>
-                
-                <p className="text-muted-foreground mb-6">{subject.description}</p>
-                
+
+                <p className="text-muted-foreground mb-6">
+                  {subject.description}
+                </p>
+
                 <div className="mb-4 flex-1">
                   <h3 className="font-bubbly mb-2">Topics:</h3>
                   <ul className="space-y-2">
@@ -99,16 +102,14 @@ const Subjects = () => {
                     </li>
                   </ul>
                 </div>
-                
+
                 <div className="mt-auto">
                   <div className="flex justify-between text-sm text-muted-foreground mb-2">
                     <span>Progress</span>
                     <span>0%</span>
                   </div>
                   <Progress value={0} className="h-3 rounded-full" />
-                  <Button className="w-full mt-4">
-                    Explore Subject
-                  </Button>
+                  <Button className="w-full mt-4">Explore Subject</Button>
                 </div>
               </div>
             </Card>

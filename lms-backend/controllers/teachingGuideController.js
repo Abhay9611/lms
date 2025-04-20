@@ -40,7 +40,7 @@ const getTeachingGuides = async (req, res) => {
       include: [{
         model: Topic,
         as: 'Topic',
-        attributes: ['id', 'title', 'description']
+        attributes: ['id', 'title']
       }]
     });
     res.json(teachingGuides);
@@ -132,10 +132,38 @@ const deleteTeachingGuide = async (req, res) => {
   }
 };
 
+// Upload a PDF file and save its path
+const uploadTeachingGuidePdf = async (req, res) => {
+  try {
+    const { topicId } = req.body;
+
+    // Check if topic exists
+    const topic = await Topic.findByPk(topicId);
+    if (!topic) {
+      return res.status(404).json({ message: 'Topic not found' });
+    }
+
+    // Save the file path in the database
+    const teachingGuide = await TeachingGuide.create({
+      topicId,
+      pdfUrl: req.file.path
+    });
+
+    res.status(201).json({
+      message: 'PDF uploaded and teaching guide created successfully',
+      teachingGuide
+    });
+  } catch (error) {
+    console.error('Upload PDF error:', error);
+    res.status(500).json({ message: 'Error uploading PDF' });
+  }
+};
+
 module.exports = {
   createTeachingGuide,
   getTeachingGuides,
   getTeachingGuide,
   updateTeachingGuide,
-  deleteTeachingGuide
+  deleteTeachingGuide,
+  uploadTeachingGuidePdf
 }; 

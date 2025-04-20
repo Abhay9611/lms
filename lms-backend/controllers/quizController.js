@@ -3,7 +3,7 @@ const { Quiz, Topic, QuizQuestion, QuizOption } = require('../models');
 // Create a new quiz
 const createQuiz = async (req, res) => {
   try {
-    const { topicId, title, description, timeLimit, passingScore } = req.body;
+    const { topicId, title, description, timeLimit, passingScore, question, points, order, option1_text, option1_iscorrect, option1_explanation, option2_text, option2_iscorrect, option2_explanation, option3_text, option3_iscorrect, option3_explanation, option4_text, option4_iscorrect, option4_explanation } = req.body;
 
     // Check if topic exists
     const topic = await Topic.findByPk(topicId);
@@ -17,7 +17,22 @@ const createQuiz = async (req, res) => {
       description,
       timeLimit,
       passingScore,
-      isActive: true
+      isActive: true,
+      question,
+      points,
+      order,
+      option1_text,
+      option1_iscorrect,
+      option1_explanation,
+      option2_text,
+      option2_iscorrect,
+      option2_explanation,
+      option3_text,
+      option3_iscorrect,
+      option3_explanation,
+      option4_text,
+      option4_iscorrect,
+      option4_explanation
     });
 
     res.status(201).json({
