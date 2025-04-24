@@ -71,10 +71,11 @@ export default {
 					darkSlate: '#1e293b',
 					// Kid-friendly colors
 					purple: '#9333EA',
-					pink: '#EC4899',
+					pink: '#91278E',
 					yellow: '#FCD34D',
-					green: '#4ADE80',
-					blue: '#60A5FA',
+					green: '#3AB44A',
+					// blue: '#60A5FA',
+					blue: '#0154A4',
 					red: '#F87171',
 					orange: '#FB923C',
 				}

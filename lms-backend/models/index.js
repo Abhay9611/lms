@@ -39,6 +39,7 @@ const TeachingGuide = require('./teachingGuide')(sequelize, Sequelize.DataTypes)
 const StudentProgress = require('./studentProgress')(sequelize, Sequelize.DataTypes);
 const ContentUpload = require('./contentUpload')(sequelize, Sequelize.DataTypes);
 const ActivationCode = require('./activationCode')(sequelize, Sequelize.DataTypes);
+const MonthlyPlanner = require('./monthlyPlanner')(sequelize, Sequelize.DataTypes);
 // Add models to db object
 db.School = School;
 db.Grade = Grade;
@@ -57,7 +58,7 @@ db.Content = Content;
 db.TeachingGuide = TeachingGuide;
 db.StudentProgress = StudentProgress;
 db.ContentUpload = ContentUpload;
-
+db.MonthlyPlanner = MonthlyPlanner;
 // Define associations in order of dependency
 
 // School & Grade

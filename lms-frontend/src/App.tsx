@@ -26,6 +26,7 @@ import ContentUpload from './pages/admin/ContentUpload';
 import AdminCalendar from './pages/admin/Calendar';
 import AdminPlanner from './pages/admin/Planner';
 import Settings from './pages/admin/Settings';
+import ActivationCodes from './pages/admin/ActivationCodes';
 
 // Teacher pages
 import TeacherDashboard from './pages/TeacherDashboard';
@@ -42,7 +43,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/dashboard" element={<Index />} />
           <Route path="/login" element={<Login />} />
-          
+
           {/* Student Routes */}
           <Route path="/student" element={<StudentDashboard />} />
           <Route path="/student/subjects" element={<Subjects />} />
@@ -52,7 +53,7 @@ function App() {
           <Route path="/student/games" element={<StudentGames />} />
           <Route path="/student/settings" element={<StudentSettings />} />
           <Route path="/student/parental-control" element={<StudentParentalControl />} />
-          
+
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/schools" element={<Schools />} />
@@ -63,7 +64,8 @@ function App() {
           <Route path="/admin/calendar" element={<AdminCalendar />} />
           <Route path="/admin/planner" element={<AdminPlanner />} />
           <Route path="/admin/settings" element={<Settings />} />
-          
+          <Route path="/admin/codes" element={<ActivationCodes />} />
+
           {/* Teacher Routes */}
           <Route path="/teacher" element={<TeacherDashboard />} />
           <Route path="/teacher/grade-selection" element={<TeacherGradeSelection />} />
@@ -71,8 +73,8 @@ function App() {
           <Route path="/teacher/planner" element={<TeacherPlanner />} />
           <Route path="/teacher/resources" element={<TeacherResourceHub />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          
-          
+
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

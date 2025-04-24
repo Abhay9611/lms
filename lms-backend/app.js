@@ -18,7 +18,9 @@ const flashcardRoutes = require('./routes/flashcardRoutes');
 const contentRoutes = require('./routes/contentRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const teachingGuideRoutes = require('./routes/teachingGuideRoutes');
-
+const progressRoutes = require('./routes/progressRoutes');
+const monthlyPlannerRoutes = require('./routes/monthlyPlannerRoutes');
+const activationCodeRoutes = require('./routes/activationCodeRoutes');
 const app = express();
 
 // CORS configuration
@@ -52,7 +54,9 @@ app.use('/api/flashcards', flashcardRoutes);
 app.use('/api/contents', contentRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/teaching-guides', teachingGuideRoutes);
-
+app.use('/api/progress', progressRoutes);
+app.use('/api/monthly-planner', monthlyPlannerRoutes);
+app.use('/api/activation-codes', activationCodeRoutes);
 // Test Route
 app.get('/', (req, res) => {
   res.send('Welcome to Learnify API');

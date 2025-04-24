@@ -9,12 +9,25 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import axios from "axios";
 
+const colors = ['bg-lms-pink', 'bg-lms-green', 'bg-lms-blue', 'bg-lms-purple']
+
+
 const Subjects = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [subjects, setSubjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const calculateProgress = async (userProgress: any, subject: any) => {
+    const topicsRes = await axios.get("http://localhost:3000/api/topics");
+    const topicList = topicsRes.data.filter((topic: any) => topic.subjectId === subject.id);
+    const topicIds = topicList.map((topic: any) => topic.id);
+    const videoCompletions = userProgress.filter((progress: any) => topicIds.includes(progress.topicId) && progress.videoCompleted).length;
+    const quizCompletions = userProgress.filter((progress: any) => topicIds.includes(progress.topicId) && progress.quizCompleted).length;
+    return Math.round((videoCompletions + quizCompletions) * 100 / (topicIds.length * 2));
+  }
+
 
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -28,18 +41,35 @@ const Subjects = () => {
           return;
         }
         // Fetch all subjects and filter by gradeId
+
+        const studentProgressRes = await axios.get("http://localhost:3000/api/progress");
+        const progressData = studentProgressRes.data.filter((progress: any) => user.id == progress.userId);
+
         const res = await axios.get("http://localhost:3000/api/subjects");
         console.log("Fetched subjects from backend:", res.data);
         const gradeId = user.grade?.id || user.gradeId;
         const filtered = res.data.filter((s: any) => s.gradeId === gradeId);
-        console.log(filtered);
-        setSubjects(filtered);
+        const progressList = [];
+        for (const subject of filtered) {
+          const progress = await calculateProgress(progressData, subject);
+          progressList.push(progress);
+        }
+        // Await the resolution of Promise.all
+        const progress = filtered.map((s: any, index: number) => ({
+          ...s,
+          color: colors[index % colors.length],
+          progress: progressList[index]
+        }));
+
+        setSubjects(progress);
       } catch (err: any) {
         setError(err.message || "Failed to fetch subjects");
       } finally {
         setLoading(false);
       }
     };
+
+    // Call the async function
     fetchSubjects();
   }, [user]);
 
@@ -72,18 +102,18 @@ const Subjects = () => {
               className="rounded-3xl overflow-hidden border-4 border-dashed hover:border-solid transition-all duration-300 hover:scale-[1.02] cursor-pointer flex flex-col"
               onClick={() => navigate(`/student/subjects/${subject.id}`)}
             >
-              <div className="bg-lms-blue h-6 w-full"></div>
+              <div className={`${subject.color} h-6 w-full`}></div>
               <div className="p-6 flex-1 flex flex-col">
                 <div className="flex justify-between mb-4">
                   <div className="flex items-center">
-                    <div className="bg-lms-blue p-3 rounded-full mr-3">
+                    <div className={`${subject.color} p-3 rounded-full mr-3`}>
                       <BookOpen className="h-6 w-6" />
                     </div>
                     <h2 className="text-2xl font-bubbly">{subject.name}</h2>
                   </div>
                   <div className="text-lms-blue font-medium flex items-center">
                     <div className="bg-lms-yellow/10 text-lms-yellow px-3 py-1 rounded-full text-sm">
-                      {/* Progress placeholder */} 0% Complete
+                      {subject.progress}% Complete
                     </div>
                   </div>
                 </div>
@@ -97,7 +127,7 @@ const Subjects = () => {
                   <ul className="space-y-2">
                     {/* Topics placeholder, can be fetched in detail page */}
                     <li className="flex items-center">
-                      <div className="bg-lms-blue w-2 h-2 rounded-full mr-2"></div>
+                      <div className={`${subject.color} w-2 h-2 rounded-full mr-2`}></div>
                       <span>See details</span>
                     </li>
                   </ul>
@@ -106,9 +136,9 @@ const Subjects = () => {
                 <div className="mt-auto">
                   <div className="flex justify-between text-sm text-muted-foreground mb-2">
                     <span>Progress</span>
-                    <span>0%</span>
+                    <span>{subject.progress}%</span>
                   </div>
-                  <Progress value={0} className="h-3 rounded-full" />
+                  <Progress value={subject.progress} className="h-3 rounded-full" />
                   <Button className="w-full mt-4">Explore Subject</Button>
                 </div>
               </div>

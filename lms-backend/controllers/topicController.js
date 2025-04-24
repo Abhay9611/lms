@@ -1,4 +1,4 @@
-const { Topic } = require('../models');
+const { Topic, StudentProgress } = require('../models');
 
 // Create a new topic
 const createTopic = async (req, res) => {
@@ -94,10 +94,52 @@ const deleteTopic = async (req, res) => {
   }
 };
 
+const updateTopicProgress = async (req, res) => {
+  try {
+    const { completedItem } = req.body;
+
+    const existingProgress = await StudentProgress.findOne({
+      where: {
+        userId: req.user.id,
+        topicId: req.params.id
+      }
+    });
+    if(!existingProgress){
+      await StudentProgress.create({
+        userId: req.user.id,
+        topicId: req.params.id,
+        videoCompleted: false,
+        quizCompleted: false
+      });
+    }
+    const studentProgress = await StudentProgress.findOne({
+      where: {
+        userId: req.user.id,
+        topicId: req.params.id
+      }
+    });
+
+    if(completedItem == "video"){
+      studentProgress.videoCompleted = true;
+    }
+    if(completedItem == "quiz"){
+      studentProgress.quizCompleted = true;
+    }
+
+    await studentProgress.save();
+    res.json({ message: 'Topic progress updated successfully' });
+  } catch (error) {
+    console.error('Update topic progress error:', error);
+    res.status(500).json({ message: 'Error updating topic progress' });
+  }
+};
+
+
 module.exports = {
   createTopic,
   getTopics,
   getTopic,
   updateTopic,
-  deleteTopic
+  deleteTopic,
+  updateTopicProgress
 }; 

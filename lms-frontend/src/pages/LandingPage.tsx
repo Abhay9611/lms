@@ -18,6 +18,9 @@ import {
   Lightbulb,
   Building,
   MessageSquare,
+  Phone,
+  Mail,
+  MapPin,
 } from "lucide-react";
 import { UserRole } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
@@ -198,7 +201,7 @@ const LandingPage = () => {
       </section>
 
       {/* About Section */}
-      <section className="py-16 px-4 bg-primary/5 backdrop-blur-sm" id="about">
+      <section className="py-16 px-2 bg-primary/5 backdrop-blur-sm" id="about">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -216,28 +219,51 @@ const LandingPage = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+            
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="grid grid-cols-1 m-24 items-center"
+            >
+              <Card className="border-4 border-lms-pink/30 rounded-3xl text-center">
+                <motion.div
+                  whileHover={{ y: -5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <img src="/mission.jpg" alt="About Aspiring Gems" className="w-full h-full object-cover rounded-3xl" />
+                </motion.div>
+              </Card>
+
+             
+            </motion.div>
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
+<h1 className="text-4xl font-bubbly font-bold mb-4">Empowering young minds together.</h1>
+<p className="text-lg font-bold font-bubbly mb-4">
+We are a dedicated team of educators and designers committed to crafting engaging educational content for preschoolers. Our curriculum aligns with national standards, preparing children for academic success while nurturing their love for learning.
+</p>
               <h3 className="text-2xl font-bubbly font-bold mb-4">
                 Our Mission
               </h3>
               <p className="mb-4 text-muted-foreground">
-                At Aspiring Gems, we believe every child deserves access to
-                quality education that sparks curiosity, fosters creativity, and
-                builds confidence. Our mission is to create educational
-                resources that make learning a joyful experience for children
-                worldwide.
+                We strive to provide high-quality educational content that engages and educates preschoolers. 
+                Our mission is to support children's holistic growth by offering comprehensive materials that
+                 prepare them for academic success and foster a love for learning.
               </p>
-              <p className="mb-6 text-muted-foreground">
-                Founded in 2020 by a team of passionate educators and child
-                development experts, we've grown to serve over 500 schools and
-                countless families with our carefully crafted learning materials
-                and digital platform.
+              <h3 className="text-2xl font-bubbly font-bold mb-4">
+                Unique Approach
+              </h3>
+              <p className="mb-4 text-muted-foreground">
+              We meticulously design our curriculum and books with input from education experts, ensuring they align with national standards. 
+              Through captivating visuals and comprehensive content, we strive to make learning enjoyable and effective for every child.
               </p>
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="flex items-center">
@@ -257,67 +283,7 @@ const LandingPage = () => {
                   <span>Continuous innovation</span>
                 </div>
               </div>
-              <Button className="rounded-xl">Learn More About Us</Button>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="grid grid-cols-2 gap-6"
-            >
-              <Card className="border-4 border-lms-pink/30 rounded-3xl p-5 text-center">
-                <motion.div
-                  whileHover={{ y: -5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <Trophy className="h-12 w-12 text-lms-pink mx-auto mb-4" />
-                  <h4 className="font-bubbly font-bold">10+</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Industry Awards
-                  </p>
-                </motion.div>
-              </Card>
-
-              <Card className="border-4 border-lms-blue/30 rounded-3xl p-5 text-center">
-                <motion.div
-                  whileHover={{ y: -5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <Building className="h-12 w-12 text-lms-blue mx-auto mb-4" />
-                  <h4 className="font-bubbly font-bold">500+</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Partner Schools
-                  </p>
-                </motion.div>
-              </Card>
-
-              <Card className="border-4 border-lms-green/30 rounded-3xl p-5 text-center">
-                <motion.div
-                  whileHover={{ y: -5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <BookOpen className="h-12 w-12 text-lms-green mx-auto mb-4" />
-                  <h4 className="font-bubbly font-bold">1000+</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Learning Resources
-                  </p>
-                </motion.div>
-              </Card>
-
-              <Card className="border-4 border-lms-yellow/30 rounded-3xl p-5 text-center">
-                <motion.div
-                  whileHover={{ y: -5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <Heart className="h-12 w-12 text-lms-yellow mx-auto mb-4" />
-                  <h4 className="font-bubbly font-bold">100K+</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Happy Students
-                  </p>
-                </motion.div>
-              </Card>
+              <Button className="rounded-xl" onClick={() => window.open("https://www.aspiringgems.com/", "_blank")}>Learn More About Us</Button>
             </motion.div>
           </div>
 
@@ -505,105 +471,161 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 bg-sidebar text-sidebar-foreground">
+      <footer className="py-8 px-4 bg-[url(/background.jpg)] text-sidebar-foreground">
         <div className="max-w-6xl mx-auto flex flex-wrap justify-between">
           <div className="w-full md:w-auto mb-6 md:mb-0">
             <div className="flex items-center mb-4">
-              <BookOpen className="h-6 w-6 text-sidebar-primary" />
-              <span className="ml-2 font-bold text-lg font-bubbly">
-                Aspiring Gems
-              </span>
+            <img
+            src="/logo.png"
+            alt="Aspiring Gems Logo"
+            className="h-24 w-64 md:h-24 md:w-64 object-contain"
+          />
+              
             </div>
-            <p className="text-sm opacity-80 max-w-xs">
-              Making learning fun and accessible for preschoolers around the
-              world.
+            <p className="text-sm opacity-80 font-bold text-black max-w-xs">
+            Discover a wealth of engaging and educational content designed to nurture young minds and support early learning journeys.
             </p>
           </div>
 
           <div className="w-full md:w-auto grid grid-cols-2 md:grid-cols-3 gap-8">
             <div>
-              <h4 className="font-bubbly font-bold mb-3">Platform</h4>
+              <h4 className="font-bubbly font-bold text-black underline mb-3">Quick Links</h4>
               <ul className="space-y-2">
                 <li>
                   <Button
+                    onClick={() => window.open("https://www.aspiringgems.com/about-us/", "_blank")}
                     variant="link"
-                    className="p-0 h-auto text-sidebar-foreground/80 hover:text-sidebar-foreground"
+                    className="p-0 h-auto text-black font-bold"
                   >
-                    For Students
+                    About Us
                   </Button>
                 </li>
                 <li>
                   <Button
+                    onClick={() => window.open("https://www.aspiringgems.com/terms-and-conditions-2/", "_blank")}
                     variant="link"
-                    className="p-0 h-auto text-sidebar-foreground/80 hover:text-sidebar-foreground"
+                    className="p-0 h-auto text-black font-bold"
                   >
-                    For Teachers
+                    Terms & Conditions
                   </Button>
                 </li>
                 <li>
                   <Button
+                    onClick={() => window.open("https://www.aspiringgems.com/return-and-refund-policy/", "_blank")}
                     variant="link"
-                    className="p-0 h-auto text-sidebar-foreground/80 hover:text-sidebar-foreground"
+                    className="p-0 h-auto text-black font-bold"
                   >
-                    For Admins
+                    Return and Refund Policy
                   </Button>
                 </li>
                 <li>
                   <Button
+                    onClick={() => window.open("https://www.aspiringgems.com/privacy-policy-2/", "_blank")}
                     variant="link"
-                    className="p-0 h-auto text-sidebar-foreground/80 hover:text-sidebar-foreground"
-                  >
-                    For Parents
-                  </Button>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bubbly font-bold mb-3">Resources</h4>
-              <ul className="space-y-2">
-                <li>
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto text-sidebar-foreground/80 hover:text-sidebar-foreground"
-                  >
-                    Learning Materials
-                  </Button>
-                </li>
-                <li>
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto text-sidebar-foreground/80 hover:text-sidebar-foreground"
-                  >
-                    Activity Guides
-                  </Button>
-                </li>
-                <li>
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto text-sidebar-foreground/80 hover:text-sidebar-foreground"
-                  >
-                    Help Center
-                  </Button>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bubbly font-bold mb-3">Legal</h4>
-              <ul className="space-y-2">
-                <li>
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto text-sidebar-foreground/80 hover:text-sidebar-foreground"
+                    className="p-0 h-auto text-black font-bold"
                   >
                     Privacy Policy
                   </Button>
                 </li>
                 <li>
                   <Button
+                    onClick={() => window.open("https://www.aspiringgems.com/shipping-policy/", "_blank")}
                     variant="link"
-                    className="p-0 h-auto text-sidebar-foreground/80 hover:text-sidebar-foreground"
+                    className="p-0 h-auto text-black font-bold"
                   >
-                    Terms of Service
+                    Shipping Policy
+                  </Button>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bubbly font-bold text-black underline mb-3">Categories</h4>
+              <ul className="space-y-2">
+                <li>
+                  <Button
+                    onClick={() => window.open("https://www.aspiringgems.com/product-category/ukg/", "_blank")}
+                    variant="link"
+                    className="p-0 h-auto text-black font-bold"
+                  >
+                    UKG
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    onClick={() => window.open("https://www.aspiringgems.com/product-category/lkg/", "_blank")}
+                    variant="link"
+                    className="p-0 h-auto text-black font-bold"
+                  >
+                    LKG
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    onClick={() => window.open("https://www.aspiringgems.com/product-category/nursery/", "_blank")}
+                    variant="link"
+                    className="p-0 h-auto text-black font-bold"
+                  >
+                    Nursery
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    onClick={() => window.open("https://www.aspiringgems.com/product-category/playgroup/", "_blank")}
+                    variant="link"
+                    className="p-0 h-auto text-black font-bold"
+                  >
+                    Play Group
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    onClick={() => window.open("https://www.aspiringgems.com/product-category/teaching-aids/", "_blank")}
+                    variant="link"
+                    className="p-0 h-auto text-black font-bold"
+                  >
+                    Teaching Aids
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    onClick={() => window.open("https://www.aspiringgems.com/product-category/play-equipment/", "_blank")}
+                    variant="link"
+                    className="p-0 h-auto text-black font-bold"
+                  >
+                    Play Equipment
+                  </Button>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bubbly font-bold text-black underline mb-3">Contact Us</h4>
+              <ul className="space-y-2">
+                <li>
+                  <Button
+                    onClick={() => window.open("tel:+917760883883", "_blank")}
+                    variant="link"
+                    className="p-0 h-auto text-black font-bold"
+                  >
+                    <Phone className="h-4 w-4" /> +91 7760883883
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    onClick={() => window.open("mailto:info@aspiringgems.com", "_blank")}
+                    variant="link"
+                    className="p-0 h-auto text-black font-bold"
+                  >
+                    <Mail className="h-4 w-4" /> info@aspiringgems.com
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    onClick={() => window.open("https://www.google.com/maps/place/Aspiring+Gems/@12.951392,77.629828,15z/data=!4m6!3m5!1s0x3bae1670c9b44e8f:0x2d41584385da5a0!8m2!3d12.951392!4d77.629828!16s%2Fg%2F11c48y0x0y?hl=en", "_blank")}
+                    variant="link"
+                    className="p-0 h-auto text-left text-black font-bold"
+                  >
+                    <MapPin className="h-4 w-4" />
+                    Ground Floor, 14th Cross,<br />Choodenapura, Kengeri,<br />Bengaluru - 560059
                   </Button>
                 </li>
               </ul>

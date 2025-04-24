@@ -17,6 +17,7 @@ interface User {
     id: number;
     name: string;
   };
+  gradeId: number;
 }
 
 interface AuthContextType {

@@ -1,75 +1,129 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ClipboardList, Plus, Clock, Calendar, CheckCircle, X, Book, FileText, School } from 'lucide-react';
+import { ClipboardList, Plus, Clock, Calendar, CheckCircle, X, Book, FileText, School, Trash } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import AnimatedCharacters from '@/components/animated/AnimatedCharacters';
 import { useToast } from '@/hooks/use-toast';
+import axios from 'axios';
 
 const AdminPlanner = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('content');
-  const [newTask, setNewTask] = useState('');
-  const [selectedGrade, setSelectedGrade] = useState<string>('all');
-  const [selectedSubject, setSelectedSubject] = useState<string>('all');
-  
-  // Mock data for tasks
-  const [tasks, setTasks] = useState([
-    { id: 1, task: 'Review new Math content for Grade 3', completed: false, category: 'content', grade: 'grade3', subject: 'math' },
-    { id: 2, task: 'Prepare Q2 content calendar', completed: true, category: 'content', grade: 'all', subject: 'all' },
-    { id: 3, task: 'Update teacher resources for EVS', completed: false, category: 'resources', grade: 'grade1', subject: 'evs' },
-    { id: 4, task: 'Check student progress reports', completed: false, category: 'admin', grade: 'grade2', subject: 'english' },
-    { id: 5, task: 'Schedule new content uploads', completed: false, category: 'admin', grade: 'all', subject: 'all' }
-  ]);
-  
-  const handleAddTask = () => {
-    if (newTask.trim()) {
-      const newTaskObj = {
-        id: Date.now(),
-        task: newTask,
-        completed: false,
-        category: activeTab,
-        grade: selectedGrade,
-        subject: selectedSubject
+  const [gradesList, setGradesList] = useState([]);
+  const [selectedGrade, setSelectedGrade] = useState('');
+  const [plannerId, setPlannerId] = useState();
+
+
+  const [subjects, setSubjects] = useState<any[]>([]);
+  const [plannerList, setPlannerList] = useState([]);
+
+
+  useEffect(() => {
+    const fetchGrades = async () => {
+      const response = await axios.get("http://localhost:3000/api/grades");
+      setGradesList(response.data);
+    };
+    fetchGrades();
+  }, []);
+
+
+
+  useEffect(() => {
+    if (selectedGrade) {
+      const fetchPlanner = async () => {
+        const response = await axios.get("http://localhost:3000/api/monthly-planner");
+        const filteredPlanner = response.data.filter(planner => planner.gradeId === selectedGrade);
+        setPlannerList(filteredPlanner.map(planner => ({ id: planner.id, pdfName: planner.pdfUrl })));
       };
-      setTasks([...tasks, newTaskObj]);
-      setNewTask('');
-      toast({
-        title: "Task added",
-        description: "New task has been added to your planner."
+      fetchPlanner();
+    }
+  }, [selectedGrade]);
+
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      const subjects = await axios.get('http://localhost:3000/api/subjects');
+      const filteredSubjects = subjects.data.filter((subject: any) => subject.gradeId === selectedGrade);
+      setSubjects(filteredSubjects);
+    };
+    fetchSubjects();
+  }, [selectedGrade]);
+
+
+  const handleChange = (value: any) => {
+    setPlannerId(value);
+  };
+
+  const handleFileUpload = async (file: File) => {
+    const fileFormData = new FormData();
+    fileFormData.append('pdf', file);
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/monthly-planner/upload', fileFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      toast({ title: 'Error', description: 'Failed to upload file.' });
+      return null;
     }
   };
-  
-  const toggleTaskCompletion = (id: number) => {
-    setTasks(tasks.map(task => 
-      task.id === id ? { ...task, completed: !task.completed } : task
-    ));
+
+
+  const handleAddMaterial = async () => {
+    const materialFile: any = plannerId;
+    if (!(materialFile instanceof File)) return;
+    try {
+      const uploadedMaterial = await handleFileUpload(materialFile);
+      if (!uploadedMaterial) return;
+
+      const newMaterial = {
+        gradeId: selectedGrade,
+        pdfUrl: uploadedMaterial.file.path.replace(/^uploads\\/, ''),
+      };
+
+      const newPlanner = await axios.post('http://localhost:3000/api/monthly-planner', newMaterial);
+
+      setPlannerList((prev) => [...prev, { id: newPlanner.data.id, pdfName: newMaterial.pdfUrl }]);
+
+    } catch (error) {
+      console.log(error);
+      toast({ title: 'Error', description: 'Failed to add material.' });
+    }
   };
-  
-  const deleteTask = (id: number) => {
-    setTasks(tasks.filter(task => task.id !== id));
-    toast({
-      title: "Task removed",
-      description: "Task has been removed from your planner."
-    });
+
+
+
+
+
+
+  const deletePlanner = async (id: number) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/monthly-planner/${id}`);
+      setPlannerList(plannerList.filter(planner => planner.id !== id));
+    } catch (error) {
+      console.log(error);
+      toast({ title: 'Error', description: 'Failed to delete planner.' });
+    }
   };
-  
-  const filteredTasks = tasks.filter(task => task.category === activeTab);
-  
+
   return (
     <DashboardLayout>
       <div className="space-y-8 relative">
         <AnimatedCharacters variant="space" density="low" />
-        
+
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-4xl font-bubbly font-bold text-primary flex items-center">
@@ -79,127 +133,74 @@ const AdminPlanner = () => {
             <p className="text-lg text-muted-foreground">Organize your tasks and manage content planning</p>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="border-4 border-lms-purple/30 rounded-3xl shadow-lg overflow-hidden lg:col-span-2">
             <CardHeader className="bg-lms-purple/10">
-              <CardTitle>My Tasks</CardTitle>
+              <CardTitle>Resources</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid grid-cols-3 mb-6">
-                  <TabsTrigger value="content" className="rounded-l-md">Content</TabsTrigger>
-                  <TabsTrigger value="resources">Resources</TabsTrigger>
-                  <TabsTrigger value="admin" className="rounded-r-md">Admin</TabsTrigger>
-                </TabsList>
-                
-                <div>
-                  <div className="flex gap-3 mb-4">
-                    <Select value={selectedGrade} onValueChange={setSelectedGrade}>
-                      <SelectTrigger className="w-[180px] bg-white">
-                        <SelectValue placeholder="Filter by Grade" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Grades</SelectItem>
-                        <SelectItem value="preschool">Pre-School</SelectItem>
-                        <SelectItem value="grade1">Grade 1</SelectItem>
-                        <SelectItem value="grade2">Grade 2</SelectItem>
-                        <SelectItem value="grade3">Grade 3</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    
-                    <Select value={selectedSubject} onValueChange={setSelectedSubject}>
-                      <SelectTrigger className="w-[180px] bg-white">
-                        <SelectValue placeholder="Filter by Subject" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Subjects</SelectItem>
-                        <SelectItem value="english">English</SelectItem>
-                        <SelectItem value="math">Math</SelectItem>
-                        <SelectItem value="evs">EVS</SelectItem>
-                        <SelectItem value="stories">Stories</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    {filteredTasks.length > 0 ? (
-                      filteredTasks.map(task => (
-                        <div 
-                          key={task.id} 
-                          className="flex items-center justify-between p-4 bg-white rounded-xl border transition-all hover:shadow-md"
-                        >
-                          <div className="flex items-start space-x-3">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className={`rounded-full ${task.completed ? 'text-lms-green' : 'text-muted-foreground'}`}
-                              onClick={() => toggleTaskCompletion(task.id)}
-                            >
-                              {task.completed ? <CheckCircle className="h-5 w-5 fill-lms-green" /> : <Circle className="h-5 w-5" />}
-                            </Button>
-                            <div>
-                              <p className={`${task.completed ? 'line-through text-muted-foreground' : ''}`}>
-                                {task.task}
-                              </p>
-                              <div className="flex space-x-2 mt-1">
-                                {task.grade !== 'all' && (
-                                  <Badge variant="outline" className="text-xs bg-lms-blue/10 text-lms-blue">
-                                    {task.grade === 'preschool' ? 'Pre-School' : task.grade.replace('grade', 'Grade ')}
-                                  </Badge>
-                                )}
-                                {task.subject !== 'all' && (
-                                  <Badge variant="outline" className="text-xs bg-lms-green/10 text-lms-green">
-                                    {task.subject.charAt(0).toUpperCase() + task.subject.slice(1)}
-                                  </Badge>
-                                )}
-                                {task.category === 'content' && (
-                                  <Badge variant="outline" className="text-xs bg-lms-purple/10 text-lms-purple">
-                                    Content
-                                  </Badge>
-                                )}
-                                {task.category === 'resources' && (
-                                  <Badge variant="outline" className="text-xs bg-lms-yellow/10 text-lms-yellow">
-                                    Resources
-                                  </Badge>
-                                )}
-                                {task.category === 'admin' && (
-                                  <Badge variant="outline" className="text-xs bg-lms-red/10 text-lms-red">
-                                    Admin
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="text-muted-foreground hover:text-destructive"
-                            onClick={() => deleteTask(task.id)}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-center p-6 text-muted-foreground">
-                        <ClipboardList className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                        <p>No tasks found for this category</p>
-                      </div>
-                    )}
-                  </div>
+
+
+              <div>
+                <div className="flex gap-3 mb-4">
+                  <Select value={selectedGrade} onValueChange={setSelectedGrade}>
+                    <SelectTrigger className="w-[180px] bg-white">
+                      <SelectValue placeholder="Select Grade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {gradesList.map((grade) => (
+                        <SelectItem key={grade.id} value={grade.id}>{grade.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+
                 </div>
-              </Tabs>
-              
+
+                <div className="space-y-4">
+                  {plannerList.length > 0 ? (
+                    plannerList.map(planner => (
+                      <div
+                        key={planner.id}
+                        className="flex items-center justify-between p-4 bg-white rounded-xl border transition-all hover:shadow-md"
+                      >
+                        <div className="flex items-start space-x-3">
+                          <FileText className="h-5 w-5" />
+                          <div>
+                            <p className="font-round">
+                              {planner.pdfName}
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-muted-foreground hover:text-destructive"
+                          onClick={() => deletePlanner(planner.id)}
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center p-6 text-muted-foreground">
+                      <ClipboardList className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                      <p>{selectedGrade ? "No planners found for this grade" : "No grade selected"}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+
               <div className="mt-6 pt-6 border-t">
                 <div className="flex gap-3">
                   <Input
-                    placeholder="Add a new task..."
-                    value={newTask}
-                    onChange={(e) => setNewTask(e.target.value)}
-                    className="flex-1 bg-white"
+                    type="file"
+                    className="mr-2"
+                    onChange={(e) => handleChange(e.target.files?.[0])}
                   />
-                  <Button onClick={handleAddTask} className="bg-lms-purple hover:bg-lms-purple/80">
+                  <Button onClick={handleAddMaterial} className="bg-lms-purple hover:bg-lms-purple/80">
                     <Plus className="h-4 w-4" />
                     Add
                   </Button>
@@ -207,7 +208,7 @@ const AdminPlanner = () => {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="border-4 border-lms-blue/30 rounded-3xl shadow-lg overflow-hidden">
             <CardHeader className="bg-lms-blue/10">
               <CardTitle>Content Calendar</CardTitle>
@@ -265,7 +266,7 @@ const AdminPlanner = () => {
                   </div>
                 ))}
               </div>
-              
+
               <Button variant="outline" className="w-full">
                 <Plus className="mr-2 h-4 w-4" />
                 Schedule New Release
@@ -273,7 +274,7 @@ const AdminPlanner = () => {
             </CardContent>
           </Card>
         </div>
-        
+
         <Card className="border-4 border-lms-green/30 rounded-3xl shadow-lg overflow-hidden">
           <CardHeader className="bg-lms-green/10">
             <CardTitle>Content Production Schedule</CardTitle>
@@ -294,8 +295,8 @@ const AdminPlanner = () => {
                     <h3 className="font-bold text-lg">{section.title}</h3>
                     <Badge className={
                       section.status === 'In Progress' ? 'bg-lms-blue' :
-                      section.status === 'Active' ? 'bg-lms-yellow' :
-                      section.status === 'Pending' ? 'bg-lms-purple' : 'bg-lms-green'
+                        section.status === 'Active' ? 'bg-lms-yellow' :
+                          section.status === 'Pending' ? 'bg-lms-purple' : 'bg-lms-green'
                     }>
                       {section.status}
                     </Badge>

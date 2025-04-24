@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress as ProgressBar } from '@/components/ui/progress';
@@ -8,12 +8,16 @@ import AnimatedCharacters from '@/components/animated/AnimatedCharacters';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
+import axios from 'axios';
+import { useAuth } from '@/contexts/AuthContext';
+
+const colors = ['bg-lms-pink', 'bg-lms-green', 'bg-lms-blue', 'bg-lms-purple']
 
 // Preschool-specific subjects with progress data
-const subjectsProgress = [
-  { 
-    id: 1, 
-    name: 'English Rhymes', 
+const xsubjectsProgress = [
+  {
+    id: 1,
+    name: 'English Rhymes',
     progress: 65,
     topics: 5,
     completed: 3,
@@ -21,9 +25,9 @@ const subjectsProgress = [
     textColor: 'text-lms-pink',
     icon: <BookOpen className="h-5 w-5" />
   },
-  { 
-    id: 2, 
-    name: 'EVS', 
+  {
+    id: 2,
+    name: 'EVS',
     progress: 40,
     topics: 5,
     completed: 2,
@@ -31,9 +35,9 @@ const subjectsProgress = [
     textColor: 'text-lms-green',
     icon: <Star className="h-5 w-5" />
   },
-  { 
-    id: 3, 
-    name: 'Maths', 
+  {
+    id: 3,
+    name: 'Maths',
     progress: 30,
     topics: 5,
     completed: 1.5,
@@ -41,9 +45,9 @@ const subjectsProgress = [
     textColor: 'text-lms-blue',
     icon: <Clock className="h-5 w-5" />
   },
-  { 
-    id: 4, 
-    name: 'Story Time', 
+  {
+    id: 4,
+    name: 'Story Time',
     progress: 50,
     topics: 5,
     completed: 2.5,
@@ -123,13 +127,91 @@ const achievements = [
 
 const StudentProgress = () => {
   const navigate = useNavigate();
-  const totalProgress = Math.round(subjectsProgress.reduce((acc, subject) => acc + subject.progress, 0) / subjectsProgress.length);
-  
+  const { user } = useAuth();
+  const [subjects, setSubjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState<any[]>([]);
+  const [subjectsProgress, setSubjectsProgress] = useState<any[]>([]);
+  const [totalProgress, setTotalProgress] = useState(0);
+
+
+  const calculateProgress = async (userProgress: any, subject: any) => {
+    const topicsRes = await axios.get("http://localhost:3000/api/topics");
+    const topicList = topicsRes.data.filter((topic: any) => topic.subjectId === subject.id);
+    const topicIds = topicList.map((topic: any) => topic.id);
+    const videoCompletions = userProgress.filter((progress: any) => topicIds.includes(progress.topicId) && progress.videoCompleted).length;
+    const quizCompletions = userProgress.filter((progress: any) => topicIds.includes(progress.topicId) && progress.quizCompleted).length;
+    return Math.round((videoCompletions + quizCompletions) * 100 / (topicIds.length * 2));
+  }
+
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        console.log("Student user object:", user);
+        if (!user?.gradeId) {
+          setError("No grade information found for user.");
+          setLoading(false);
+          return;
+        }
+        // Fetch all subjects and filter by gradeId
+        const subjects = await axios.get("http://localhost:3000/api/subjects");
+        const gradeSubjects = subjects.data.filter((s: any) => s.gradeId === user.gradeId)
+
+        const studentProgressRes = await axios.get("http://localhost:3000/api/progress");
+        const progressData = studentProgressRes.data.filter((progress: any) => user.id == progress.userId);
+
+        //TODO: Recent activities
+
+        const grade = await axios.get("http://localhost:3000/api/grades");
+        const user_grade = grade.data.filter((s: any) => s.id === user.gradeId)[0].name;
+
+        let completed = 0;
+        let total = 0;
+        const progressList = [];
+        for (const subject of gradeSubjects) {
+          const progress = await calculateProgress(progressData, subject);
+          completed += progress;
+          total += 100;
+          progressList.push(progress);
+        }
+
+        const subjectCount = gradeSubjects.length;
+
+        const progress = gradeSubjects.map((subject, index) => ({
+          id: subject.id,
+          name: subject.name,
+          color: colors[index % colors.length],
+          progress: progressList[index]
+        }))
+
+        setTotalProgress(Math.round(completed / total * 100));
+        setSubjectsProgress(progress);
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch subjects");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSubjects();
+  }, [user]);
+
+  if (loading) {
+    return <div className="p-8 text-center">Loading subjects...</div>;
+  }
+  if (error) {
+    return <div className="p-8 text-center text-red-500">{error}</div>;
+  }
+
+
   return (
     <DashboardLayout>
       <div className="relative space-y-8">
         <AnimatedCharacters variant="minimal" density="medium" />
-        
+
         <div className="mb-6 relative">
           <h1 className="text-4xl font-bubbly font-bold text-primary flex items-center">
             <BarChart3 className="mr-3 h-8 w-8" />
@@ -139,7 +221,7 @@ const StudentProgress = () => {
             See how well you're doing with your learning!
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="border-4 border-primary/30 rounded-3xl shadow-lg lg:col-span-2">
             <CardHeader className="bg-primary/10">
@@ -153,21 +235,21 @@ const StudentProgress = () => {
                       <div className="text-4xl font-bubbly font-bold">{totalProgress}%</div>
                     </div>
                     <svg className="w-full h-full" viewBox="0 0 100 100">
-                      <circle 
-                        cx="50" cy="50" r="40" 
-                        fill="none" 
-                        stroke="#f1f1f1" 
-                        strokeWidth="10" 
+                      <circle
+                        cx="50" cy="50" r="40"
+                        fill="none"
+                        stroke="#f1f1f1"
+                        strokeWidth="10"
                       />
-                      <circle 
-                        cx="50" cy="50" r="40" 
-                        fill="none" 
-                        stroke="hsl(var(--primary))" 
-                        strokeWidth="10" 
+                      <circle
+                        cx="50" cy="50" r="40"
+                        fill="none"
+                        stroke="hsl(var(--primary))"
+                        strokeWidth="10"
                         strokeDasharray={`${totalProgress * 2.51} 251`}
-                        strokeDashoffset="0" 
-                        strokeLinecap="round" 
-                        transform="rotate(-90 50 50)" 
+                        strokeDashoffset="0"
+                        strokeLinecap="round"
+                        transform="rotate(-90 50 50)"
                       />
                     </svg>
                   </div>
@@ -176,11 +258,10 @@ const StudentProgress = () => {
                     Keep up the good work! You're doing great!
                   </p>
                 </div>
-                
                 <div className="space-y-4">
                   {subjectsProgress.map((subject) => (
-                    <div 
-                      key={subject.id} 
+                    <div
+                      key={subject.id}
                       className="p-4 bg-white rounded-xl border-2 border-dashed hover:border-solid cursor-pointer transition-all duration-200"
                       onClick={() => navigate(`/student/subjects/${subject.id}`)}
                     >
@@ -193,20 +274,18 @@ const StudentProgress = () => {
                         </div>
                         <span className="text-sm font-medium">{subject.progress}%</span>
                       </div>
-                      <ProgressBar 
-                        value={subject.progress} 
+                      <ProgressBar
+                        value={subject.progress}
                         className="h-2.5 rounded-full"
                       />
-                      <div className="mt-2 text-xs text-muted-foreground">
-                        {subject.completed} of {subject.topics} topics completed
-                      </div>
+
                     </div>
                   ))}
                 </div>
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="border-4 border-secondary/30 rounded-3xl shadow-lg">
             <CardHeader className="bg-secondary/10">
               <CardTitle className="text-xl font-bubbly">Recent Activities</CardTitle>
@@ -227,7 +306,7 @@ const StudentProgress = () => {
                     </div>
                   </div>
                 ))}
-                
+
                 <Button variant="outline" size="sm" className="w-full">
                   View More Activities
                 </Button>
@@ -235,106 +314,6 @@ const StudentProgress = () => {
             </CardContent>
           </Card>
         </div>
-        
-        <Card className="border-4 border-accent/30 rounded-3xl shadow-lg overflow-hidden">
-          <CardHeader className="bg-accent/10">
-            <CardTitle className="text-xl font-bubbly">My Achievements</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {achievements.map((achievement) => (
-                <div 
-                  key={achievement.id} 
-                  className="flex flex-col items-center text-center p-4 bg-white rounded-2xl border-2 border-dashed hover:border-solid hover:shadow-lg transition-all duration-300"
-                >
-                  <div className={`${achievement.color} p-3 rounded-full mb-3 animate-pulse`}>
-                    {achievement.icon}
-                  </div>
-                  <h3 className="font-bold font-bubbly text-lg">{achievement.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{achievement.description}</p>
-                  <span className="text-xs text-muted-foreground mt-2">
-                    Earned on {new Date(achievement.date).toLocaleDateString()}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="border-4 border-lms-purple/30 rounded-3xl shadow-lg overflow-hidden mb-8">
-          <CardHeader className="bg-lms-purple/10">
-            <CardTitle className="text-xl font-bubbly">Learning Milestones</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="relative">
-              <div className="absolute top-0 bottom-0 left-7 w-1 bg-muted-foreground/20"></div>
-              
-              <div className="space-y-8">
-                {[
-                  { 
-                    title: "Learning to Count", 
-                    date: "March 15, 2025", 
-                    description: "Completed counting 1 to 10 and recognizing numbers", 
-                    status: "completed",
-                    icon: <Clock className="h-6 w-6" />
-                  },
-                  { 
-                    title: "English Rhymes", 
-                    date: "April 5, 2025", 
-                    description: "Learned 3 popular English rhymes with actions", 
-                    status: "completed",
-                    icon: <BookOpen className="h-6 w-6" />
-                  },
-                  { 
-                    title: "Basic Shapes", 
-                    date: "April 20, 2025", 
-                    description: "Learn to recognize and draw basic shapes", 
-                    status: "in-progress",
-                    icon: <Star className="h-6 w-6" />
-                  },
-                  { 
-                    title: "Story Comprehension", 
-                    date: "May 10, 2025", 
-                    description: "Be able to answer simple questions about stories", 
-                    status: "upcoming",
-                    icon: <Award className="h-6 w-6" />
-                  }
-                ].map((milestone, index) => (
-                  <div key={index} className="flex">
-                    <div className="flex-shrink-0 relative z-10">
-                      <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
-                        milestone.status === 'completed' ? 'bg-lms-green text-white' :
-                        milestone.status === 'in-progress' ? 'bg-lms-yellow text-white' :
-                        'bg-muted-foreground/20 text-muted-foreground'
-                      }`}>
-                        {milestone.icon}
-                      </div>
-                    </div>
-                    
-                    <div className="ml-6">
-                      <div className="flex items-baseline">
-                        <h3 className="font-bubbly text-lg">{milestone.title}</h3>
-                        <span className="ml-2 text-sm text-muted-foreground">{milestone.date}</span>
-                      </div>
-                      <p className="mt-1 text-muted-foreground">{milestone.description}</p>
-                      <div className="mt-2">
-                        {milestone.status === 'completed' && (
-                          <Badge className="bg-lms-green">Completed</Badge>
-                        )}
-                        {milestone.status === 'in-progress' && (
-                          <Badge className="bg-lms-yellow">In Progress</Badge>
-                        )}
-                        {milestone.status === 'upcoming' && (
-                          <Badge variant="outline">Coming Soon</Badge>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </DashboardLayout>
   );

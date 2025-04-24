@@ -1,6 +1,6 @@
 const { TeachingGuide, Topic, Subject } = require('../models');
 const { Op } = require('sequelize');
-
+const fs = require('fs');
 // Create a new teaching guide
 const createTeachingGuide = async (req, res) => {
   try {
@@ -123,7 +123,13 @@ const deleteTeachingGuide = async (req, res) => {
     if (!teachingGuide) {
       return res.status(404).json({ message: 'Teaching guide not found' });
     }
-
+    fs.unlink(`uploads/${teachingGuide.pdfUrl}`, (err) => {
+      if (err) {
+        console.error('Error deleting file:', err);
+      } else {
+        console.log('File deleted successfully');
+      }
+    });
     await teachingGuide.destroy();
     res.json({ message: 'Teaching guide deleted successfully' });
   } catch (error) {

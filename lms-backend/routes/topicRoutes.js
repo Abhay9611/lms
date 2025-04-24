@@ -5,7 +5,8 @@ const {
   getTopics,
   getTopic,
   updateTopic,
-  deleteTopic
+  deleteTopic,
+  updateTopicProgress
 } = require('../controllers/topicController');
 const { isAuthenticated, isTeacher } = require('../middleware/auth');
 
@@ -20,5 +21,7 @@ router.delete('/:id', isTeacher, deleteTopic);
 // Routes accessible by all authenticated users
 router.get('/', getTopics);
 router.get('/:id', getTopic);
+
+router.post('/progress/:id', updateTopicProgress);
 
 module.exports = router; 

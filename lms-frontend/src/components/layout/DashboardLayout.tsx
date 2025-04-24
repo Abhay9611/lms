@@ -97,9 +97,9 @@ const AdminLinks = [
     icon: User,
   },
   {
-    title: "Analytics",
-    href: "/admin/analytics",
-    icon: ListTodo,
+    title: "Activation Codes",
+    href: "/admin/codes",
+    icon: BookOpen,
   },
   {
     title: "Content",
@@ -188,9 +188,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <Button
                   key={item.href}
                   variant={item.active ? "secondary" : "ghost"}
-                  className={`w-full justify-start rounded-xl ${
-                    item.active ? "bg-primary/10 text-primary" : ""
-                  }`}
+                  className={`w-full justify-start rounded-xl ${item.active ? "bg-primary/10 text-primary" : ""
+                    }`}
                   onClick={() => {
                     navigate(item.href);
                     setIsSidebarOpen(false);
@@ -232,9 +231,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             <Button
               key={item.href}
               variant={item.active ? "secondary" : "ghost"}
-              className={`w-full justify-start rounded-xl ${
-                item.active ? "bg-primary/10 text-primary" : ""
-              }`}
+              className={`w-full justify-start rounded-xl ${item.active ? "bg-primary/10 text-primary" : ""
+                }`}
               onClick={() => navigate(item.href)}
             >
               <item.icon className="mr-2 h-5 w-5" />
