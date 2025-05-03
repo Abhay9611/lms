@@ -8,7 +8,7 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
-    dialect: 'postgres',
+    dialect: 'mysql',
     logging: console.log
   }
 );
@@ -21,11 +21,11 @@ async function createTestTable() {
     
     // Create a test table
     await sequelize.query(`
-      CREATE TABLE IF NOT EXISTS "test_table" (
-        "id" SERIAL PRIMARY KEY,
-        "name" VARCHAR(255) NOT NULL,
-        "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL,
-        "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL
+      CREATE TABLE IF NOT EXISTS test_table (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       );
     `);
     
@@ -33,15 +33,19 @@ async function createTestTable() {
     
     // Insert a test record
     await sequelize.query(`
-      INSERT INTO "test_table" ("name", "createdAt", "updatedAt")
-      VALUES ('Test Record', NOW(), NOW());
+      INSERT INTO test_table (name)
+      VALUES ('Test Record');
     `);
     
     console.log('✅ Test record inserted successfully.');
     
     // Check if the table exists
     const [results] = await sequelize.query(
-      "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'test_table'"
+      "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'test_table'",
+      {
+        replacements: [process.env.DB_NAME],
+        type: sequelize.QueryTypes.SELECT
+      }
     );
     
     console.log('\n📋 Tables in the database:');
@@ -52,7 +56,7 @@ async function createTestTable() {
       
       // Count records in the table
       const [countResult] = await sequelize.query(
-        `SELECT COUNT(*) as count FROM "test_table"`
+        `SELECT COUNT(*) as count FROM test_table`
       );
       console.log(`  Records: ${countResult[0].count}`);
     }

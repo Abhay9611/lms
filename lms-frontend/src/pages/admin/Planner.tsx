@@ -29,7 +29,7 @@ const AdminPlanner = () => {
 
   useEffect(() => {
     const fetchGrades = async () => {
-      const response = await axios.get("http://localhost:3000/api/grades");
+      const response = await axios.get(`https://${import.meta.env.VITE_API_URL}/grades`);
       setGradesList(response.data);
     };
     fetchGrades();
@@ -40,7 +40,7 @@ const AdminPlanner = () => {
   useEffect(() => {
     if (selectedGrade) {
       const fetchPlanner = async () => {
-        const response = await axios.get("http://localhost:3000/api/monthly-planner");
+        const response = await axios.get(`https://${import.meta.env.VITE_API_URL}/monthly-planner`);
         const filteredPlanner = response.data.filter(planner => planner.gradeId === selectedGrade);
         setPlannerList(filteredPlanner.map(planner => ({ id: planner.id, pdfName: planner.pdfUrl })));
       };
@@ -51,7 +51,7 @@ const AdminPlanner = () => {
 
   useEffect(() => {
     const fetchSubjects = async () => {
-      const subjects = await axios.get('http://localhost:3000/api/subjects');
+      const subjects = await axios.get(`https://${import.meta.env.VITE_API_URL}/subjects`);
       const filteredSubjects = subjects.data.filter((subject: any) => subject.gradeId === selectedGrade);
       setSubjects(filteredSubjects);
     };
@@ -68,7 +68,7 @@ const AdminPlanner = () => {
     fileFormData.append('pdf', file);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/monthly-planner/upload', fileFormData, {
+      const response = await axios.post(`https://${import.meta.env.VITE_API_URL}/monthly-planner/upload`, fileFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -94,7 +94,7 @@ const AdminPlanner = () => {
         pdfUrl: uploadedMaterial.file.path.replace(/^uploads\\/, ''),
       };
 
-      const newPlanner = await axios.post('http://localhost:3000/api/monthly-planner', newMaterial);
+      const newPlanner = await axios.post(`https://${import.meta.env.VITE_API_URL}/monthly-planner`, newMaterial);
 
       setPlannerList((prev) => [...prev, { id: newPlanner.data.id, pdfName: newMaterial.pdfUrl }]);
 
@@ -111,7 +111,7 @@ const AdminPlanner = () => {
 
   const deletePlanner = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:3000/api/monthly-planner/${id}`);
+      await axios.delete(`https://${import.meta.env.VITE_API_URL}/monthly-planner/${id}`);
       setPlannerList(plannerList.filter(planner => planner.id !== id));
     } catch (error) {
       console.log(error);

@@ -7,7 +7,7 @@ module.exports = {
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
-    dialect: 'postgres',
+    dialect: 'mysql',
     logging: false,
     pool: {
       max: 5,
@@ -21,7 +21,7 @@ module.exports = {
     password: process.env.DB_PASSWORD,
     database: process.env.TEST_DB_NAME || 'learnify_test',
     host: process.env.DB_HOST,
-    dialect: 'postgres',
+    dialect: 'mysql',
     logging: false
   },
   production: {
@@ -29,7 +29,7 @@ module.exports = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
-    dialect: 'postgres',
+    dialect: 'mysql',
     logging: false,
     dialectOptions: {
       ssl: {

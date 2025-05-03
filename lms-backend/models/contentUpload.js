@@ -17,7 +17,7 @@ module.exports = (sequelize) => {
 
   ContentUpload.init({
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
@@ -56,7 +56,7 @@ module.exports = (sequelize) => {
       allowNull: true
     },
     topicId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'Topics',
@@ -64,17 +64,12 @@ module.exports = (sequelize) => {
       }
     },
     uploadedById: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'Users',
         key: 'id'
       }
-    },
-    metadata: {
-      type: DataTypes.JSONB,
-      allowNull: true,
-      comment: 'Additional metadata specific to content type'
     },
     isActive: {
       type: DataTypes.BOOLEAN,

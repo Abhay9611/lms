@@ -39,7 +39,7 @@ module.exports = (sequelize) => {
 
   Topic.init({
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
@@ -49,7 +49,7 @@ module.exports = (sequelize) => {
     },
 
     subjectId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'Subjects',

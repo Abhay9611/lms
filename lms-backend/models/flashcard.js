@@ -21,12 +21,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   Flashcard.init({
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     topicId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'Topics',
@@ -61,11 +61,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('EASY', 'MEDIUM', 'HARD'),
       allowNull: false,
       defaultValue: 'MEDIUM'
-    },
-    tags: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
-      allowNull: true,
-      defaultValue: []
     },
     isActive: {
       type: DataTypes.BOOLEAN,

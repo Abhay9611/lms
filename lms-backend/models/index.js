@@ -16,7 +16,7 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
-    dialect: 'postgres',
+    dialect: 'mysql',
     logging: false,
   }
 );
@@ -33,7 +33,6 @@ const QuizQuestion = require('./quizQuestion')(sequelize, Sequelize.DataTypes);
 const QuizOption = require('./quizOption')(sequelize, Sequelize.DataTypes);
 const StudentQuizAttempt = require('./studentQuizAttempt')(sequelize, Sequelize.DataTypes);
 const StudentQuizAnswer = require('./studentQuizAnswer')(sequelize, Sequelize.DataTypes);
-const Flashcard = require('./flashcard')(sequelize, Sequelize.DataTypes);
 const Content = require('./content')(sequelize, Sequelize.DataTypes);
 const TeachingGuide = require('./teachingGuide')(sequelize, Sequelize.DataTypes);
 const StudentProgress = require('./studentProgress')(sequelize, Sequelize.DataTypes);
@@ -53,7 +52,6 @@ db.QuizQuestion = QuizQuestion;
 db.QuizOption = QuizOption;
 db.StudentQuizAttempt = StudentQuizAttempt;
 db.StudentQuizAnswer = StudentQuizAnswer;
-db.Flashcard = Flashcard;
 db.Content = Content;
 db.TeachingGuide = TeachingGuide;
 db.StudentProgress = StudentProgress;
@@ -80,10 +78,6 @@ Subject.belongsTo(Grade, { foreignKey: 'gradeId' });
 // Subject & Topic
 Subject.hasMany(Topic, { foreignKey: 'subjectId' });
 Topic.belongsTo(Subject, { foreignKey: 'subjectId' });
-
-// Topic & Flashcard
-Topic.hasMany(Flashcard, { foreignKey: 'topicId' });
-Flashcard.belongsTo(Topic, { foreignKey: 'topicId' });
 
 // Topic & Quiz
 Topic.hasMany(Quiz, { 

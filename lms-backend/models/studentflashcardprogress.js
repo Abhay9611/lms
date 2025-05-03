@@ -15,12 +15,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   StudentFlashcardProgress.init({
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     studentId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'Students',
@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     flashcardId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'Flashcards',

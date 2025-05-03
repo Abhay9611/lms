@@ -60,7 +60,7 @@ const AddSchoolModal = ({ isOpen, onClose }: AddSchoolModalProps) => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/api/schools", formData);
+      const response = await axios.post(`https://${import.meta.env.VITE_API_URL}/schools`, formData);
 
       if (response.data.status === "success") {
         toast({

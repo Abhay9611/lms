@@ -26,7 +26,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }: ForgotPasswordModalProps) => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/forgot-password', { email });
+      const response = await axios.post(`https://${import.meta.env.VITE_API_URL}/auth/forgot-password`, { email });
 
       if (response.status === 200) {
         toast({ title: 'Success', description: 'A reset link has been sent to your email.' });

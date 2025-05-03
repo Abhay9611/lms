@@ -9,12 +9,12 @@ module.exports = (sequelize) => {
 
   MonthlyPlanner.init({
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     gradeId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false
     },
 

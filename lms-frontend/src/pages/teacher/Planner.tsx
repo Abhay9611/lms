@@ -84,8 +84,8 @@ const TeacherPlanner = () => {
 
   useEffect(() => {
     const fetchPlans = async () => {
-      const allPlans = await axios.get("http://localhost:3000/api/monthly-planner");
-      const grades = await axios.get("http://localhost:3000/api/grades");
+      const allPlans = await axios.get(`https://${import.meta.env.VITE_API_URL}/monthly-planner`);
+      const grades = await axios.get(`https://${import.meta.env.VITE_API_URL}/grades`);
       const gradeName = db_grades[selectedGrade];
       const gradeId = grades.data.find((grade) => grade.name === gradeName).id;
       const filteredPlans = allPlans.data.filter((plan) => plan.gradeId === gradeId);

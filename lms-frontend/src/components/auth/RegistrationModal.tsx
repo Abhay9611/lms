@@ -52,14 +52,14 @@ const RegistrationModal = ({
   const [error, setError] = useState("");
   const [schoolsList, setSchoolsList] = useState([]);
 
-  useEffect(()=>{
+  useEffect(() => {
     const fetchSchools = async () => {
-      const response = await axios.get("http://localhost:3000/api/schools");
+      const response = await axios.get(`https://${import.meta.env.VITE_API_URL}/schools`);
       setSchoolsList(response.data);
       console.log("Fetched schools:", response.data);
     };
     fetchSchools();
-  },[]);
+  }, []);
 
 
   const grades = [
@@ -151,7 +151,7 @@ const RegistrationModal = ({
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/register",
+        `https://${import.meta.env.VITE_API_URL}/auth/register`,
         {
           firstName: formData.firstName,
           lastName: formData.lastName,
@@ -178,7 +178,7 @@ const RegistrationModal = ({
     } catch (error: any) {
       setError(
         error.response?.data?.message ||
-          "Registration failed. Please try again."
+        "Registration failed. Please try again."
       );
       toast({
         title: "Registration failed",

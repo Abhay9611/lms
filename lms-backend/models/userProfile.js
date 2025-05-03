@@ -13,12 +13,12 @@ module.exports = (sequelize) => {
 
   UserProfile.init({
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     userId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       unique: true,
       references: {
@@ -47,9 +47,8 @@ module.exports = (sequelize) => {
       allowNull: true
     },
     preferences: {
-      type: DataTypes.JSONB,
+      type: DataTypes.TEXT,
       allowNull: true,
-      defaultValue: {}
     },
     lastLoginAt: {
       type: DataTypes.DATE,

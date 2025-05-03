@@ -137,7 +137,7 @@ const StudentProgress = () => {
 
 
   const calculateProgress = async (userProgress: any, subject: any) => {
-    const topicsRes = await axios.get("http://localhost:3000/api/topics");
+    const topicsRes = await axios.get(`https://${import.meta.env.VITE_API_URL}/topics`);
     const topicList = topicsRes.data.filter((topic: any) => topic.subjectId === subject.id);
     const topicIds = topicList.map((topic: any) => topic.id);
     const videoCompletions = userProgress.filter((progress: any) => topicIds.includes(progress.topicId) && progress.videoCompleted).length;
@@ -158,15 +158,15 @@ const StudentProgress = () => {
           return;
         }
         // Fetch all subjects and filter by gradeId
-        const subjects = await axios.get("http://localhost:3000/api/subjects");
+        const subjects = await axios.get(`https://${import.meta.env.VITE_API_URL}/subjects`);
         const gradeSubjects = subjects.data.filter((s: any) => s.gradeId === user.gradeId)
 
-        const studentProgressRes = await axios.get("http://localhost:3000/api/progress");
+        const studentProgressRes = await axios.get(`https://${import.meta.env.VITE_API_URL}/progress`);
         const progressData = studentProgressRes.data.filter((progress: any) => user.id == progress.userId);
 
         //TODO: Recent activities
 
-        const grade = await axios.get("http://localhost:3000/api/grades");
+        const grade = await axios.get(`https://${import.meta.env.VITE_API_URL}/grades`);
         const user_grade = grade.data.filter((s: any) => s.id === user.gradeId)[0].name;
 
         let completed = 0;

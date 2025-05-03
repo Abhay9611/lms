@@ -22,7 +22,7 @@ interface UserAttributes {
 }
 
 // Define attributes for User creation (id is optional)
-interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id'> { }
 
 // User model
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
@@ -45,7 +45,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
 User.init(
   {
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },

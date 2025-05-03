@@ -23,7 +23,7 @@ module.exports = (sequelize) => {
   }
   StudentProgress.init({
     userId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'Users',
@@ -31,7 +31,7 @@ module.exports = (sequelize) => {
       }
     },
     topicId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'Topics',

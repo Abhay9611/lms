@@ -23,12 +23,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   StudentAnswer.init({
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     studentId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'Students',
@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     questionId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'Questions',
@@ -44,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     attemptId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'StudentQuizAttempts',
@@ -52,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     selectedOptionId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: true,
       references: {
         model: 'QuestionOptions',

@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
 import { Link, Trash } from "lucide-react";
 
+
 interface AddContentModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -31,7 +32,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
 
   useEffect(() => {
     const fetchGrades = async () => {
-      const response = await axios.get("http://localhost:3000/api/grades");
+      const response = await axios.get(`https://${import.meta.env.VITE_API_URL}/grades`);
       setGradesList(response.data);
     };
     fetchGrades();
@@ -40,7 +41,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
   useEffect(() => {
     if (formData.grade) {
       const fetchSubjects = async () => {
-        const response = await axios.get("http://localhost:3000/api/subjects");
+        const response = await axios.get(`https://${import.meta.env.VITE_API_URL}/subjects`);
         const filteredSubjects = response.data.filter(subject => subject.gradeId === formData.grade);
         setSubjectsList(filteredSubjects);
       };
@@ -52,7 +53,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
     console.log(topicsList);
     if (formData.subject) {
       const fetchTopics = async () => {
-        const response = await axios.get("http://localhost:3000/api/topics");
+        const response = await axios.get(`https://${import.meta.env.VITE_API_URL}/topics`);
         const filteredTopics = response.data.filter(topic => topic.subjectId === formData.subject);
         setTopicsList(filteredTopics);
       };
@@ -63,14 +64,14 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
   useEffect(() => {
     if (formData.topic) {
       const fetchContents = async () => {
-        const response = await axios.get("http://localhost:3000/api/contents");
+        const response = await axios.get(`https://${import.meta.env.VITE_API_URL}/contents`);
         const filteredContents = response.data.filter(content => content.topicId === formData.topic);
         setVideosList(filteredContents);
       };
       fetchContents();
 
       const fetchMaterials = async () => {
-        const response = await axios.get("http://localhost:3000/api/teaching-guides");
+        const response = await axios.get(`https://${import.meta.env.VITE_API_URL}/teaching-guides`);
         const filteredMaterials = response.data.filter(material => material.topicId === formData.topic);
         setMaterialsList(filteredMaterials);
       };
@@ -88,10 +89,10 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
       const newVideo = {
         topicId: formData.topic,
         title: `Video ${videosList.length + 1}`,
-        videoUrl: YouTubeEmbed({url: newVideoUrl}),
+        videoUrl: YouTubeEmbed({ url: newVideoUrl }),
       };
 
-      await axios.post("http://localhost:3000/api/contents", newVideo);
+      await axios.post(`https://${import.meta.env.VITE_API_URL}/contents`, newVideo);
       setVideosList((prev) => [...prev, newVideo]);
       setNewVideoUrl("");
     } catch (error) {
@@ -104,19 +105,19 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
   type YouTubeEmbedProps = {
     url: string;
   };
-  
+
   const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({ url }) => {
     const extractVideoId = (youtubeUrl: string): string | null => {
       const urlObj = new URL(youtubeUrl);
       return urlObj.searchParams.get("v");
     };
-  
+
     const videoId = extractVideoId(url);
-  
+
     if (!videoId) return url;
-  
+
     const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
-  
+
     return embedUrl;
   };
 
@@ -125,7 +126,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
     fileFormData.append('pdf', file);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/teaching-guides/upload', fileFormData, {
+      const response = await axios.post(`https://${import.meta.env.VITE_API_URL}/teaching-guides/upload`, fileFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -150,7 +151,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
         pdfUrl: uploadedMaterial.file.path.replace(/^uploads\\/, ''),
       };
 
-      await axios.post('http://localhost:3000/api/teaching-guides', newMaterial);
+      await axios.post(`https://${import.meta.env.VITE_API_URL}/teaching-guides`, newMaterial);
       setMaterialsList((prev) => [...prev, newMaterial]);
       handleChange('materialId', null);
     } catch (error) {
@@ -161,7 +162,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
 
   const handleDeleteVideo = async (videoId) => {
     try {
-      await axios.delete(`http://localhost:3000/api/contents/${videoId}`);
+      await axios.delete(`https://${import.meta.env.VITE_API_URL}/contents/${videoId}`);
       setVideosList((prev) => prev.filter((video) => video.id !== videoId));
       toast({ title: "Success", description: "Video deleted successfully." });
     } catch (error) {
@@ -172,7 +173,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
 
   const handleDeleteMaterial = async (materialId) => {
     try {
-      await axios.delete(`http://localhost:3000/api/teaching-guides/${materialId}`);
+      await axios.delete(`https://${import.meta.env.VITE_API_URL}/teaching-guides/${materialId}`);
       setMaterialsList((prev) => prev.filter((material) => material.id !== materialId));
       toast({ title: "Success", description: "Material deleted successfully." });
     } catch (error) {
@@ -281,10 +282,10 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
                 {videosList.map((v) => (
                   <li key={v.id} className="flex flex-row justify-between items-center py-2">
                     <div className="flex flex-row items-center">
-                    <Link className="pr-2" scale={0.3}/>
-                    <a href={v.videoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                      {v.title}
-                    </a></div>
+                      <Link className="pr-2" scale={0.3} />
+                      <a href={v.videoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                        {v.title}
+                      </a></div>
                     <Trash className="mr-2" scale={0.3} onClick={() => handleDeleteVideo(v.id)} />
                   </li>
                 ))}
@@ -322,7 +323,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
                     onChange={(e) => handleChange('materialId', e.target.files[0])}
                     className="mr-2"
                   />
-                  
+
                   <Button type="button" className="ml-2" onClick={handleAddMaterial}>
                     <span className="icon">+</span>
                   </Button>
@@ -331,7 +332,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
             </div>
           )}
 
-          
+
         </form>
       </DialogContent>
     </Dialog>

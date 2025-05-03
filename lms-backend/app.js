@@ -73,12 +73,13 @@ app.use((err, req, res, next) => {
 
 // Database connection
 const db = require('./models');
+
 db.sequelize.sync({ alter: process.env.NODE_ENV === 'development' })
   .then(() => {
     console.log('✅ Database synced successfully');
   })
   .catch((err) => {
-    console.error('❌ Error syncing DB:', err.message);
+    console.error('❌ Error syncing DB:', err);
   });
 
 const PORT = process.env.PORT || 3000;

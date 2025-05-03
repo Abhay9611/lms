@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       setError(null);
 
-      const response = await axios.post('http://localhost:3000/api/auth/login', {
+      const response = await axios.post(`https://${import.meta.env.VITE_API_URL}/auth/login`, {
         email,
         password
       });
@@ -125,10 +125,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Store token and user data
       localStorage.setItem('token', tokenValue);
       localStorage.setItem('user', JSON.stringify(userData));
-      
+
       // Set the token in axios headers
       axios.defaults.headers.common['Authorization'] = `Bearer ${tokenValue}`;
-      
+
       // Update state
       setToken(tokenValue);
       setUser(userData);
@@ -151,14 +151,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Clear local storage
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    
+
     // Clear axios headers
     delete axios.defaults.headers.common['Authorization'];
-    
+
     // Clear state
     setToken(null);
     setUser(null);
-    
+
     console.log('Logout completed');
     // Navigate to login page
     window.location.href = '/login';

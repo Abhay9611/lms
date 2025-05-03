@@ -31,7 +31,7 @@ const ActivationCodes = () => {
 
 
     const handleDelete = (id: number) => {
-        axios.delete(`http://localhost:3000/api/activation-codes/${id}`)
+        axios.delete(`https://${import.meta.env.VITE_API_URL}/activation-codes/${id}`)
             .then(() => {
                 setActivationCodesList(activationCodesList.filter(activationCode => activationCode.id !== id));
             })
@@ -44,7 +44,7 @@ const ActivationCodes = () => {
             setError(null);
             try {
 
-                const gradesResponse = await axios.get('http://localhost:3000/api/grades')
+                const gradesResponse = await axios.get(`https://${import.meta.env.VITE_API_URL}/grades`)
                 setGradesList(gradesResponse.data);
 
 
@@ -64,7 +64,7 @@ const ActivationCodes = () => {
         const fetchActivationCodes = async () => {
             try {
                 const gradeName = gradesList.find((grade: any) => grade.id === selectedGrade)?.name;
-                const activationCodesResponse = await axios.post(`http://localhost:3000/api/activation-codes`, { grade: gradeName === 'Pre-nursery' ? 'Nursery' : gradeName === 'Play Home' ? 'Play Group' : gradeName, limit: 100 })
+                const activationCodesResponse = await axios.post(`https://${import.meta.env.VITE_API_URL}/activation-codes`, { grade: gradeName === 'Pre-nursery' ? 'Nursery' : gradeName === 'Play Home' ? 'Play Group' : gradeName, limit: 100 })
                 console.log("activationCodesResponse", activationCodesResponse.data);
                 const formattedActivationCodes = activationCodesResponse.data.map((activationCodeData: any) => {
                     return {

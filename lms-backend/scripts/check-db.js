@@ -8,7 +8,7 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
-    dialect: 'postgres',
+    dialect: 'mysql',
     logging: console.log
   }
 );
@@ -19,9 +19,13 @@ async function checkDatabase() {
     await sequelize.authenticate();
     console.log('✅ Database connection has been established successfully.');
     
-    // Get all tables using the correct query
-    const [results] = await sequelize.query(
-      "SELECT tablename FROM pg_tables WHERE schemaname = 'public'"
+    // Get all tables
+    const results = await sequelize.query(
+      "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = ?",
+      {
+        replacements: [process.env.DB_NAME],
+        type: sequelize.QueryTypes.SELECT
+      }
     );
     
     console.log('\n📋 Tables in the database:');
@@ -29,14 +33,14 @@ async function checkDatabase() {
       console.log('No tables found in the database.');
     } else {
       for (const row of results) {
-        const tableName = row.tablename;
+        const tableName = row.TABLE_NAME;
         if (tableName) {
           console.log(`- ${tableName}`);
           
           // Count records in each table
           try {
             const [countResult] = await sequelize.query(
-              `SELECT COUNT(*) as count FROM "${tableName}"`
+              `SELECT COUNT(*) as count FROM \`${tableName}\``
             );
             console.log(`  Records: ${countResult[0].count}`);
           } catch (err) {

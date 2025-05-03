@@ -23,7 +23,7 @@ module.exports = (sequelize) => {
 
   School.init({
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },

@@ -94,15 +94,15 @@ const SubjectDetails = () => {
       setError(null);
       try {
         // Fetch subject details by subject ID
-        const subjectRes = await axios.get(`http://localhost:3000/api/subjects/${id}`);
+        const subjectRes = await axios.get(`https://${import.meta.env.VITE_API_URL}/subjects/${id}`);
         console.log("Fetched subject details from backend:", subjectRes.data);
         const subjectData = subjectRes.data;
 
         // Fetch all topics and filter by subjectId
-        const topicsRes = await axios.get("http://localhost:3000/api/topics");
-        const contentsRes = await axios.get("http://localhost:3000/api/contents");
-        const materialsRes = await axios.get("http://localhost:3000/api/teaching-guides");
-        const quizzesRes = await axios.get("http://localhost:3000/api/quizzes");
+        const topicsRes = await axios.get(`https://${import.meta.env.VITE_API_URL}/topics`);
+        const contentsRes = await axios.get(`https://${import.meta.env.VITE_API_URL}/contents`);
+        const materialsRes = await axios.get(`https://${import.meta.env.VITE_API_URL}/teaching-guides`);
+        const quizzesRes = await axios.get(`https://${import.meta.env.VITE_API_URL}/quizzes`);
 
         const filteredTopics: Topic[] = topicsRes.data.filter((topic: any) => topic.subjectId === id).map((topic: any) => {
           const videoUrls = contentsRes.data
@@ -203,7 +203,7 @@ const SubjectDetails = () => {
   const handleQuizComplete = (score: number, total: number) => {
     const percentage = Math.round((score / total) * 100);
     const updateProgress = async () => {
-      const res = await axios.post(`http://localhost:3000/api/topics/progress/${currentTopic.id}`, {
+      const res = await axios.post(`https://${import.meta.env.VITE_API_URL}/topics/progress/${currentTopic.id}`, {
         completedItem: "quiz"
       });
     }
@@ -224,7 +224,7 @@ const SubjectDetails = () => {
 
   const handleVideoEnded = () => {
     const updateProgress = async () => {
-      const res = await axios.post(`http://localhost:3000/api/topics/progress/${currentTopic.id}`, {
+      const res = await axios.post(`https://${import.meta.env.VITE_API_URL}/topics/progress/${currentTopic.id}`, {
         completedItem: "video"
       });
     }
@@ -393,7 +393,7 @@ const SubjectDetails = () => {
                               <Button
                                 variant="outline"
                                 size="icon"
-                                onClick={() => window.open(`http://localhost:3000/uploads/${material.url}`, '_blank')}
+                                onClick={() => window.open(`https://${import.meta.env.VITE_API_URL}/uploads/${material.url}`, '_blank')}
                                 className="rounded-full"
                               >
                                 <ArrowDown className="h-4 w-4" />

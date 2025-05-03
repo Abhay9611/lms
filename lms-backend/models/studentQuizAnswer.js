@@ -21,12 +21,12 @@ class StudentQuizAnswer extends Model {
 module.exports = (sequelize) => {
   StudentQuizAnswer.init({
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     attemptId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'StudentQuizAttempts',
@@ -34,7 +34,7 @@ module.exports = (sequelize) => {
       }
     },
     questionId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'QuizQuestions',
@@ -42,7 +42,7 @@ module.exports = (sequelize) => {
       }
     },
     selectedOptionId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: true,
       references: {
         model: 'QuizOptions',

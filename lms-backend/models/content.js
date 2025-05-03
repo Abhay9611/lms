@@ -21,12 +21,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   Content.init({
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     topicId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'Topics',
@@ -50,9 +50,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Content',
     indexes: [
-      {
-        fields: ['topicId']
-      },
       {
         fields: ['topicId']
       }

@@ -20,7 +20,7 @@ const Subjects = () => {
   const [error, setError] = useState<string | null>(null);
 
   const calculateProgress = async (userProgress: any, subject: any) => {
-    const topicsRes = await axios.get("http://localhost:3000/api/topics");
+    const topicsRes = await axios.get(`https://${import.meta.env.VITE_API_URL}/topics`);
     const topicList = topicsRes.data.filter((topic: any) => topic.subjectId === subject.id);
     const topicIds = topicList.map((topic: any) => topic.id);
     const videoCompletions = userProgress.filter((progress: any) => topicIds.includes(progress.topicId) && progress.videoCompleted).length;
@@ -42,10 +42,10 @@ const Subjects = () => {
         }
         // Fetch all subjects and filter by gradeId
 
-        const studentProgressRes = await axios.get("http://localhost:3000/api/progress");
+        const studentProgressRes = await axios.get(`https://${import.meta.env.VITE_API_URL}/progress`);
         const progressData = studentProgressRes.data.filter((progress: any) => user.id == progress.userId);
 
-        const res = await axios.get("http://localhost:3000/api/subjects");
+        const res = await axios.get(`https://${import.meta.env.VITE_API_URL}/subjects`);
         console.log("Fetched subjects from backend:", res.data);
         const gradeId = user.grade?.id || user.gradeId;
         const filtered = res.data.filter((s: any) => s.gradeId === gradeId);

@@ -31,7 +31,7 @@ const UsersPage = () => {
 
 
   const handleDelete = (id: number) => {
-    axios.delete(`http://localhost:3000/api/users/${id}`)
+    axios.delete(`https://${import.meta.env.VITE_API_URL}/users/${id}`)
       .then(() => {
         setUsersList(usersList.filter(user => user.id !== id));
       })
@@ -43,8 +43,8 @@ const UsersPage = () => {
       setLoading(true);
       setError(null);
       try {
-        const usersResponse = await axios.get('http://localhost:3000/api/users');
-        const schoolsResponse = await axios.get('http://localhost:3000/api/schools');
+        const usersResponse = await axios.get(`https://${import.meta.env.VITE_API_URL}/users`);
+        const schoolsResponse = await axios.get(`https://${import.meta.env.VITE_API_URL}/schools`);
         const schoolsData = schoolsResponse.data;
 
         const formattedUsers = usersResponse.data.map((userData: any) => {
@@ -81,7 +81,7 @@ const UsersPage = () => {
     <DashboardLayout>
       <div className="space-y-8 relative">
         <AnimatedCharacters variant="space" density="low" />
-        
+
         <div className="mb-6 relative">
           <h1 className="text-4xl font-bubbly font-bold text-primary flex items-center">
             <UsersIcon className="mr-3 h-8 w-8" />
@@ -91,29 +91,29 @@ const UsersPage = () => {
             Manage all users in the BookWorm Academy platform
           </p>
         </div>
-        
+
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div className="relative w-full max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input 
-              placeholder="Search users..." 
+            <Input
+              placeholder="Search users..."
               className="pl-10 rounded-xl border-2"
             />
           </div>
-          
+
           <div className="flex items-center gap-3">
             <Button variant="outline" className="rounded-xl">
               <Filter className="h-4 w-4 mr-2" />
               Filters
             </Button>
-            
+
             <Button className="rounded-xl bg-primary">
               <Plus className="h-4 w-4 mr-2" />
               Add User
             </Button>
           </div>
         </div>
-        
+
         <Card className="border-4 border-primary/30 rounded-3xl shadow-lg overflow-hidden">
           <CardHeader className="bg-primary/10">
             <CardTitle className="text-xl font-bubbly">All Users</CardTitle>
@@ -149,23 +149,23 @@ const UsersPage = () => {
                       <td className="px-4 py-4 text-center">
                         <Badge className={
                           user.role === UserRole.ADMIN ? "bg-lms-purple" :
-                          user.role === UserRole.TEACHER ? "bg-lms-blue" :
-                          user.role === UserRole.STUDENT ? "bg-lms-green" :
-                          "bg-lms-yellow"
+                            user.role === UserRole.TEACHER ? "bg-lms-blue" :
+                              user.role === UserRole.STUDENT ? "bg-lms-green" :
+                                "bg-lms-yellow"
                         }>
                           {user.role}
                         </Badge>
                       </td>
                       <td className="px-4 py-4">{user.school}</td>
                       <td className="px-4 py-4 text-center">
-                        <Badge variant={user.status === "active" ? "default" : "outline"} 
+                        <Badge variant={user.status === "active" ? "default" : "outline"}
                           className={user.status === "active" ? "bg-lms-green" : ""}>
                           {user.status}
                         </Badge>
                       </td>
                       <td className="px-4 py-4 text-center">
                         <div className="flex items-center justify-center space-x-2">
-                          
+
                           <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-lms-pink" onClick={() => handleDelete(user.id)}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -178,7 +178,7 @@ const UsersPage = () => {
             </div>
           </CardContent>
         </Card>
-        
+
         {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="border-4 border-lms-blue/30 rounded-3xl shadow-lg overflow-hidden">
             <CardHeader className="bg-lms-blue/10">

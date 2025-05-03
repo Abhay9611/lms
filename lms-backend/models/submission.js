@@ -11,7 +11,7 @@ module.exports = (sequelize) => {
 
   Submission.init({
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
@@ -41,7 +41,7 @@ module.exports = (sequelize) => {
       defaultValue: 'submitted'
     },
     assignmentId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'Assignments',
@@ -49,7 +49,7 @@ module.exports = (sequelize) => {
       }
     },
     studentId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'Users',

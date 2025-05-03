@@ -11,7 +11,7 @@ module.exports = (sequelize) => {
 
   Lesson.init({
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
@@ -45,7 +45,7 @@ module.exports = (sequelize) => {
       defaultValue: 'draft'
     },
     courseId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'Courses',
