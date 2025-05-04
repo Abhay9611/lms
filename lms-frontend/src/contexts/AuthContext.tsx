@@ -161,7 +161,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     console.log('Logout completed');
     // Navigate to login page
-    window.location.href = '/login';
+    // window.location.href = '/login';
   };
 
   const value = {

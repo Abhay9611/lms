@@ -29,6 +29,12 @@ import { Separator } from "@/components/ui/separator";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { UserRole } from "@/types";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -256,17 +262,37 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <div className="flex-1 flex flex-col min-h-screen bg-gradient-to-b from-background to-primary/5">
         <header className="h-16 border-b bg-white/50 backdrop-blur-sm flex items-center justify-between px-4 md:px-6">
           <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setIsSidebarOpen(true)}
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
             <h1 className="text-xl font-bubbly font-bold text-primary">
               {menuItems.find((item) => item.active)?.title || "Dashboard"}
             </h1>
           </div>
           <div className="flex items-center space-x-4">
-            <Avatar className="h-8 w-8 border-2 border-primary">
-              <AvatarImage
-                src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.firstName}`}
-              />
-              <AvatarFallback>{user?.firstName?.charAt(0)}</AvatarFallback>
-            </Avatar>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Avatar className="h-8 w-8 border-2 border-primary">
+                    <AvatarImage
+                      src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.firstName}`}
+                    />
+                    <AvatarFallback>{user?.firstName?.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Logout</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
         <main className="flex-1 p-4 md:p-6 overflow-auto">{children}</main>

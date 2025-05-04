@@ -148,7 +148,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
 
       const newMaterial = {
         topicId: formData.topic,
-        pdfUrl: uploadedMaterial.file.path.replace(/^uploads\\/, ''),
+        pdfUrl: uploadedMaterial.file.path.replace(/^uploads[\\/]/, ''),
       };
 
       await axios.post(`https://${import.meta.env.VITE_API_URL}/teaching-guides`, newMaterial);
