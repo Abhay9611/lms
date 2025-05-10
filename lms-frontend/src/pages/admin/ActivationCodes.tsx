@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,13 +12,13 @@ import axios from 'axios';
 import { useAuth } from '@/contexts/AuthContext';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
+const API_BASE_URL = 'http://localhost:5000';
 
 interface ActivationCode {
     id: number;
     grade: string;
     code: string;
 }
-
 
 const ActivationCodes = () => {
     const { user } = useAuth();
@@ -29,13 +28,19 @@ const ActivationCodes = () => {
     const [selectedGrade, setSelectedGrade] = useState('');
     const [gradesList, setGradesList] = useState([]);
 
-
-    const handleDelete = (id: number) => {
-        axios.delete(`https://${import.meta.env.VITE_API_URL}/activation-codes/${id}`)
-            .then(() => {
-                setActivationCodesList(activationCodesList.filter(activationCode => activationCode.id !== id));
-            })
-            .catch(error => console.error('Error deleting user:', error));
+    const handleDelete = async (id: number) => {
+        try {
+            const token = localStorage.getItem('token');
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            };
+            
+            await axios.delete(`${API_BASE_URL}/api/activation-codes/${id}`, { headers });
+            setActivationCodesList(activationCodesList.filter(activationCode => activationCode.id !== id));
+        } catch (error) {
+            console.error('Error deleting activation code:', error);
+        }
     };
 
     useEffect(() => {
@@ -43,11 +48,14 @@ const ActivationCodes = () => {
             setLoading(true);
             setError(null);
             try {
+                const token = localStorage.getItem('token');
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                };
 
-                const gradesResponse = await axios.get(`https://${import.meta.env.VITE_API_URL}/grades`)
+                const gradesResponse = await axios.get(`${API_BASE_URL}/api/grades`, { headers });
                 setGradesList(gradesResponse.data);
-
-
             } catch (error) {
                 setError('Failed to fetch grades');
                 console.error('Error fetching grades:', error);
@@ -58,14 +66,25 @@ const ActivationCodes = () => {
         fetchStats();
     }, [user]);
 
-
     useEffect(() => {
-
         const fetchActivationCodes = async () => {
             try {
+                const token = localStorage.getItem('token');
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                };
+
                 const gradeName = gradesList.find((grade: any) => grade.id === selectedGrade)?.name;
-                const activationCodesResponse = await axios.post(`https://${import.meta.env.VITE_API_URL}/activation-codes`, { grade: gradeName === 'Pre-nursery' ? 'Nursery' : gradeName === 'Play Home' ? 'Play Group' : gradeName, limit: 100 })
-                console.log("activationCodesResponse", activationCodesResponse.data);
+                const activationCodesResponse = await axios.post(
+                    `${API_BASE_URL}/api/activation-codes`,
+                    {
+                        grade: gradeName === 'Pre-nursery' ? 'Nursery' : gradeName === 'Play Home' ? 'Play Group' : gradeName,
+                        limit: 100
+                    },
+                    { headers }
+                );
+
                 const formattedActivationCodes = activationCodesResponse.data.map((activationCodeData: any) => {
                     return {
                         id: activationCodeData.id,

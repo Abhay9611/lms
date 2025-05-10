@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,6 +15,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { UploadCloud, FileText, CheckCircle2, Video, File, FilePlus } from 'lucide-react';
 import AnimatedCharacters from '@/components/animated/AnimatedCharacters';
 import { useToast } from '@/hooks/use-toast';
+import axios from 'axios';
+
+const API_BASE_URL = 'http://localhost:5000';
 
 const ContentUpload = () => {
   const { toast } = useToast();
@@ -77,8 +79,28 @@ const ContentUpload = () => {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const token = localStorage.getItem('token');
+      const headers = {
+        'Authorization': `Bearer ${token}`
+      };
+
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('description', formData.description);
+      formDataToSend.append('subject', formData.subject);
+      formDataToSend.append('grade', formData.grade);
+      formDataToSend.append('topic', formData.topic);
+      formDataToSend.append('contentType', formData.contentType);
+      if (formData.file) {
+        formDataToSend.append('file', formData.file);
+      }
+
+      await axios.post(`${API_BASE_URL}/api/content/upload`, formDataToSend, {
+        headers: {
+          ...headers,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       
       // Show success message
       toast({
@@ -103,6 +125,7 @@ const ContentUpload = () => {
       }, 2000);
       
     } catch (error) {
+      console.error('Error uploading content:', error);
       toast({
         title: "Upload Failed",
         description: "There was an error uploading your content. Please try again.",

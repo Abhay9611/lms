@@ -113,11 +113,6 @@ const AdminLinks = [
     icon: Gamepad2,
   },
   {
-    title: "Calendar",
-    href: "/admin/calendar",
-    icon: BookOpen,
-  },
-  {
     title: "Planner",
     href: "/admin/planner",
     icon: ListTodo,
@@ -150,7 +145,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     active: location.pathname === link.href,
   }));
 
-  let menuItems;
+  let menuItems = []; // Initialize with empty array
   switch (user?.role) {
     case UserRole.ADMIN:
       menuItems = adminMenuItems;
@@ -160,6 +155,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       break;
     case UserRole.STUDENT:
       menuItems = studentMenuItems;
+      break;
+    default:
+      menuItems = []; // Default to empty array if role is not recognized
       break;
   }
 

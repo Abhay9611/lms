@@ -12,16 +12,20 @@ import { Link, Trash } from "lucide-react";
 interface AddContentModalProps {
   isOpen: boolean;
   onClose: () => void;
+  content?: any; // Optional content for editing
+  onUpdate?: (updatedContent: any) => Promise<void>; // Optional update handler
 }
 
-const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
+const AddContentModal = ({ isOpen, onClose, content, onUpdate }: AddContentModalProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
-    grade: "",
-    subject: "",
-    topic: "",
-    videoId: "",
-    materialId: null as File | null,
+    title: '',
+    description: '',
+    subject: '',
+    grade: '',
+    topic: '',
+    type: 'lesson',
+    file: null as File | null
   });
   const [gradesList, setGradesList] = useState([]);
   const [subjectsList, setSubjectsList] = useState([]);
@@ -30,10 +34,22 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
   const [materialsList, setMaterialsList] = useState([]);
   const [newVideoUrl, setNewVideoUrl] = useState("");
 
+  const baseUrl = "http://localhost:5000";
+
   useEffect(() => {
     const fetchGrades = async () => {
-      const response = await axios.get(`https://${import.meta.env.VITE_API_URL}/grades`);
-      setGradesList(response.data);
+      try {
+        const token = localStorage.getItem('token');
+        const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        };
+        const response = await axios.get(`${baseUrl}/api/grades`, { headers });
+        setGradesList(response.data);
+      } catch (error) {
+        console.error('Error fetching grades:', error);
+        toast({ title: 'Error', description: 'Failed to fetch grades.' });
+      }
     };
     fetchGrades();
   }, []);
@@ -41,9 +57,19 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
   useEffect(() => {
     if (formData.grade) {
       const fetchSubjects = async () => {
-        const response = await axios.get(`https://${import.meta.env.VITE_API_URL}/subjects`);
-        const filteredSubjects = response.data.filter(subject => subject.gradeId === formData.grade);
-        setSubjectsList(filteredSubjects);
+        try {
+          const token = localStorage.getItem('token');
+          const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          };
+          const response = await axios.get(`${baseUrl}/api/subjects`, { headers });
+          const filteredSubjects = response.data.filter(subject => subject.gradeId === formData.grade);
+          setSubjectsList(filteredSubjects);
+        } catch (error) {
+          console.error('Error fetching subjects:', error);
+          toast({ title: 'Error', description: 'Failed to fetch subjects.' });
+        }
       };
       fetchSubjects();
     }
@@ -53,9 +79,19 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
     console.log(topicsList);
     if (formData.subject) {
       const fetchTopics = async () => {
-        const response = await axios.get(`https://${import.meta.env.VITE_API_URL}/topics`);
-        const filteredTopics = response.data.filter(topic => topic.subjectId === formData.subject);
-        setTopicsList(filteredTopics);
+        try {
+          const token = localStorage.getItem('token');
+          const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          };
+          const response = await axios.get(`${baseUrl}/api/topics`, { headers });
+          const filteredTopics = response.data.filter(topic => topic.subjectId === formData.subject);
+          setTopicsList(filteredTopics);
+        } catch (error) {
+          console.error('Error fetching topics:', error);
+          toast({ title: 'Error', description: 'Failed to fetch topics.' });
+        }
       };
       fetchTopics();
     }
@@ -64,23 +100,105 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
   useEffect(() => {
     if (formData.topic) {
       const fetchContents = async () => {
-        const response = await axios.get(`https://${import.meta.env.VITE_API_URL}/contents`);
-        const filteredContents = response.data.filter(content => content.topicId === formData.topic);
-        setVideosList(filteredContents);
+        try {
+          const token = localStorage.getItem('token');
+          const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          };
+          const response = await axios.get(`${baseUrl}/api/contents`, { headers });
+          const filteredContents = response.data.filter(content => content.topicId === formData.topic);
+          setVideosList(filteredContents);
+        } catch (error) {
+          console.error('Error fetching contents:', error);
+          toast({ title: 'Error', description: 'Failed to fetch contents.' });
+        }
       };
       fetchContents();
 
       const fetchMaterials = async () => {
-        const response = await axios.get(`https://${import.meta.env.VITE_API_URL}/teaching-guides`);
-        const filteredMaterials = response.data.filter(material => material.topicId === formData.topic);
-        setMaterialsList(filteredMaterials);
+        try {
+          const token = localStorage.getItem('token');
+          const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          };
+          const response = await axios.get(`${baseUrl}/api/teaching-guides`, { headers });
+          const filteredMaterials = response.data.filter(material => material.topicId === formData.topic);
+          setMaterialsList(filteredMaterials);
+        } catch (error) {
+          console.error('Error fetching materials:', error);
+          toast({ title: 'Error', description: 'Failed to fetch materials.' });
+        }
       };
       fetchMaterials();
     }
   }, [formData.topic]);
 
+  // Initialize form data when content is provided (edit mode)
+  useEffect(() => {
+    if (content) {
+      setFormData({
+        title: content.title || '',
+        description: content.description || '',
+        subject: content.subject || '',
+        grade: content.grade || '',
+        topic: content.topic || '',
+        type: content.type || 'lesson',
+        file: null
+      });
+    }
+  }, [content]);
+
   const handleChange = (name: string, value: any) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      const token = localStorage.getItem('token');
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
+
+      if (content && onUpdate) {
+        // Update existing content
+        await onUpdate({
+          ...formData,
+          id: content.id
+        });
+      } else {
+        // Create new content
+        const response = await axios.post(`${baseUrl}/api/contents`, formData, { headers });
+        
+        if (response.status === 201) {
+          toast({
+            title: "Success",
+            description: "Content added successfully",
+            variant: "default"
+          });
+          onClose();
+          setFormData({
+            title: '',
+            description: '',
+            subject: '',
+            grade: '',
+            topic: '',
+            type: 'lesson',
+            file: null
+          });
+        }
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save content. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleAddVideo = async () => {
@@ -92,7 +210,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
         videoUrl: YouTubeEmbed({ url: newVideoUrl }),
       };
 
-      await axios.post(`https://${import.meta.env.VITE_API_URL}/contents`, newVideo);
+      await axios.post(`${baseUrl}/api/contents`, newVideo);
       setVideosList((prev) => [...prev, newVideo]);
       setNewVideoUrl("");
     } catch (error) {
@@ -126,7 +244,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
     fileFormData.append('pdf', file);
 
     try {
-      const response = await axios.post(`https://${import.meta.env.VITE_API_URL}/teaching-guides/upload`, fileFormData, {
+      const response = await axios.post(`${baseUrl}/api/teaching-guides/upload`, fileFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -140,7 +258,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
   };
 
   const handleAddMaterial = async () => {
-    const materialFile = formData.materialId;
+    const materialFile = formData.file;
     if (!(materialFile instanceof File)) return;
     try {
       const uploadedMaterial = await handleFileUpload(materialFile);
@@ -151,9 +269,9 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
         pdfUrl: uploadedMaterial.file.path.replace(/^uploads[\\/]/, ''),
       };
 
-      await axios.post(`https://${import.meta.env.VITE_API_URL}/teaching-guides`, newMaterial);
+      await axios.post(`${baseUrl}/api/teaching-guides`, newMaterial);
       setMaterialsList((prev) => [...prev, newMaterial]);
-      handleChange('materialId', null);
+      handleChange('file', null);
     } catch (error) {
       console.log(error);
       toast({ title: 'Error', description: 'Failed to add material.' });
@@ -162,7 +280,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
 
   const handleDeleteVideo = async (videoId) => {
     try {
-      await axios.delete(`https://${import.meta.env.VITE_API_URL}/contents/${videoId}`);
+      await axios.delete(`${baseUrl}/api/contents/${videoId}`);
       setVideosList((prev) => prev.filter((video) => video.id !== videoId));
       toast({ title: "Success", description: "Video deleted successfully." });
     } catch (error) {
@@ -173,7 +291,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
 
   const handleDeleteMaterial = async (materialId) => {
     try {
-      await axios.delete(`https://${import.meta.env.VITE_API_URL}/teaching-guides/${materialId}`);
+      await axios.delete(`${baseUrl}/api/teaching-guides/${materialId}`);
       setMaterialsList((prev) => prev.filter((material) => material.id !== materialId));
       toast({ title: "Success", description: "Material deleted successfully." });
     } catch (error) {
@@ -184,11 +302,13 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
 
   const resetFormData = () => {
     setFormData({
-      grade: "",
-      subject: "",
-      topic: "",
-      videoId: "",
-      materialId: null,
+      title: '',
+      description: '',
+      subject: '',
+      grade: '',
+      topic: '',
+      type: 'lesson',
+      file: null
     });
     setNewVideoUrl("");
     setSubjectsList([]);
@@ -198,18 +318,16 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) { onClose(); resetFormData(); } }}>
-      <DialogContent className="sm:max-w-[425px] rounded-3xl border-4 border-dashed">
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bubbly text-center">
-            Add Content
-          </DialogTitle>
-          <DialogDescription className="text-center">
-            Select grade, subject, and topic to add content.
+          <DialogTitle>{content ? 'Edit Content' : 'Add New Content'}</DialogTitle>
+          <DialogDescription>
+            {content ? 'Update the content details below.' : 'Add new educational content for your students.'}
           </DialogDescription>
         </DialogHeader>
 
-        <form className="space-y-4 py-4" onSubmit={(e) => e.preventDefault()}>
+        <form className="space-y-4 py-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <Label htmlFor="grade" className="font-round">
               Grade
@@ -320,7 +438,7 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
                 <li className="flex justify-between items-center">
                   <Input
                     type="file"
-                    onChange={(e) => handleChange('materialId', e.target.files[0])}
+                    onChange={(e) => handleChange('file', e.target.files[0])}
                     className="mr-2"
                   />
 
@@ -332,7 +450,12 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
             </div>
           )}
 
-
+          <DialogFooter>
+            <Button variant="outline" onClick={onClose}>Cancel</Button>
+            <Button type="submit" onClick={handleSubmit}>
+              {content ? 'Update Content' : 'Add Content'}
+            </Button>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

@@ -153,36 +153,29 @@ const RegistrationModal = ({
       const response = await axios.post(
         `https://${import.meta.env.VITE_API_URL}/auth/register`,
         {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          password: formData.password,
-          role: role,
-          grade: formData.grade,
-          // grade: formData.grade === 'Nursery' ? 'Pre-nursery' : formData.grade,
-          activationCode: formData.activationCode,
-          schoolId: formData.schoolId,
+          ...formData,
+          role: role.toLowerCase(),
         }
       );
 
-      if (response.data.status === "success") {
+      if (response.data.token) {
+        login(response.data.token, response.data.user);
         toast({
-          title: "Registration successful",
-          description: "Welcome to Aspiring Gems!",
+          title: "Registration successful!",
+          description: "Welcome to BookWorm Academy!",
         });
-
-        // Login the user after successful registration
-        await login(formData.email, formData.password);
-        navigate("/");
+        onClose();
+        
+        // Dispatch custom event when a teacher is registered
+        if (role === UserRole.TEACHER) {
+          window.dispatchEvent(new Event('teacherAdded'));
+        }
       }
     } catch (error: any) {
-      setError(
-        error.response?.data?.message ||
-        "Registration failed. Please try again."
-      );
+      setError(error.response?.data?.message || "Registration failed");
       toast({
         title: "Registration failed",
-        description: error.response?.data?.message || "Please try again later.",
+        description: error.response?.data?.message || "Please try again",
         variant: "destructive",
       });
     } finally {

@@ -23,7 +23,6 @@ import Users from './pages/admin/Users';
 import Analytics from './pages/admin/Analytics';
 import Content from './pages/admin/Content';
 import ContentUpload from './pages/admin/ContentUpload';
-import AdminCalendar from './pages/admin/Calendar';
 import AdminPlanner from './pages/admin/Planner';
 import Settings from './pages/admin/Settings';
 import ActivationCodes from './pages/admin/ActivationCodes';
@@ -61,7 +60,6 @@ function App() {
           <Route path="/admin/analytics" element={<Analytics />} />
           <Route path="/admin/content" element={<Content />} />
           <Route path="/admin/content/upload" element={<ContentUpload />} />
-          <Route path="/admin/calendar" element={<AdminCalendar />} />
           <Route path="/admin/planner" element={<AdminPlanner />} />
           <Route path="/admin/settings" element={<Settings />} />
           <Route path="/admin/codes" element={<ActivationCodes />} />

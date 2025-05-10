@@ -17,6 +17,7 @@ import { Loader2 } from "lucide-react";
 import RegistrationModal from "@/components/auth/RegistrationModal";
 import { UserRole } from "@/types";
 import ForgotPasswordModal from "@/components/auth/ForgotPasswordModal";
+import api from "@/lib/api";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -40,41 +41,50 @@ const LoginForm = () => {
     setLoading(true);
 
     try {
-      console.log("Attempting login...", { email });
-      const user = await login(email, password);
-      console.log("Login successful, user:", { id: user.id, role: user.role });
+      console.log('Attempting login with:', { email });
+      const response = await api.post('/auth/login', { email, password });
+      console.log('Login response:', response.data);
+      
+      if (response.data.message === 'Login successful') {
+        const { token, user: userData } = response.data;
+        
+        // Store auth data
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(userData));
+        
+        toast({
+          title: "Login successful",
+          description: `Welcome back, ${userData.firstName}!`,
+        });
 
-      // Show success message
-      toast({
-        title: "Login successful",
-        description: `Welcome back, ${user.firstName}!`,
-      });
+        // Navigate based on role
+        let dashboardPath = "/dashboard";
+        switch (userData.role.toUpperCase()) {
+          case "ADMIN":
+            dashboardPath = "/admin/dashboard";
+            break;
+          case "TEACHER":
+            dashboardPath = "/teacher/dashboard";
+            break;
+          case "STUDENT":
+            dashboardPath = "/student/dashboard";
+            break;
+          default:
+            dashboardPath = "/dashboard";
+        }
 
-      // Navigate based on role
-      let dashboardPath = "/dashboard";
-      switch (user.role) {
-        case "ADMIN":
-          dashboardPath = "/admin/";
-          break;
-        case "TEACHER":
-          dashboardPath = "/teacher";
-          break;
-        case "STUDENT":
-          dashboardPath = "/student";
-          break;
-        default:
-          console.warn("Unknown role:", user.role);
-          dashboardPath = "/dashboard";
+        console.log('Navigating to:', dashboardPath);
+        navigate(dashboardPath);
+      } else {
+        throw new Error(response.data.message || 'Login failed');
       }
-
-      console.log("Navigating to:", dashboardPath, "for role:", user.role);
-      navigate(dashboardPath);
     } catch (error: any) {
-      console.error("Login error:", error);
-      setError(error.message);
+      console.error('Login error:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Login failed';
+      setError(errorMessage);
       toast({
         title: "Login failed",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -85,9 +95,9 @@ const LoginForm = () => {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
+        <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
         <CardDescription className="text-center">
-          Enter your credentials to access your account
+          Sign in to your account to continue
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -101,8 +111,6 @@ const LoginForm = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              disabled={loading}
-              className="bg-white"
             />
           </div>
           <div className="space-y-2">
@@ -114,65 +122,57 @@ const LoginForm = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              disabled={loading}
-              className="bg-white"
             />
-            <Button
-              variant="link"
-              className="text-sm text-primary"
-              onClick={() => setShowForgotPassword(true)}
-              disabled={loading}
-            >
-              Forgot Password?
-            </Button>
           </div>
           {error && (
-            <div className="text-red-500 text-sm p-2 bg-red-50 rounded-md">
-              {error}
-            </div>
+            <div className="text-sm text-red-500">{error}</div>
           )}
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={loading}
+          >
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Logging in...
+                Signing in...
               </>
             ) : (
-              "Login"
+              "Sign In"
             )}
           </Button>
         </form>
       </CardContent>
-      <CardFooter className="flex flex-col justify-center">
-        <p className="text-sm text-gray-500 text-current">
+      <CardFooter className="flex flex-col space-y-4">
+        <div className="text-sm text-center">
+          <Button
+            variant="link"
+            className="p-0"
+            onClick={() => setShowForgotPassword(true)}
+          >
+            Forgot your password?
+          </Button>
+        </div>
+        <div className="text-sm text-center">
           Don't have an account?{" "}
-        </p>
-        <CardFooter className="flex justify-center">
           <Button
             variant="link"
-            className="px-8"
-            onClick={() => handleRoleSelect(UserRole.STUDENT)}
-            disabled={loading}
+            className="p-0"
+            onClick={() => setShowRegistration(true)}
           >
-            Register as Student
+            Sign up
           </Button>
-          <Button
-            variant="link"
-            className="px-8"
-            onClick={() => handleRoleSelect(UserRole.TEACHER)}
-            disabled={loading}
-          >
-            Register as Teacher
-          </Button>
-        </CardFooter>
+        </div>
       </CardFooter>
-      {showRegistration && selectedRole && (
+
+      {showRegistration && (
         <RegistrationModal
           isOpen={showRegistration}
           onClose={() => setShowRegistration(false)}
-          role={selectedRole}
+          role={selectedRole || UserRole.STUDENT}
         />
       )}
+
       {showForgotPassword && (
         <ForgotPasswordModal
           isOpen={showForgotPassword}

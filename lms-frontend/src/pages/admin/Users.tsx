@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +11,7 @@ import { UserRole } from '@/types';
 import axios from 'axios';
 import { useAuth } from '@/contexts/AuthContext';
 
+const API_BASE_URL = 'http://localhost:5000';
 
 interface User {
   id: number;
@@ -29,13 +29,19 @@ const UsersPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [usersList, setUsersList] = useState<User[]>([]);
 
-
-  const handleDelete = (id: number) => {
-    axios.delete(`https://${import.meta.env.VITE_API_URL}/users/${id}`)
-      .then(() => {
-        setUsersList(usersList.filter(user => user.id !== id));
-      })
-      .catch(error => console.error('Error deleting user:', error));
+  const handleDelete = async (id: number) => {
+    try {
+      const token = localStorage.getItem('token');
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
+      
+      await axios.delete(`${API_BASE_URL}/api/users/${id}`, { headers });
+      setUsersList(usersList.filter(user => user.id !== id));
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
   };
 
   useEffect(() => {
@@ -43,8 +49,17 @@ const UsersPage = () => {
       setLoading(true);
       setError(null);
       try {
-        const usersResponse = await axios.get(`https://${import.meta.env.VITE_API_URL}/users`);
-        const schoolsResponse = await axios.get(`https://${import.meta.env.VITE_API_URL}/schools`);
+        const token = localStorage.getItem('token');
+        const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        };
+
+        const [usersResponse, schoolsResponse] = await Promise.all([
+          axios.get(`${API_BASE_URL}/api/users`, { headers }),
+          axios.get(`${API_BASE_URL}/api/schools`, { headers })
+        ]);
+
         const schoolsData = schoolsResponse.data;
 
         const formattedUsers = usersResponse.data.map((userData: any) => {

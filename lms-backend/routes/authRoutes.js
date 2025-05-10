@@ -99,15 +99,34 @@ router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     // Find user
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ 
+      where: { email },
+      include: [
+        {
+          model: School,
+          attributes: ['id', 'name', 'code']
+        },
+        {
+          model: Grade,
+          attributes: ['id', 'name']
+        }
+      ]
+    });
+    
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ 
+        status: 'error',
+        message: "Invalid credentials" 
+      });
     }
 
     // Check password using the model's validatePassword method
     const isValidPassword = await user.validatePassword(password);
     if (!isValidPassword) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ 
+        status: 'error',
+        message: "Invalid credentials" 
+      });
     }
 
     // Generate token
@@ -121,20 +140,27 @@ router.post("/login", async (req, res) => {
     await user.update({ lastLogin: new Date() });
 
     res.json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-        gradeId: user.gradeId,
-      },
-      // grade: [id: user.gradeId, name: ]
+      status: 'success',
+      data: {
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          school: user.School,
+          grade: user.Grade,
+          gradeId: user.gradeId
+        }
+      }
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Login error:', error);
+    res.status(500).json({ 
+      status: 'error',
+      message: error.message 
+    });
   }
 });
 

@@ -19,7 +19,7 @@ module.exports = {
   test: {
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
-    database: process.env.TEST_DB_NAME || 'learnify_test',
+    database: process.env.TEST_DB_NAME || 'aspirin3_learnify_db',
     host: process.env.DB_HOST,
     dialect: 'mysql',
     logging: false

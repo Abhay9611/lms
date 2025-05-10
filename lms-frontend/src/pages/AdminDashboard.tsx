@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import WelcomeCard from '@/components/dashboard/WelcomeCard';
@@ -7,6 +6,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { School, Users, BookOpen, BarChart3 } from 'lucide-react';
 import axios from 'axios';
+
+const API_BASE_URL = 'http://localhost:5000';
 
 interface AdminStats {
   label: string;
@@ -26,9 +27,47 @@ const AdminDashboard = () => {
       setLoading(true);
       setError(null);
       try {
-        const schoolsResponse = await axios.get(`https://${import.meta.env.VITE_API_URL}/schools`);
-        const usersResponse = await axios.get(`https://${import.meta.env.VITE_API_URL}/users`);
-        const booksResponse = await axios.get(`https://${import.meta.env.VITE_API_URL}/teaching-guides`);
+        // Debug: Check if user is authenticated
+        console.log('Current user:', user);
+        const token = localStorage.getItem('token');
+        console.log('Auth token:', token);
+
+        const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        };
+
+        const [schoolsResponse, usersResponse, booksResponse] = await Promise.all([
+          axios.get(`${API_BASE_URL}/api/schools`, { headers }).catch(err => {
+            console.error('Error fetching schools:', {
+              status: err.response?.status,
+              data: err.response?.data,
+              message: err.message
+            });
+            throw new Error('Failed to fetch schools data');
+          }),
+          axios.get(`${API_BASE_URL}/api/users`, { headers }).catch(err => {
+            console.error('Error fetching users:', {
+              status: err.response?.status,
+              data: err.response?.data,
+              message: err.message
+            });
+            throw new Error('Failed to fetch users data');
+          }),
+          axios.get(`${API_BASE_URL}/api/teaching-guides`, { headers }).catch(err => {
+            console.error('Error fetching teaching guides:', {
+              status: err.response?.status,
+              data: err.response?.data,
+              message: err.message
+            });
+            throw new Error('Failed to fetch teaching guides data');
+          })
+        ]);
+
+        // Debug: Log successful responses
+        console.log('Schools response:', schoolsResponse.data);
+        console.log('Users response:', usersResponse.data);
+        console.log('Books response:', booksResponse.data);
 
         const sortedUsers = usersResponse.data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
@@ -45,8 +84,8 @@ const AdminDashboard = () => {
         ]);
 
         setRecentActivities(sortedUsers);
-      } catch (error) {
-        setError('Failed to fetch statistics');
+      } catch (error: any) {
+        setError(error.message || 'Failed to fetch statistics');
         console.error('Error fetching statistics:', error);
       } finally {
         setLoading(false);

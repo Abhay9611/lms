@@ -153,22 +153,33 @@ const authController = {
       }
 
       // Find user
-      const user = await User.findOne({ 
-        where: { 
-          email,
-          isActive: true 
-        },
-        include: [
-          {
-            model: School,
-            attributes: ['id', 'name', 'code']
+      console.log('Attempting to find user in database...');
+      let user;
+      try {
+        user = await User.findOne({ 
+          where: { 
+            email,
+            isActive: true 
           },
-          {
-            model: Grade,
-            attributes: ['id', 'name']
-          }
-        ]
-      });
+          include: [
+            {
+              model: School,
+              attributes: ['id', 'name', 'code']
+            },
+            {
+              model: Grade,
+              attributes: ['id', 'name']
+            }
+          ]
+        });
+        console.log('User query result:', user ? 'User found' : 'User not found');
+      } catch (dbError) {
+        console.error('Database error during user lookup:', {
+          message: dbError.message,
+          stack: dbError.stack
+        });
+        throw new Error('Database error during user lookup');
+      }
 
       if (!user) {
         console.log('Login failed: User not found');
@@ -178,8 +189,20 @@ const authController = {
         });
       }
 
+      console.log('User found, checking password...');
       // Check password
-      const validPassword = await bcrypt.compare(password, user.password);
+      let validPassword;
+      try {
+        validPassword = await bcrypt.compare(password, user.password);
+        console.log('Password check result:', validPassword ? 'Valid' : 'Invalid');
+      } catch (bcryptError) {
+        console.error('Error during password comparison:', {
+          message: bcryptError.message,
+          stack: bcryptError.stack
+        });
+        throw new Error('Error during password verification');
+      }
+
       if (!validPassword) {
         console.log('Login failed: Invalid password');
         return res.status(401).json({
@@ -188,12 +211,23 @@ const authController = {
         });
       }
 
+      console.log('Password valid, generating token...');
       // Generate token
-      const token = jwt.sign(
-        { id: user.id, email: user.email, role: user.role },
-        process.env.JWT_SECRET,
-        { expiresIn: '1d' }
-      );
+      let token;
+      try {
+        token = jwt.sign(
+          { id: user.id, email: user.email, role: user.role },
+          process.env.JWT_SECRET,
+          { expiresIn: '1d' }
+        );
+        console.log('Token generated successfully');
+      } catch (jwtError) {
+        console.error('Error generating JWT:', {
+          message: jwtError.message,
+          stack: jwtError.stack
+        });
+        throw new Error('Error generating authentication token');
+      }
 
       const userData = {
         id: user.id,
@@ -210,17 +244,19 @@ const authController = {
 
       // Return success response with user data
       res.json({
-        status: 'success',
-        data: {
-          token,
-          user: userData
-        }
+        message: 'Login successful',
+        token,
+        user: userData
       });
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Login error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
       res.status(500).json({
-        status: 'error',
-        message: 'An error occurred during login'
+        message: 'An error occurred during login',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
       });
     }
   },

@@ -9,6 +9,7 @@ router.get('/', isAuthenticated, async (req, res) => {
     const contents = await Content.findAll();
     res.json(contents);
   } catch (error) {
+    console.error('Error in GET /api/contents:', error);
     res.status(500).json({ message: error.message });
   }
 });

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,53 +13,227 @@ import { Separator } from '@/components/ui/separator';
 import AnimatedCharacters from '@/components/animated/AnimatedCharacters';
 import { useToast } from '@/hooks/use-toast';
 import axios from 'axios';
+import { Calendar as CalendarIcon } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+
+const API_BASE_URL = 'http://localhost:5000';
+
+interface Grade {
+  id: string;
+  name: string;
+}
+
+interface Subject {
+  id: string;
+  name: string;
+  gradeId: string;
+}
+
+interface Topic {
+  id: string;
+  title: string;
+  subjectId: string;
+}
 
 const AdminPlanner = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('content');
-  const [gradesList, setGradesList] = useState([]);
+  const [grades, setGrades] = useState<Grade[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [topics, setTopics] = useState<Topic[]>([]);
   const [selectedGrade, setSelectedGrade] = useState('');
-  const [plannerId, setPlannerId] = useState();
-
-
-  const [subjects, setSubjects] = useState<any[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState('');
+  const [selectedTopic, setSelectedTopic] = useState('');
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
   const [plannerList, setPlannerList] = useState([]);
-
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchGrades = async () => {
-      const response = await axios.get(`https://${import.meta.env.VITE_API_URL}/grades`);
-      setGradesList(response.data);
-    };
     fetchGrades();
   }, []);
 
+  useEffect(() => {
+    if (selectedGrade) {
+      fetchSubjects();
+    } else {
+      setSubjects([]);
+      setSelectedSubject('');
+    }
+  }, [selectedGrade]);
 
+  useEffect(() => {
+    if (selectedSubject) {
+      fetchTopics();
+    } else {
+      setTopics([]);
+      setSelectedTopic('');
+    }
+  }, [selectedSubject]);
 
   useEffect(() => {
     if (selectedGrade) {
       const fetchPlanner = async () => {
-        const response = await axios.get(`https://${import.meta.env.VITE_API_URL}/monthly-planner`);
-        const filteredPlanner = response.data.filter(planner => planner.gradeId === selectedGrade);
-        setPlannerList(filteredPlanner.map(planner => ({ id: planner.id, pdfName: planner.pdfUrl })));
+        try {
+          const token = localStorage.getItem('token');
+          const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          };
+          const response = await axios.get(`${API_BASE_URL}/api/monthly-planner`, { headers });
+          const filteredPlanner = response.data.filter(planner => planner.gradeId === selectedGrade);
+          setPlannerList(filteredPlanner.map(planner => ({ id: planner.id, pdfName: planner.pdfUrl })));
+        } catch (error) {
+          console.error('Error fetching planner:', error);
+          toast({ title: 'Error', description: 'Failed to fetch planner.' });
+        }
       };
       fetchPlanner();
     }
   }, [selectedGrade]);
 
+  const fetchGrades = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API_BASE_URL}/api/admin/grades`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setGrades(response.data);
+    } catch (error) {
+      console.error('Error fetching grades:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch grades. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  useEffect(() => {
-    const fetchSubjects = async () => {
-      const subjects = await axios.get(`https://${import.meta.env.VITE_API_URL}/subjects`);
-      const filteredSubjects = subjects.data.filter((subject: any) => subject.gradeId === selectedGrade);
+  const fetchSubjects = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API_BASE_URL}/api/admin/subjects`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const filteredSubjects = response.data.filter((subject: Subject) => subject.gradeId === selectedGrade);
       setSubjects(filteredSubjects);
-    };
-    fetchSubjects();
-  }, [selectedGrade]);
+    } catch (error) {
+      console.error('Error fetching subjects:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch subjects. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const fetchTopics = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API_BASE_URL}/api/admin/topics`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const filteredTopics = response.data.filter((topic: Topic) => topic.subjectId === selectedSubject);
+      setTopics(filteredTopics);
+    } catch (error) {
+      console.error('Error fetching topics:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch topics. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!selectedGrade || !selectedSubject || !selectedTopic) {
+      toast({
+        title: "Error",
+        description: "Please select grade, subject, and topic",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!startDate || !endDate) {
+      toast({
+        title: "Error",
+        description: "Please select both start and end dates",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (startDate > endDate) {
+      toast({
+        title: "Error",
+        description: "End date must be after start date",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`${API_BASE_URL}/api/admin/planner`, {
+        gradeId: selectedGrade,
+        subjectId: selectedSubject,
+        topicId: selectedTopic,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString()
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.status === 201) {
+        toast({
+          title: "Success",
+          description: "Academic plan created successfully",
+          variant: "default"
+        });
+        // Reset form
+        setSelectedGrade('');
+        setSelectedSubject('');
+        setSelectedTopic('');
+        setStartDate(undefined);
+        setEndDate(undefined);
+      }
+    } catch (error) {
+      console.error('Error creating planner:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create academic plan. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (value: any) => {
-    setPlannerId(value);
+    setSelectedGrade(value);
   };
 
   const handleFileUpload = async (file: File) => {
@@ -68,53 +241,61 @@ const AdminPlanner = () => {
     fileFormData.append('pdf', file);
 
     try {
-      const response = await axios.post(`https://${import.meta.env.VITE_API_URL}/monthly-planner/upload`, fileFormData, {
+      const token = localStorage.getItem('token');
+      const headers = {
+        'Authorization': `Bearer ${token}`
+      };
+      const response = await axios.post(`${API_BASE_URL}/api/monthly-planner/upload`, fileFormData, {
         headers: {
+          ...headers,
           'Content-Type': 'multipart/form-data',
         },
       });
       return response.data;
     } catch (error) {
-      console.log(error);
+      console.error('Error uploading file:', error);
       toast({ title: 'Error', description: 'Failed to upload file.' });
       return null;
     }
   };
 
-
   const handleAddMaterial = async () => {
-    const materialFile: any = plannerId;
+    const materialFile: any = selectedGrade;
     if (!(materialFile instanceof File)) return;
     try {
       const uploadedMaterial = await handleFileUpload(materialFile);
       if (!uploadedMaterial) return;
+
+      const token = localStorage.getItem('token');
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
 
       const newMaterial = {
         gradeId: selectedGrade,
         pdfUrl: uploadedMaterial.file.path.replace(/^uploads\\/, ''),
       };
 
-      const newPlanner = await axios.post(`https://${import.meta.env.VITE_API_URL}/monthly-planner`, newMaterial);
-
+      const newPlanner = await axios.post(`${API_BASE_URL}/api/monthly-planner`, newMaterial, { headers });
       setPlannerList((prev) => [...prev, { id: newPlanner.data.id, pdfName: newMaterial.pdfUrl }]);
-
     } catch (error) {
-      console.log(error);
+      console.error('Error adding material:', error);
       toast({ title: 'Error', description: 'Failed to add material.' });
     }
   };
 
-
-
-
-
-
   const deletePlanner = async (id: number) => {
     try {
-      await axios.delete(`https://${import.meta.env.VITE_API_URL}/monthly-planner/${id}`);
+      const token = localStorage.getItem('token');
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
+      await axios.delete(`${API_BASE_URL}/api/monthly-planner/${id}`, { headers });
       setPlannerList(plannerList.filter(planner => planner.id !== id));
     } catch (error) {
-      console.log(error);
+      console.error('Error deleting planner:', error);
       toast({ title: 'Error', description: 'Failed to delete planner.' });
     }
   };
@@ -140,8 +321,6 @@ const AdminPlanner = () => {
               <CardTitle>Resources</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-
-
               <div>
                 <div className="flex gap-3 mb-4">
                   <Select value={selectedGrade} onValueChange={setSelectedGrade}>
@@ -149,13 +328,11 @@ const AdminPlanner = () => {
                       <SelectValue placeholder="Select Grade" />
                     </SelectTrigger>
                     <SelectContent>
-                      {gradesList.map((grade) => (
+                      {grades.map((grade) => (
                         <SelectItem key={grade.id} value={grade.id}>{grade.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-
-
                 </div>
 
                 <div className="space-y-4">
@@ -191,7 +368,6 @@ const AdminPlanner = () => {
                   )}
                 </div>
               </div>
-
 
               <div className="mt-6 pt-6 border-t">
                 <div className="flex gap-3">

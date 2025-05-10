@@ -4,31 +4,28 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const compression = require('compression');
 const path = require('path');
-require('dotenv').config();
+const dotenv = require('dotenv');
+const { initializeDatabase } = require('./src/config/database');
 
 // Import routes
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const schoolRoutes = require('./routes/schoolRoutes');
-const gradeRoutes = require('./routes/gradeRoutes');
-const subjectRoutes = require('./routes/subjectRoutes');
-const topicRoutes = require('./routes/topicRoutes');
-const quizRoutes = require('./routes/quizRoutes');
-const flashcardRoutes = require('./routes/flashcardRoutes');
-const contentRoutes = require('./routes/contentRoutes');
-const uploadRoutes = require('./routes/uploadRoutes');
-const teachingGuideRoutes = require('./routes/teachingGuideRoutes');
-const progressRoutes = require('./routes/progressRoutes');
-const monthlyPlannerRoutes = require('./routes/monthlyPlannerRoutes');
-const activationCodeRoutes = require('./routes/activationCodeRoutes');
+const authRoutes = require('./src/routes/auth.routes');
+const userRoutes = require('./src/routes/user.routes');
+const schoolRoutes = require('./src/routes/school.routes');
+
+// Load environment variables
+dotenv.config();
+
+// Create Express app
 const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: ['http://localhost:8080', 'http://localhost:5173', 'http://localhost:3000'],
+  origin: true, // Allow all origins in development
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  maxAge: 600
 };
 
 // Middleware
@@ -46,17 +43,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/schools', schoolRoutes);
-app.use('/api/grades', gradeRoutes);
-app.use('/api/subjects', subjectRoutes);
-app.use('/api/topics', topicRoutes);
-app.use('/api/quizzes', quizRoutes);
-app.use('/api/flashcards', flashcardRoutes);
-app.use('/api/contents', contentRoutes);
-app.use('/api/uploads', uploadRoutes);
-app.use('/api/teaching-guides', teachingGuideRoutes);
-app.use('/api/progress', progressRoutes);
-app.use('/api/monthly-planner', monthlyPlannerRoutes);
-app.use('/api/activation-codes', activationCodeRoutes);
+
 // Test Route
 app.get('/', (req, res) => {
   res.send('Welcome to Learnify API');
@@ -66,23 +53,26 @@ app.get('/', (req, res) => {
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
-    message: 'Something went wrong!',
+    success: false,
+    message: 'Internal Server Error',
     error: process.env.NODE_ENV === 'development' ? err.message : undefined
   });
 });
 
-// Database connection
-const db = require('./models');
+// Start server
+const PORT = process.env.PORT || 5000;
 
-db.sequelize.sync({ alter: process.env.NODE_ENV === 'development' })
-  .then(() => {
-    console.log('✅ Database synced successfully');
-  })
-  .catch((err) => {
-    console.error('❌ Error syncing DB:', err);
-  });
+// Initialize database and start server
+const startServer = async () => {
+  try {
+    await initializeDatabase();
+    app.listen(PORT, () => {
+      console.log(`✅ Server is running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+startServer();

@@ -11,15 +11,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import axios from "axios";
+import api from "@/config/api";
 import { AlertCircle } from "lucide-react";
 
 interface AddSchoolModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-const AddSchoolModal = ({ isOpen, onClose }: AddSchoolModalProps) => {
+const AddSchoolModal = ({ isOpen, onClose, onSuccess }: AddSchoolModalProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     schoolName: "",
@@ -60,7 +61,7 @@ const AddSchoolModal = ({ isOpen, onClose }: AddSchoolModalProps) => {
     }
 
     try {
-      const response = await axios.post(`https://${import.meta.env.VITE_API_URL}/schools`, formData);
+      const response = await api.post('/api/schools', formData);
 
       if (response.data.status === "success") {
         toast({
@@ -68,6 +69,7 @@ const AddSchoolModal = ({ isOpen, onClose }: AddSchoolModalProps) => {
           description: "The school has been added to the list.",
         });
         onClose();
+        onSuccess?.();
       }
     } catch (error: any) {
       setError(
