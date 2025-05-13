@@ -25,13 +25,32 @@ const isAuthenticated = async (req, res, next) => {
 const isAdmin = async (req, res, next) => {
   try {
     await isAuthenticated(req, res, () => {
+      console.log('Admin middleware - User:', {
+        id: req.user.id,
+        role: req.user.role,
+        email: req.user.email
+      });
+      
       if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Admin access required' });
+        console.log('Admin middleware - Access denied:', {
+          userRole: req.user.role,
+          requiredRole: 'admin'
+        });
+        return res.status(403).json({ 
+          status: 'error',
+          message: 'Admin access required',
+          userRole: req.user.role 
+        });
       }
+      console.log('Admin middleware - Access granted');
       next();
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Admin middleware error:', error);
+    res.status(500).json({ 
+      status: 'error',
+      message: error.message 
+    });
   }
 };
 

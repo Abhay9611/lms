@@ -30,7 +30,6 @@ import ActivationCodes from './pages/admin/ActivationCodes';
 
 // Teacher pages
 import TeacherDashboard from './pages/TeacherDashboard';
-import TeacherCalendar from './pages/teacher/Calendar';
 import TeacherPlanner from './pages/teacher/Planner';
 import TeacherResourceHub from './pages/teacher/ResourceHub';
 import TeacherGradeSelection from './pages/teacher/GradeSelection';
@@ -69,11 +68,9 @@ function App() {
           {/* Teacher Routes */}
           <Route path="/teacher" element={<TeacherDashboard />} />
           <Route path="/teacher/grade-selection" element={<TeacherGradeSelection />} />
-          <Route path="/teacher/calendar" element={<TeacherCalendar />} />
           <Route path="/teacher/planner" element={<TeacherPlanner />} />
           <Route path="/teacher/resources" element={<TeacherResourceHub />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-
 
           <Route path="*" element={<NotFound />} />
         </Routes>

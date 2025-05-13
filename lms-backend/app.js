@@ -74,7 +74,9 @@ app.use((err, req, res, next) => {
 // Database connection
 const db = require('./models');
 
-db.sequelize.sync({ alter: process.env.NODE_ENV === 'development' })
+// Sync database without altering existing tables to prevent data loss
+// In development, you can use migrations to handle schema changes
+db.sequelize.sync()
   .then(() => {
     console.log('✅ Database synced successfully');
   })

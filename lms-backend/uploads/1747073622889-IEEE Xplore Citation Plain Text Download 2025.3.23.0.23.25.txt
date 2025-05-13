@@ -1,0 +1,12 @@
+R. Salama, C. Altrjman, F. Al-Turjman, S. P. Yadav and S. Vats, "Overview of Energy Harvesting and Sustainability in Smart Cities," 2023 3rd International Conference on Advancement in Electronics & Communication Engineering (AECE), GHAZIABAD, India, 2023, pp. 390-392, doi: 10.1109/AECE59614.2023.10428140. keywords: {Renewable energy sources;Costs;Systematics;Smart cities;Urban planning;Energy harvesting;Sustainable development;Sustainable Energy;Renewable Energy;Energy Efficiency;Smart Grid;Smart Building;Smart City},
+
+J. Qiu, H. Wang, Y. Liu, M. Fu and J. Liang, "A Synchronous Current Inversion and Energy Extraction Circuit for Electromagnetic Energy Harvesting Enhancement," in IEEE Transactions on Circuits and Systems I: Regular Papers, vol. 71, no. 12, pp. 5471-5481, Dec. 2024, doi: 10.1109/TCSI.2024.3430055.
+keywords: {Transducers;Circuits;Voltage control;Switches;Synchronization;Power generation;Energy harvesting;Electromagnetics;Electromagnetic energy harvesting (EMEH);synchronous switch interface circuit},
+
+M. M. Ferreira, M. P. M. G. Miguel, C. P. d. Souza, Y. An and O. Baiocchi, "An Energy Efficiency Evaluation of the LTC3108 for Thermal Energy Harvesting," 2024 IEEE World AI IoT Congress (AIIoT), Seattle, WA, USA, 2024, pp. 0219-0224, doi: 10.1109/AIIoT61789.2024.10579004. keywords: {Low voltage;Electric potential;Simulation;Heat engines;Transformers;Energy efficiency;Software;energy harvesting;smart tree;energy conditioning circuit;energy efficiency},
+
+A. Arunkumar, P. Pandiyarajan, S. B. L. Akshaya, A. Archana and A. Archana, "Renewable Energy Consumption on Solar and Wind Energy Prediction Using Deep Learning and Generative AI," 2024 International Conference on IoT Based Control Networks and Intelligent Systems (ICICNIS), Bengaluru, India, 2024, pp. 770-777, doi: 10.1109/ICICNIS64247.2024.10823172. keywords: {Deep learning;Support vector machines;Training;Renewable energy sources;Wind energy;Explainable AI;Production;Predictive models;Wind forecasting;Random forests;Storage of energy;Lime algorithm;solar;wind;renewable energy},
+
+Z. Xie, L. Teng, H. Wang, Y. Liu, M. Fu and J. Liang, "A Self-Powered Synchronous Switch Energy Extraction Circuit for Electromagnetic Energy Harvesting Enhancement," in IEEE Transactions on Power Electronics, vol. 38, no. 8, pp. 9972-9982, Aug. 2023, doi: 10.1109/TPEL.2023.3272586.
+keywords: {Switches;Switching circuits;RLC circuits;Generators;Energy harvesting;Vibrations;Inductors;Electromagnetic energy harvesting (EMEH);self-powered design;synchronous switch interface circuit},
+

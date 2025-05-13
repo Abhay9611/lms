@@ -1,0 +1,107 @@
+Abhay Kulkarni
+Data Analyst
+
+Hubli
+9611035172
+
+Results-oriented Data Analyst with expertise in SQL, Python, and data visualization. Skilled in predictive modeling, AI-driven analytics, and data-driven decision-making to optimize business processes. Adept at extracting actionable insights to enhance efficiency and strategic growth. Strong problem-solving abilities with experience in handling large datasets. Passionate about leveraging data to drive innovation, improve business intelligence, and contribute to dynamic, collaborative environments focused on continuous improvement.
+
+PERSONAL INFORMATION
+  Address: , Hubli, 
+  Nationality: 
+  Driving License: 
+  Hobbies: Chess 
+
+SOCIAL PROFILES
+  * Linkedin: linkedin.com/in/abhay-kulkarni-96b120227
+
+LANGUAGES
+  ★★★★☆ English 
+  ★★★★☆ Kannada
+  ★★★★☆ Hindi
+
+SKILLS
+  ★★★★★ SQL
+  ★★★★★ Microsoft Excel
+  ★★★★★ Python
+  ★★★★★ Microsoft PowerPoint
+  ★★★★★ Microsoft Office
+  ★★★★★ Data Visualization
+  ★★★★★ Data Analysis
+  ★★★★★ Teamwork
+  ★★★★★ Effective Time Management
+  ★★★★★ Fast Learner
+  ★★★★★ Communication
+  ★★★★★ Leadership Skills
+  ★★★★★ Predictive Modeling
+  ★★★★★ Business Intelligence
+
+WORK EXPERIENCE
+  * October 2024 – November 2025
+    Intern at Tata Consultancy Services, 
+      
+  Completed a simulation involving creating data visualizations for Tata Consultancy Services
+  Prepared questions for a meeting with client senior leadership
+  Created visuals for data analysis to help executives with effective decision making
+
+
+  * December 2024 – January 2025
+    Intern at PricewaterhouseCoopers International Limited  (PWC), 
+      
+  Strengthened Power BI skills to understand client data visualization needs.
+  Created dashboards showcasing KPIs and responding to client requests.
+  Communicated insights effectively through concise emails to engagement partners.
+  Analyzed HR data, identifying root causes for gender balance issues in management.
+  Applied data-driven decision-making and analytical problem-solving skills.
+
+
+  * February 2025 – May 2025
+    Intern at NWKRTC, Hubli 
+      
+  Developed a secure web-based fleet management system for KWSRTC using PHP, MySQL, and Power BI.
+  Centralized vehicle registration, maintenance, and driver assignments for streamlined operations.
+  Integrated Power BI dashboards for real-time data visualization and decision-making.
+  Implemented role-based authentication to ensure secure access and data integrity.
+  Optimized database queries for sub-3 second execution, enhancing performance.
+  Designed modular components for efficient fleet and driver management.
+  Utilized Agile methodology for iterative improvements based on stakeholder feedback.
+
+
+
+EDUCATION
+  * June 2021 – May 2025
+     S D M College of Engineering and Technology ,  BE 
+  * June 2019 – May 2021
+    Impulse Science PU College,  PU
+  * March 2019
+    KLE M.R Sakhare English Medium School, Hubli SSLC
+
+COURSES
+  * August 2024
+    CCNA – Cisco Networking Academy , CISCO
+  * October 2024
+    Foundation Course on Data Science, Great Learning 
+  * October 2024
+     Google Analytical Certification , Google
+
+
+PROJECTS
+  * Freelancer Fusion, SDMCET, HUBLI, 
+
+    
+  Developed Freelancer Fusion, a web platform connecting clients with freelancers.
+  Implemented project listings, bid management, secure payments, and user reviews.
+  Designed advanced search filters and personalized recommendations for better project matching.
+  Ensured robust authentication and payment security to protect user data.
+  Created a responsive, user-friendly interface for seamless interaction.
+
+  * Leave Management System, SDMCET, HUBLI, 
+
+    
+
+   eveloped a web-based leave management system for streamlined leave requests and approvals.
+  Implemented email notifications for real-time updates on leave status.
+  Designed an intuitive user interface for seamless interaction.
+  Ensured secure data handling with robust authentication mechanisms.
+  Optimized backend processing for efficient performance and quick response times.
+

@@ -54,9 +54,11 @@ const authController = {
 
           // Map grade name to enum value
           const gradeMap = {
+            'Play Home': 'Play Home',
+            'Nursery': 'Nursery',
             'Pre-Nursery': 'Pre-nursery',
-            'Nursery': 'LKG',
-            'Kindergarten': 'UKG'
+            'LKG': 'LKG',
+            'UKG': 'UKG'
           };
 
           const gradeName = gradeMap[grade] || grade;

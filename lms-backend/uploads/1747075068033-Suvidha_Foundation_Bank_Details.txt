@@ -1,0 +1,6 @@
+Bank: Bank of Baroda
+City: Nagpur
+Contact No: +91 8010996763
+Account Name: Suvidha Mahila Mandal
+Account No: 97840100027609
+IFSC Code: BARB0DBKPAR

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import WelcomeCard from '@/components/dashboard/WelcomeCard';
@@ -15,7 +14,7 @@ interface AdminStats {
 
 const AdminDashboard = () => {
 
-  const { user } = useAuth();
+  const { user, token, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [adminStats, setAdminStats] = useState<AdminStats[]>([]);
@@ -23,12 +22,40 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
+      console.log('Fetching stats with auth state:', { 
+        isAuthenticated, 
+        hasToken: !!token, 
+        userRole: user?.role,
+        apiUrl: import.meta.env.VITE_API_URL 
+      });
+
+      if (!isAuthenticated || !token) {
+        console.log('Not authenticated, skipping fetch');
+        setError('Please log in to access this page');
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       setError(null);
       try {
-        const schoolsResponse = await axios.get(`${import.meta.env.VITE_API_URL}/schools`);
-        const usersResponse = await axios.get(`${import.meta.env.VITE_API_URL}/users`);
-        const booksResponse = await axios.get(`${import.meta.env.VITE_API_URL}/teaching-guides`);
+        // Ensure the token is set in headers for this request
+        const headers = {
+          Authorization: `Bearer ${token}`
+        };
+        console.log('Making API requests with headers:', { 
+          hasAuthHeader: !!headers.Authorization,
+          tokenLength: token.length 
+        });
+
+        const schoolsResponse = await axios.get(`${import.meta.env.VITE_API_URL}/schools`, { headers });
+        console.log('Schools response:', schoolsResponse.status);
+        
+        const usersResponse = await axios.get(`${import.meta.env.VITE_API_URL}/users`, { headers });
+        console.log('Users response:', usersResponse.status);
+        
+        const booksResponse = await axios.get(`${import.meta.env.VITE_API_URL}/teaching-guides`, { headers });
+        console.log('Books response:', booksResponse.status);
 
         const sortedUsers = usersResponse.data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
@@ -45,15 +72,32 @@ const AdminDashboard = () => {
         ]);
 
         setRecentActivities(sortedUsers);
-      } catch (error) {
-        setError('Failed to fetch statistics');
-        console.error('Error fetching statistics:', error);
+      } catch (error: any) {
+        console.error('Detailed error info:', {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          headers: error.response?.headers,
+          config: {
+            url: error.config?.url,
+            method: error.config?.method,
+            headers: error.config?.headers
+          }
+        });
+
+        if (error.response?.status === 401) {
+          setError('Your session has expired. Please log in again.');
+          // Optionally trigger logout
+          window.location.href = '/login';
+        } else {
+          setError(error.response?.data?.message || 'Failed to fetch statistics');
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchStats();
-  }, [user]);
+  }, [user, token, isAuthenticated]);
 
   if (loading) {
     return <div className="p-8 text-center">Loading data...</div>;

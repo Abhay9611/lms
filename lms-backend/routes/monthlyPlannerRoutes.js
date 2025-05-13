@@ -1,62 +1,136 @@
 const express = require('express');
 const router = express.Router();
-const { MonthlyPlanner } = require('../models');
-const { isAuthenticated, isTeacher } = require('../middleware/auth');
 const multer = require('multer');
-const fs = require('fs');
-router.post('/', isTeacher, async (req, res) => {
-  const { gradeId, pdfUrl } = req.body;
-  try {
-    const monthlyPlanner = await MonthlyPlanner.create({ gradeId, pdfUrl });
-    res.status(201).json(monthlyPlanner);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+const path = require('path');
+const { isAuthenticated, isTeacher } = require('../middleware/auth');
+const {
+  getMonthlyPlanners,
+  getMonthlyPlanner,
+  createMonthlyPlanner,
+  updateMonthlyPlanner,
+  deleteMonthlyPlanner
+} = require('../controllers/monthlyPlannerController');
 
-router.get('/', isTeacher, async (req, res) => {
-  try {
-    const monthlyPlanner = await MonthlyPlanner.findAll();
-    res.status(200).json(monthlyPlanner);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-router.delete('/:id', isTeacher, async (req, res) => {
-  const { id } = req.params;
-  try {
-    const pdf = await MonthlyPlanner.findOne({ where: { id } });
-    fs.unlink(`uploads/${pdf.pdfUrl}`, (err) => {
-      if (err) {
-        console.error('Error deleting file:', err);
-      } else {
-        console.log('File deleted successfully');
-      }
-    });
-    await MonthlyPlanner.destroy({ where: { id } });
-    res.status(200).json({ message: 'Planner deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-
+// Configure multer for file uploads
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads/'); // Directory to save uploaded files
-    },
-    filename: function (req, file, cb) {
-      cb(null, Date.now() + '-' + file.originalname); // Unique filename
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '..', 'uploads'));
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + '-' + file.originalname);
+  }
+});
+
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    // Accept only PDF files
+    if (file.mimetype === 'application/pdf') {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PDF files are allowed'), false);
     }
-  });
-const upload = multer({ storage: storage });
-router.post('/upload', isTeacher, upload.single('pdf'), (req, res) => {
+  },
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  }
+});
+
+// Get all monthly planners with optional filters
+router.get('/', isAuthenticated, getMonthlyPlanners);
+
+// Get a single monthly planner
+router.get('/:id', isAuthenticated, getMonthlyPlanner);
+
+// Create a new monthly planner (with optional PDF upload)
+router.post('/', 
+  isAuthenticated, 
+  isTeacher,
+  upload.single('pdf'),
+  (req, res, next) => {
+    console.log('File upload middleware:', {
+      file: req.file,
+      body: req.body
+    });
+
+    // Only require file if content is not provided
+    if (!req.file && !req.body.content) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Either a PDF file or text content is required'
+      });
+    }
+
+    // Set the pdfUrl if a file was uploaded
+    if (req.file) {
+      req.body.pdfUrl = req.file.filename;
+    }
+    
+    // Log the modified request body
+    console.log('Modified request body:', req.body);
+    
+    next();
+  },
+  createMonthlyPlanner
+);
+
+// Update a monthly planner (with optional PDF upload)
+router.put('/:id',
+  isAuthenticated,
+  isTeacher,
+  upload.single('pdf'),
+  (req, res, next) => {
+    if (req.file) {
+      req.body.pdfUrl = req.file.filename;
+    }
+    next();
+  },
+  updateMonthlyPlanner
+);
+
+// Delete a monthly planner
+router.delete('/:id', isAuthenticated, isTeacher, deleteMonthlyPlanner);
+
+// Test endpoint for debugging
+router.post('/test-upload', 
+  isAuthenticated,
+  isTeacher,
+  upload.single('pdf'),
+  (req, res) => {
     try {
-      res.status(200).json({ message: 'File uploaded successfully', file: req.file });
+      console.log('Test upload request details:', {
+        user: req.user,
+        file: req.file,
+        body: req.body,
+        headers: req.headers
+      });
+      
+      res.json({
+        status: 'success',
+        message: 'Test upload successful',
+        details: {
+          user: {
+            id: req.user.id,
+            role: req.user.role
+          },
+          file: req.file ? {
+            filename: req.file.filename,
+            mimetype: req.file.mimetype,
+            size: req.file.size
+          } : null,
+          body: req.body
+        }
+      });
     } catch (error) {
-      res.status(500).json({ message: 'Error uploading file', error: error.message });
+      console.error('Test upload error:', error);
+      res.status(500).json({
+        status: 'error',
+        message: error.message,
+        stack: error.stack
+      });
     }
-  });
+  }
+);
 
 module.exports = router;

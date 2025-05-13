@@ -54,7 +54,7 @@ const LoginForm = () => {
       let dashboardPath = "/dashboard";
       switch (user.role) {
         case "ADMIN":
-          dashboardPath = "/admin/";
+          dashboardPath = "/admin";
           break;
         case "TEACHER":
           dashboardPath = "/teacher";

@@ -17,10 +17,28 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING(36),
       allowNull: false
     },
-
-    pdfUrl: {
+    title: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    pdfUrl: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    date: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      get() {
+        const rawValue = this.getDataValue('date');
+        return rawValue ? new Date(rawValue).toISOString() : null;
+      },
+      set(value) {
+        this.setDataValue('date', value ? new Date(value) : null);
+      }
     }
   }, {
     sequelize,

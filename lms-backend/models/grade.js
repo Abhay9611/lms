@@ -22,6 +22,10 @@ module.exports = (sequelize) => {
         as: 'subjects', 
         foreignKey: 'gradeId' 
       });
+      Grade.hasMany(models.MonthlyPlanner, {
+        as: 'monthlyPlanners',
+        foreignKey: 'gradeId'
+      });
     }
   }
 
@@ -32,14 +36,21 @@ module.exports = (sequelize) => {
       primaryKey: true
     },
     name: {
-      type: DataTypes.ENUM('Pre-nursery', 'LKG', 'UKG'),
+      type: DataTypes.ENUM('Play Home', 'Nursery', 'Pre-nursery', 'LKG', 'UKG'),
       allowNull: false
     },
     description: {
       type: DataTypes.TEXT,
       allowNull: true
     },
-
+    schoolId: {
+      type: DataTypes.STRING(36),
+      allowNull: true,
+      references: {
+        model: 'Schools',
+        key: 'id'
+      }
+    },
     isActive: {
       type: DataTypes.BOOLEAN,
       defaultValue: true
@@ -48,9 +59,11 @@ module.exports = (sequelize) => {
     sequelize,
     modelName: 'Grade',
     indexes: [
-
       {
         fields: ['name']
+      },
+      {
+        fields: ['schoolId']
       }
     ]
   });

@@ -64,11 +64,6 @@ const TeacherLinks = [
     icon: Home,
   },
   {
-    title: "Calendar",
-    href: "/teacher/calendar",
-    icon: Calendar,
-  },
-  {
     title: "Planner",
     href: "/teacher/planner",
     icon: ListTodo,
@@ -144,17 +139,29 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     active: location.pathname === link.href,
   }));
 
-  let menuItems;
-  switch (user?.role) {
-    case UserRole.ADMIN:
-      menuItems = adminMenuItems;
-      break;
-    case UserRole.TEACHER:
-      menuItems = teacherMenuItems;
-      break;
-    case UserRole.STUDENT:
-      menuItems = studentMenuItems;
-      break;
+  // Default to empty array if user is undefined
+  let menuItems: typeof studentMenuItems = [];
+  
+  if (user) {
+    switch (user.role) {
+      case UserRole.ADMIN:
+        menuItems = adminMenuItems;
+        break;
+      case UserRole.TEACHER:
+        menuItems = teacherMenuItems;
+        break;
+      case UserRole.STUDENT:
+        menuItems = studentMenuItems;
+        break;
+      default:
+        menuItems = [];
+    }
+  }
+
+  // If user is not authenticated, redirect to login
+  if (!user) {
+    navigate('/login');
+    return null;
   }
 
   return (

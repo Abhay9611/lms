@@ -156,6 +156,10 @@ UserProfile.belongsTo(User, { foreignKey: 'userId' });
 Topic.hasMany(StudentProgress, { foreignKey: 'topicId' });
 StudentProgress.belongsTo(Topic, { foreignKey: 'topicId' });
 
+// Add association between MonthlyPlanner and Grade
+MonthlyPlanner.belongsTo(Grade, { foreignKey: 'gradeId', as: 'grade' });
+Grade.hasMany(MonthlyPlanner, { foreignKey: 'gradeId', as: 'monthlyPlanners' });
+
 // Export sequelize instance and models
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

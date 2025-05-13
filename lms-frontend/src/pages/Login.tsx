@@ -39,13 +39,13 @@ const Login = () => {
     if (!from) {
       switch (user.role) {
         case "ADMIN":
-          from = "/admin/dashboard";
+          from = "/admin";
           break;
         case "TEACHER":
-          from = "/teacher/dashboard";
+          from = "/teacher";
           break;
         case "STUDENT":
-          from = "/student/dashboard";
+          from = "/student";
           break;
         default:
           console.warn("Unknown role:", user.role);
