@@ -14,7 +14,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import api from '@/lib/api';
-import { Download as DownloadIcon, Trash as TrashIcon } from 'lucide-react';
+import { Download as DownloadIcon, FileText } from 'lucide-react';
 
 // Spinner component for loading state
 const SpinnerComponent = ({ className }: { className?: string }) => (
@@ -147,39 +147,43 @@ const TeacherPlanner = () => {
 
   const handleDownloadPDF = async (pdfUrl: string) => {
     try {
-      const response = await api.get(`/monthly-planner/download/${pdfUrl}`, {
+      // Show loading state
+      toast({
+        title: 'Downloading...',
+        description: 'Please wait while we prepare your PDF',
+      });
+
+      // Decode the URL-encoded filename
+      const decodedFilename = decodeURIComponent(pdfUrl);
+      
+      const response = await api.get(`/monthly-planner/download/${decodedFilename}`, {
         responseType: 'blob'
       });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      // Create a more descriptive filename
+      const filename = `monthly-plan-${format(selectedDate, 'yyyy-MM-dd')}.pdf`;
+      
+      // Create blob URL and trigger download
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `plan-${selectedDate.toISOString()}.pdf`);
+      link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
       link.remove();
-    } catch (error) {
+      window.URL.revokeObjectURL(url);
+
+      // Show success message
+      toast({
+        title: 'Success',
+        description: 'PDF downloaded successfully',
+      });
+    } catch (error: any) {
       console.error('Error downloading PDF:', error);
       toast({
         title: 'Error',
-        description: 'Failed to download PDF',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const handleDeletePlan = async (planId: number) => {
-    try {
-      await api.delete(`/monthly-planner/${planId}`);
-      toast({
-        title: 'Success',
-        description: 'Plan deleted successfully',
-      });
-      fetchPlans();
-    } catch (error) {
-      console.error('Error deleting plan:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to delete plan',
+        description: error.response?.data?.message || 'Failed to download PDF. Please try again.',
         variant: 'destructive',
       });
     }
@@ -301,43 +305,44 @@ const TeacherPlanner = () => {
               ) : filteredPlans.length > 0 ? (
                 <div className="space-y-4">
                   {filteredPlans.map((plan) => (
-                    <Card key={plan.id} className="rounded-xl overflow-hidden">
-                      <div className="border-l-4 border-lms-green p-4 hover:bg-muted/10 transition-colors">
+                    <Card key={plan.id} className="rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
+                      <div className="border-l-4 border-lms-green p-6 hover:bg-muted/5 transition-colors">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <div className="flex items-center mb-2">
-                              <Badge variant="outline" className="mr-2">
+                            <div className="flex items-center gap-3 mb-3">
+                              <Badge variant="outline" className="bg-lms-green/10 text-lms-green border-lms-green/20">
                                 {plan.grade?.name || grades.find(g => g.id === plan.gradeId)?.name || 'Unknown Grade'}
                               </Badge>
                               {plan.date && (
-                                <span className="text-xs text-muted-foreground">
-                                  {format(parseISO(plan.date), 'h:mm a')}
+                                <span className="text-sm text-muted-foreground">
+                                  {format(parseISO(plan.date), 'MMMM d, yyyy h:mm a')}
                                 </span>
                               )}
                             </div>
-                            <h3 className="text-lg font-semibold mb-2">{plan.title}</h3>
-                            <p className="text-muted-foreground mb-4 whitespace-pre-wrap">{plan.content}</p>
-                            <div className="flex gap-2">
-                              {plan.pdfUrl && (
+                            
+                            <h3 className="text-xl font-semibold mb-3 text-gray-800">{plan.title}</h3>
+                            
+                            <div className="prose prose-sm max-w-none mb-4">
+                              <p className="text-gray-600 whitespace-pre-wrap">{plan.content}</p>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                              {plan.pdfUrl ? (
                                 <Button 
                                   variant="outline" 
                                   size="sm" 
-                                  className="mr-2"
+                                  className="bg-lms-green/10 hover:bg-lms-green/20 text-lms-green border-lms-green/20"
                                   onClick={() => handleDownloadPDF(plan.pdfUrl!)}
                                 >
                                   <DownloadIcon className="h-4 w-4 mr-2" />
                                   Download PDF
                                 </Button>
+                              ) : (
+                                <div className="flex items-center text-muted-foreground text-sm">
+                                  <FileText className="h-4 w-4 mr-2" />
+                                  No PDF available
+                                </div>
                               )}
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
-                                className="text-red-500 hover:text-red-600"
-                                onClick={() => handleDeletePlan(parseInt(plan.id))}
-                              >
-                                <TrashIcon className="h-4 w-4 mr-2" />
-                                Delete
-                              </Button>
                             </div>
                           </div>
                         </div>

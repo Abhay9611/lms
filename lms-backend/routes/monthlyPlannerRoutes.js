@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const { isAuthenticated, isTeacher } = require('../middleware/auth');
 const {
   getMonthlyPlanners,
@@ -132,5 +133,36 @@ router.post('/test-upload',
     }
   }
 );
+
+// Add download route
+router.get('/download/:filename', isAuthenticated, async (req, res) => {
+  try {
+    const filename = req.params.filename;
+    const filePath = path.join(__dirname, '..', 'uploads', filename);
+
+    // Check if file exists
+    if (!fs.existsSync(filePath)) {
+      console.error('File not found:', filePath);
+      return res.status(404).json({
+        status: 'error',
+        message: 'PDF file not found'
+      });
+    }
+
+    // Set headers for PDF download
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    // Stream the file
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.pipe(res);
+  } catch (error) {
+    console.error('Error downloading PDF:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to download PDF'
+    });
+  }
+});
 
 module.exports = router;
