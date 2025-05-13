@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Plus, Search, Edit, Trash2, FileText, Film, Music, Upload } from 'lucide-react';
+import { BookOpen, Plus, Search, Edit, Trash2, FileText, Film, Music, Upload, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from '@/components/ui/use-toast';
 import axios from 'axios';
+import api from '@/lib/api';
 
 // Mock content data
 const contentItems = [
@@ -174,14 +175,69 @@ const ContentPage = () => {
     setIsAddContentModalOpen(false);
   };
 
-  const handlePdfClick = (pdfUrl: string) => {
-    if (!pdfUrl) return;
+  const handlePdfClick = async (pdfUrl: string) => {
+    if (!pdfUrl) {
+      toast({
+        title: "Error",
+        description: "No PDF available for this content",
+        variant: "destructive"
+      });
+      return;
+    }
     
-    // Construct the URL to access the uploaded file
-    const fullUrl = `${import.meta.env.VITE_API_URL}/uploads/${pdfUrl}`;
-    
-    // Open in new tab
-    window.open(fullUrl, '_blank');
+    try {
+      // Show loading state
+      toast({
+        title: "Loading",
+        description: "Opening PDF...",
+      });
+
+      // Decode the URL-encoded filename
+      const decodedFilename = decodeURIComponent(pdfUrl);
+      
+      // Log the request details for debugging
+      console.log('Requesting PDF:', {
+        url: `/contents/download/${decodedFilename}`,
+        filename: decodedFilename
+      });
+      
+      const response = await api.get(`/contents/download/${decodedFilename}`, {
+        responseType: 'blob'
+      });
+
+      // Create blob URL and open in new tab
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      
+      // Open PDF in new tab
+      const newWindow = window.open(url, '_blank');
+      if (!newWindow) {
+        toast({
+          title: "Warning",
+          description: "Please allow popups to view PDFs",
+          variant: "destructive"
+        });
+      }
+      
+      // Clean up the blob URL after a short delay
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+      }, 1000);
+
+    } catch (error: any) {
+      console.error('Error viewing PDF:', error);
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || "Failed to open PDF. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -374,19 +430,19 @@ const ContentPage = () => {
                           <td colSpan={4} className="text-center py-12 text-muted-foreground">No content found</td>
                         </tr>
                       ) : (
-                        filteredContent.map(item => (
-                          <tr key={item.id} className="hover:bg-muted/20 transition-colors">
-                            <td className="px-4 py-4 truncate max-w-[200px] font-medium">{item.topicName}</td>
-                            <td className="px-4 py-4 text-center truncate max-w-[150px]">{item.grade}</td>
+                        filteredContent.map((content) => (
+                          <tr key={content.id} className="hover:bg-muted/20 transition-colors">
+                            <td className="px-4 py-4 truncate max-w-[200px] font-medium">{content.topicName}</td>
+                            <td className="px-4 py-4 text-center truncate max-w-[150px]">{content.grade}</td>
                             <td className="px-4 py-4 text-center">
-                              {item.pdfUrl ? (
+                              {content.pdfUrl ? (
                                 <Button
                                   variant="ghost"
                                   size="sm"
                                   className="text-blue-500 hover:text-blue-700 hover:underline flex items-center justify-center gap-2 mx-auto"
-                                  onClick={() => handlePdfClick(item.pdfUrl)}
+                                  onClick={() => handlePdfClick(content.pdfUrl)}
                                 >
-                                  <FileText className="h-4 w-4" />
+                                  <Eye className="h-4 w-4" />
                                   View PDF
                                 </Button>
                               ) : (
@@ -399,7 +455,7 @@ const ContentPage = () => {
                                   variant="ghost" 
                                   size="sm" 
                                   className="h-8 w-8 p-0 text-lms-blue hover:bg-lms-blue/10"
-                                  onClick={() => handleEdit(item)}
+                                  onClick={() => handleEdit(content)}
                                 >
                                   <Edit className="h-4 w-4" />
                                 </Button>
@@ -407,7 +463,7 @@ const ContentPage = () => {
                                   variant="ghost" 
                                   size="sm" 
                                   className="h-8 w-8 p-0 text-lms-pink hover:bg-lms-pink/10"
-                                  onClick={() => handleDelete(item)}
+                                  onClick={() => handleDelete(content)}
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>

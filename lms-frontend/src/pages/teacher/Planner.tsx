@@ -209,10 +209,6 @@ const TeacherPlanner = () => {
                 className="pl-9 w-[200px]"
               />
             </div>
-            <Button className="bg-lms-green hover:bg-lms-green/90">
-              <Plus className="h-4 w-4 mr-2" />
-              New Plan
-            </Button>
           </div>
         </div>
 
